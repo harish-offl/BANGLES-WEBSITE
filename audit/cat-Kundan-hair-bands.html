@@ -1,0 +1,1366 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> - Bangles_byBeauty</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/site.css?v=qJPc4Iwo5CURa0KF8HGM7WjeFiUQwzc6WEmqWe_PKng" />
+    <link rel="stylesheet" href="/Bangles_byBeauty.styles.css?v=JCcIeNT_UvJOOndP_c01HDncHsJ07cOCclJdrJGxevQ" />
+
+</head>
+<body>
+    <header b-o5l447ku4h>
+    </header>
+    <div b-o5l447ku4h class="container">
+        <main b-o5l447ku4h role="main" class="pb-3">
+            
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Kundan hair bands - Bangles by Beauty</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;1,300&family=Jost:wght@300;400;500&family=Italiana&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --gold: #C8956C;
+            --shine: #E8C4A0;
+            --deep: #8B5E3C;
+            --c100: #FDF5F0;
+            --c200: #F7E8DF;
+            --c300: #EEC9B4;
+            --c500: #B87C58;
+            --white: #FFFFFF;
+            --paper: #F8F5F1;
+            --smoke: #F2EDE8;
+            --border: #EAE4DC;
+            --td: #1A1614;
+            --tm: #5C4F46;
+            --ts: #9B8C82;
+            --fd: 'Italiana', serif;
+            --fs: 'Cormorant', serif;
+            --fb: 'Jost', sans-serif;
+            --sh-md: 0 8px 32px rgba(180,120,80,.12);
+            --nav-h: 68px;
+            --px: clamp(16px, 4vw, 52px);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            background: linear-gradient(to bottom,#EFA79C 0%,#F3B8AE 25%,#F7CFC6 50%,#F3B8AE 75%,#EFA79C 100%);
+            background-attachment: fixed;
+            color: var(--td);
+            font-family: var(--fb);
+            font-weight: 300;
+        }
+
+        /* NAV */
+        #mainNav {
+            width: 100%;
+            background: rgba(255,255,255,.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 900;
+            position: sticky;
+            top: 0;
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: var(--nav-h);
+            padding: 0 var(--px);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-brand {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-brand-text {
+            font-family: var(--fd);
+            font-size: 1.45rem;
+            letter-spacing: .04em;
+            color: var(--td);
+        }
+
+            .nav-brand-text span {
+                color: var(--gold);
+            }
+
+        /* BREADCRUMB */
+        .breadcrumb-wrap {
+            padding: 12px var(--px);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        nav[aria-label="breadcrumb"] ol.breadcrumb {
+            background: transparent !important;
+            background-color: transparent !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .breadcrumb {
+            background: transparent !important;
+            background-color: transparent !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+        }
+
+        .breadcrumb-item a {
+            color: var(--gold);
+            text-decoration: none;
+            font-size: .75rem;
+            letter-spacing: .1em;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--ts);
+            font-size: .75rem;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            color: var(--ts);
+        }
+
+        /* HERO */
+        .cat-hero {
+            background: var(--white);
+            padding: 48px var(--px) 36px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .cat-hero-eyebrow {
+            font-size: .62rem;
+            letter-spacing: .28em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+            .cat-hero-eyebrow::before, .cat-hero-eyebrow::after {
+                content: '';
+                display: block;
+                width: 28px;
+                height: 1px;
+                background: linear-gradient(90deg, var(--gold), var(--shine));
+            }
+
+        .cat-hero-title {
+            font-family: var(--fd);
+            font-size: clamp(2rem, 5vw, 4rem);
+            letter-spacing: .02em;
+            color: var(--td);
+            margin-bottom: 8px;
+        }
+
+        .cat-hero-count {
+            font-size: .75rem;
+            color: var(--ts);
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        /* GRID */
+        .products-section {
+            padding: 40px var(--px) 80px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+
+        /* CARD — matches BanglesV exactly */
+        .product-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform .35s cubic-bezier(.25,.46,.45,.94), box-shadow .35s, border-color .35s;
+            display: flex;
+            flex-direction: column;
+        }
+
+            .product-card:hover {
+                transform: translateY(-6px);
+                box-shadow: var(--sh-md);
+                border-color: var(--c300);
+            }
+
+        .product-img-wrap {
+            aspect-ratio: 1;
+            overflow: hidden;
+            position: relative;
+            background: var(--smoke);
+        }
+
+            .product-img-wrap img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform .6s cubic-bezier(.25,.46,.45,.94);
+            }
+
+        .product-card:hover .product-img-wrap img {
+            transform: scale(1.07);
+        }
+
+        .product-body {
+            padding: 14px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .product-cat-lbl {
+            font-size: .56rem;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+
+        .product-name {
+            font-family: var(--fs);
+            font-size: .95rem;
+            font-weight: 400;
+            line-height: 1.3;
+            color: var(--td);
+            margin-bottom: 8px;
+            flex: 1;
+        }
+
+        .product-price {
+            font-family: var(--fd);
+            font-size: 1.15rem;
+            color: #7B4F2E;
+            font-weight: 600;
+        }
+
+        .product-add-btn {
+            display: block;
+            width: 100%;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 9px;
+            font-family: var(--fb);
+            font-size: .6rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 10px;
+            color: var(--tm);
+            transition: all .25s;
+        }
+
+            .product-add-btn:hover {
+                background: var(--c100);
+                border-color: var(--c300);
+                color: var(--deep);
+            }
+
+        /* CART BTN */
+        .nav-cart-btn {
+            background: none;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            position: relative;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: var(--tm);
+            font-size: 1rem;
+            transition: all .25s;
+        }
+
+            .nav-cart-btn:hover {
+                background: var(--c100);
+                color: var(--gold);
+            }
+
+        .cart-count {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: linear-gradient(135deg, var(--gold), var(--deep));
+            color: #fff;
+            font-size: .55rem;
+            font-weight: 600;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* BACK BTN */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--fb);
+            font-size: .7rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-decoration: none;
+            border: 1px solid rgba(200,149,108,.4);
+            padding: 10px 20px;
+            border-radius: 100px;
+            transition: all .25s;
+            margin-bottom: 32px;
+            display: inline-flex;
+        }
+
+            .back-btn:hover {
+                background: var(--c100);
+                color: var(--deep);
+            }
+
+        /* EMPTY */
+        .no-products {
+            text-align: center;
+            padding: 80px 20px;
+            font-family: var(--fs);
+            font-style: italic;
+            color: var(--ts);
+            font-size: 1.2rem;
+        }
+
+        /* SCROLL BUTTONS */
+        .scroll-btns {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 9999;
+        }
+
+        .scroll-btn {
+            width: 48px;
+            height: 48px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--deep));
+            color: #fff;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(200,149,108,.4);
+            transition: all .3s;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+        }
+
+            .scroll-btn.show {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+
+            .scroll-btn:hover {
+                transform: translateY(-3px) scale(1.05);
+                box-shadow: 0 6px 24px rgba(200,149,108,.5);
+            }
+
+        @media (max-width: 768px) {
+            .scroll-btn {
+                width: 42px;
+                height: 42px;
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .products-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .products-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 767px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .cat-hero {
+                padding: 32px var(--px) 24px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+        }
+
+        /* CART MODAL */
+        #cartModal .modal-content {
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        #cartModal .modal-header {
+            background: var(--paper);
+            border-bottom: 1px solid var(--border);
+            padding: 22px 28px;
+        }
+
+        #cartModal .modal-title {
+            font-family: var(--fd);
+            font-size: 1.2rem;
+            color: var(--td);
+        }
+
+        #cartModal .modal-body {
+            padding: 28px;
+        }
+
+        .cart-thead th {
+            font-size: .58rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--ts);
+            font-weight: 500;
+            padding-bottom: 14px;
+        }
+
+        .cart-input {
+            background: var(--smoke);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--td);
+            padding: 13px 17px;
+            font-family: var(--fb);
+            font-size: .84rem;
+            width: 100%;
+            margin-bottom: 12px;
+            outline: none;
+            transition: border-color .2s;
+        }
+
+            .cart-input:focus {
+                border-color: var(--gold);
+            }
+
+        .cart-modal-footer {
+            display: flex;
+            gap: 12px;
+            padding: 18px 28px;
+            border-top: 1px solid var(--border);
+            background: var(--white);
+        }
+
+        .btn-cart-clear {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 11px 24px;
+            font-family: var(--fb);
+            font-size: .67rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            color: var(--tm);
+        }
+
+        .btn-cart-order {
+            background: linear-gradient(135deg, var(--gold), var(--shine));
+            color: #fff;
+            border: none;
+            border-radius: 100px;
+            padding: 11px 28px;
+            font-family: var(--fb);
+            font-size: .67rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        /* PRODUCT DETAIL MODAL */
+        #productDetailModal .modal-dialog {
+            max-width: 920px;
+        }
+
+        #productDetailModal .modal-content {
+            border: none;
+            border-radius: 24px;
+            overflow-y: auto;
+            max-height: 92vh;
+            box-shadow: 0 32px 80px rgba(180,120,80,.24);
+            position: relative;
+        }
+
+        .pdm-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            z-index: 20;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.92);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--tm);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .pdm-body {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+        }
+
+        .pdm-img-wrap {
+            position: relative;
+            background: var(--smoke);
+            overflow: hidden;
+        }
+
+            .pdm-img-wrap img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                min-height: 380px;
+                display: block;
+            }
+
+        .pdm-info {
+            padding: clamp(20px,4vw,48px);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            background: var(--white);
+            overflow-y: auto;
+            max-height: 92vh;
+        }
+
+        .pdm-name {
+            font-family: var(--fd);
+            font-size: clamp(1.5rem,2.8vw,2.2rem);
+            color: var(--td);
+            margin-bottom: 14px;
+        }
+
+        .pdm-price {
+            font-family: var(--fd);
+            font-size: 1.75rem;
+            background: linear-gradient(135deg,var(--deep),var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .pdm-btn-bag {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg,var(--gold),var(--shine));
+            color: #fff;
+            border: none;
+            padding: 15px 28px;
+            border-radius: 100px;
+            font-family: var(--fb);
+            font-size: .7rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        @media (max-width: 680px) {
+            .pdm-body {
+                grid-template-columns: 1fr;
+                display: flex;
+                flex-direction: column;
+            }
+
+                .pdm-body > div:first-child {
+                    min-height: 260px;
+                    flex-shrink: 0;
+                }
+
+            .pdm-img-wrap {
+                min-height: 260px;
+                height: 260px;
+            }
+
+                .pdm-img-wrap img {
+                    min-height: 260px;
+                    max-height: 260px;
+                    width: 100%;
+                    height: 260px;
+                }
+        }
+
+        /* PAY OPTIONS */
+        .pay-label {
+            font-size: .62rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 12px;
+            margin-top: 4px;
+        }
+
+        .pay-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .pay-option {
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all .2s;
+            background: var(--white);
+        }
+
+            .pay-option.selected {
+                border-color: var(--gold);
+                background: linear-gradient(135deg,rgba(200,149,108,.08),rgba(200,149,108,.03));
+            }
+
+        .pay-option-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+            .pay-option-icon.upi {
+                background: #e8f5e9;
+                color: #2e7d32;
+            }
+
+            .pay-option-icon.bank {
+                background: #e3f2fd;
+                color: #1565c0;
+            }
+
+        .pay-option-name {
+            font-size: .72rem;
+            font-weight: 500;
+            color: var(--td);
+        }
+
+        .pay-option-sub {
+            font-size: .6rem;
+            color: var(--ts);
+        }
+
+        .pay-upi-apps {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+
+        .pay-upi-chip {
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 5px 12px;
+            font-size: .6rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--tm);
+            cursor: pointer;
+            transition: all .2s;
+            background: var(--white);
+        }
+
+            .pay-upi-chip:hover, .pay-upi-chip.active {
+                border-color: var(--gold);
+                color: var(--gold);
+            }
+    </style>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav id="mainNav">
+        <div class="nav-inner">
+            <a href="/Bangles/BanglesV" class="nav-brand">
+                <img src="/Images/logo.png" alt="Bangles by Beauty" style="height:48px;width:48px;object-fit:contain;" />
+                <span class="nav-brand-text">Bangles <span>by Beauty</span></span>
+            </a>
+            <button class="nav-cart-btn" id="cartBtn">
+                <i class="bi bi-bag"></i>
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb-wrap">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0" style="background:transparent!important;background-color:transparent!important;padding:0!important;margin:0!important;border:none!important;">
+                <li class="breadcrumb-item"><a href="/Bangles/BanglesV">Home</a></li>
+                <li class="breadcrumb-item"><a href="/Bangles/BanglesV#categories">Collections</a></li>
+                <li class="breadcrumb-item active">Kundan hair bands</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- HERO -->
+    <div class="cat-hero">
+        <div class="cat-hero-eyebrow">Collections</div>
+        <h1 class="cat-hero-title">Kundan hair bands</h1>
+        <p class="cat-hero-count">6 items</p>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="products-section">
+        <a href="/Bangles/BanglesV#categories" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Collections
+        </a>
+
+            <div class="products-grid">
+                    <div class="product-card">
+                        <div class="product-img-wrap open-product-detail"
+                             data-id="133"
+                             data-name="HEXA (BABY PINK WITH MIRROR WHITE)"
+                             data-price="45.00"
+                             data-img="/uploads/786074aa-606e-4e86-8766-96bb0f34cdfd.jpg"
+                             data-cat="Kundan hair bands"
+                             data-desc="Handcrafted with love from Pattukottai &#x2014; a beautiful piece perfect for every occasion."
+                             data-isglass="false"
+                             data-colors=""
+                             style="cursor:pointer;">
+                            <img src="/uploads/786074aa-606e-4e86-8766-96bb0f34cdfd.jpg"
+                                 alt="HEXA (BABY PINK WITH MIRROR WHITE)"
+                                 loading="lazy"
+                                 width="300"
+                                 height="300"
+                                 style="width:100%;height:100%;object-fit:cover;" />
+                        </div>
+                        <div class="product-body">
+                            <div class="product-cat-lbl">Kundan hair bands</div>
+                            <div class="product-name">HEXA (BABY PINK WITH MIRROR WHITE)</div>
+                            <div class="product-price">₹45.00</div>
+                            <button class="product-add-btn addToCart"
+                                    data-id="133"
+                                    data-name="HEXA (BABY PINK WITH MIRROR WHITE)"
+                                    data-price="45.00"
+                                    data-img="/uploads/786074aa-606e-4e86-8766-96bb0f34cdfd.jpg">
+                                Add to Bag
+                            </button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-img-wrap open-product-detail"
+                             data-id="132"
+                             data-name="LOTUS(Mini) (DARK PINK WITH GREEN)"
+                             data-price="50.00"
+                             data-img="/uploads/c0f5887a-5364-4b27-96fa-0e35950e497c.jpg"
+                             data-cat="Kundan hair bands"
+                             data-desc="Handcrafted with love from Pattukottai &#x2014; a beautiful piece perfect for every occasion."
+                             data-isglass="false"
+                             data-colors=""
+                             style="cursor:pointer;">
+                            <img src="/uploads/c0f5887a-5364-4b27-96fa-0e35950e497c.jpg"
+                                 alt="LOTUS(Mini) (DARK PINK WITH GREEN)"
+                                 loading="lazy"
+                                 width="300"
+                                 height="300"
+                                 style="width:100%;height:100%;object-fit:cover;" />
+                        </div>
+                        <div class="product-body">
+                            <div class="product-cat-lbl">Kundan hair bands</div>
+                            <div class="product-name">LOTUS(Mini) (DARK PINK WITH GREEN)</div>
+                            <div class="product-price">₹50.00</div>
+                            <button class="product-add-btn addToCart"
+                                    data-id="132"
+                                    data-name="LOTUS(Mini) (DARK PINK WITH GREEN)"
+                                    data-price="50.00"
+                                    data-img="/uploads/c0f5887a-5364-4b27-96fa-0e35950e497c.jpg">
+                                Add to Bag
+                            </button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-img-wrap open-product-detail"
+                             data-id="131"
+                             data-name="LOTUS (Mini) (YEMON YELLOW WITH GREEN)"
+                             data-price="50.00"
+                             data-img="/uploads/173cfe38-7a02-4aac-a469-ddcc3de78b92.jpg"
+                             data-cat="Kundan hair bands"
+                             data-desc="Handcrafted with love from Pattukottai &#x2014; a beautiful piece perfect for every occasion."
+                             data-isglass="false"
+                             data-colors=""
+                             style="cursor:pointer;">
+                            <img src="/uploads/173cfe38-7a02-4aac-a469-ddcc3de78b92.jpg"
+                                 alt="LOTUS (Mini) (YEMON YELLOW WITH GREEN)"
+                                 loading="lazy"
+                                 width="300"
+                                 height="300"
+                                 style="width:100%;height:100%;object-fit:cover;" />
+                        </div>
+                        <div class="product-body">
+                            <div class="product-cat-lbl">Kundan hair bands</div>
+                            <div class="product-name">LOTUS (Mini) (YEMON YELLOW WITH GREEN)</div>
+                            <div class="product-price">₹50.00</div>
+                            <button class="product-add-btn addToCart"
+                                    data-id="131"
+                                    data-name="LOTUS (Mini) (YEMON YELLOW WITH GREEN)"
+                                    data-price="50.00"
+                                    data-img="/uploads/173cfe38-7a02-4aac-a469-ddcc3de78b92.jpg">
+                                Add to Bag
+                            </button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-img-wrap open-product-detail"
+                             data-id="130"
+                             data-name="MARYGOLD (RED WITH GREEN)"
+                             data-price="75.00"
+                             data-img="/uploads/9f9aee01-5886-47c9-81fc-d7247216962b.jpg"
+                             data-cat="Kundan hair bands"
+                             data-desc="Handcrafted with love from Pattukottai &#x2014; a beautiful piece perfect for every occasion."
+                             data-isglass="false"
+                             data-colors=""
+                             style="cursor:pointer;">
+                            <img src="/uploads/9f9aee01-5886-47c9-81fc-d7247216962b.jpg"
+                                 alt="MARYGOLD (RED WITH GREEN)"
+                                 loading="lazy"
+                                 width="300"
+                                 height="300"
+                                 style="width:100%;height:100%;object-fit:cover;" />
+                        </div>
+                        <div class="product-body">
+                            <div class="product-cat-lbl">Kundan hair bands</div>
+                            <div class="product-name">MARYGOLD (RED WITH GREEN)</div>
+                            <div class="product-price">₹75.00</div>
+                            <button class="product-add-btn addToCart"
+                                    data-id="130"
+                                    data-name="MARYGOLD (RED WITH GREEN)"
+                                    data-price="75.00"
+                                    data-img="/uploads/9f9aee01-5886-47c9-81fc-d7247216962b.jpg">
+                                Add to Bag
+                            </button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-img-wrap open-product-detail"
+                             data-id="129"
+                             data-name="MARYGOLD (ORANGE WITH WHITE)"
+                             data-price="75.00"
+                             data-img="/uploads/adea74c1-cc51-4afa-b87d-3c522ad47f2f.jpg"
+                             data-cat="Kundan hair bands"
+                             data-desc="Handcrafted with love from Pattukottai &#x2014; a beautiful piece perfect for every occasion."
+                             data-isglass="false"
+                             data-colors=""
+                             style="cursor:pointer;">
+                            <img src="/uploads/adea74c1-cc51-4afa-b87d-3c522ad47f2f.jpg"
+                                 alt="MARYGOLD (ORANGE WITH WHITE)"
+                                 loading="lazy"
+                                 width="300"
+                                 height="300"
+                                 style="width:100%;height:100%;object-fit:cover;" />
+                        </div>
+                        <div class="product-body">
+                            <div class="product-cat-lbl">Kundan hair bands</div>
+                            <div class="product-name">MARYGOLD (ORANGE WITH WHITE)</div>
+                            <div class="product-price">₹75.00</div>
+                            <button class="product-add-btn addToCart"
+                                    data-id="129"
+                                    data-name="MARYGOLD (ORANGE WITH WHITE)"
+                                    data-price="75.00"
+                                    data-img="/uploads/adea74c1-cc51-4afa-b87d-3c522ad47f2f.jpg">
+                                Add to Bag
+                            </button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-img-wrap open-product-detail"
+                             data-id="128"
+                             data-name="MARYGOLD (RED WITH MIRROR WHITE)"
+                             data-price="75.00"
+                             data-img="/uploads/0c861f31-25d4-4e19-ae8b-c1759a2bc05b.jpg"
+                             data-cat="Kundan hair bands"
+                             data-desc="Handcrafted with love from Pattukottai &#x2014; a beautiful piece perfect for every occasion."
+                             data-isglass="false"
+                             data-colors=""
+                             style="cursor:pointer;">
+                            <img src="/uploads/0c861f31-25d4-4e19-ae8b-c1759a2bc05b.jpg"
+                                 alt="MARYGOLD (RED WITH MIRROR WHITE)"
+                                 loading="lazy"
+                                 width="300"
+                                 height="300"
+                                 style="width:100%;height:100%;object-fit:cover;" />
+                        </div>
+                        <div class="product-body">
+                            <div class="product-cat-lbl">Kundan hair bands</div>
+                            <div class="product-name">MARYGOLD (RED WITH MIRROR WHITE)</div>
+                            <div class="product-price">₹75.00</div>
+                            <button class="product-add-btn addToCart"
+                                    data-id="128"
+                                    data-name="MARYGOLD (RED WITH MIRROR WHITE)"
+                                    data-price="75.00"
+                                    data-img="/uploads/0c861f31-25d4-4e19-ae8b-c1759a2bc05b.jpg">
+                                Add to Bag
+                            </button>
+                        </div>
+                    </div>
+            </div>
+    </div>
+
+    <!-- PRODUCT DETAIL MODAL -->
+    <div class="modal fade" id="productDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:920px;padding:12px;">
+            <div class="modal-content">
+                <button class="pdm-close" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i></button>
+                <div class="pdm-body">
+                    <!-- Left: Image + Thumbnails -->
+                    <div style="display:flex;flex-direction:column;background:var(--smoke);">
+                        <div class="pdm-img-wrap" style="position:relative;flex:1;min-height:0;">
+                            <img id="pdmImage" src="" alt="" style="transition:opacity 0.3s ease;" />
+                        </div>
+                        <!-- Thumbnails outside img-wrap -->
+                        <div id="pdmThumbnails" style="display:none;gap:8px;flex-wrap:wrap;justify-content:center;padding:10px 12px;background:var(--white);border-top:1px solid var(--border);"></div>
+                    </div>
+                    <!-- Right: Info -->
+                    <div class="pdm-info">
+                        <div style="font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:8px;" id="pdmCategory"></div>
+                        <div class="pdm-name" id="pdmName"></div>
+                        <div class="pdm-price" id="pdmPrice"></div>
+                        <div style="width:100%;height:1px;background:linear-gradient(90deg,var(--c300),transparent);margin-bottom:16px;"></div>
+                        <div style="font-size:.57rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ts);margin-bottom:9px;">About This Piece</div>
+                        <p style="font-family:var(--fs);font-style:italic;font-size:.98rem;line-height:1.78;color:var(--tm);margin-bottom:20px;" id="pdmDesc"></p>
+                        <!-- Size Selector -->
+                        <div id="pdmSizeSection" style="margin-bottom:20px;">
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                                <div style="font-family:var(--fb);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ts);">Select Size</div>
+                                <button type="button" onclick="document.getElementById('sizeChartModal').style.display='flex'" style="background:none;border:none;font-family:var(--fb);font-size:.62rem;color:var(--gold);letter-spacing:.1em;text-decoration:underline;cursor:pointer;padding:0;">📏 Size Chart</button>
+                            </div>
+                            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+                                <button type="button" class="pdm-size-btn" data-size="2.2" data-extra="0" onclick="selectPdmSize(this)" style="min-width:52px;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--fb);font-size:.85rem;color:var(--td);background:var(--smoke);cursor:pointer;transition:all .2s;font-weight:500;">2.2</button>
+                                <button type="button" class="pdm-size-btn" data-size="2.4" data-extra="0" onclick="selectPdmSize(this)" style="min-width:52px;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--fb);font-size:.85rem;color:var(--td);background:var(--smoke);cursor:pointer;transition:all .2s;font-weight:500;">2.4</button>
+                                <button type="button" class="pdm-size-btn" data-size="2.6" data-extra="0" onclick="selectPdmSize(this)" style="min-width:52px;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--fb);font-size:.85rem;color:var(--td);background:var(--smoke);cursor:pointer;transition:all .2s;font-weight:500;">2.6</button>
+                                <button type="button" class="pdm-size-btn" data-size="2.8" data-extra="0" onclick="selectPdmSize(this)" style="min-width:52px;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--fb);font-size:.85rem;color:var(--td);background:var(--smoke);cursor:pointer;transition:all .2s;font-weight:500;">2.8</button>
+                                <button type="button" class="pdm-size-btn" data-size="2.10" data-extra="20" onclick="selectPdmSize(this)" style="min-width:72px;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--fb);font-size:.75rem;color:var(--td);background:var(--smoke);cursor:pointer;transition:all .2s;font-weight:500;">2.10 <span style="font-size:.6rem;color:var(--gold);">+₹20</span></button>
+                            </div>
+                            <div id="pdmSizePrice" style="font-size:.75rem;color:var(--ts);margin-bottom:8px;min-height:18px;"></div>
+                            <input type="hidden" id="pdmSelectedSize" value="2.4" />
+                            <input type="hidden" id="pdmExtraPrice" value="0" />
+                        </div>
+                        <!-- Color Section -->
+                        <div id="pdmColorSection" style="margin-bottom:20px;display:none;">
+                            <div style="font-family:var(--fb);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ts);margin-bottom:10px;">Select Color</div>
+                            <div id="pdmColorChips" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+                            <input type="hidden" id="pdmSelectedColor" value="" />
+                        </div>
+                        <button class="pdm-btn-bag addToCart" id="pdmAddToCart">
+                            <i class="bi bi-bag-plus"></i> Add to Bag
+                        </button>
+                        <div style="display:flex;gap:14px;flex-wrap:wrap;padding-top:16px;border-top:1px solid var(--border);margin-top:16px;">
+                            <div style="font-size:.57rem;letter-spacing:.11em;text-transform:uppercase;color:var(--ts);display:flex;align-items:center;gap:5px;"><i class="bi bi-truck" style="color:var(--gold);font-size:.78rem;"></i> Free Delivery above ₹2499</div>
+                            <div style="font-size:.57rem;letter-spacing:.11em;text-transform:uppercase;color:var(--ts);display:flex;align-items:center;gap:5px;"><i class="bi bi-shield-check" style="color:var(--gold);font-size:.78rem;"></i> Authentic Quality</div>
+                            <div style="font-size:.57rem;letter-spacing:.11em;text-transform:uppercase;color:var(--ts);display:flex;align-items:center;gap:5px;"><i class="bi bi-heart" style="color:var(--gold);font-size:.78rem;"></i> Handcrafted with Love</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIZE CHART MODAL -->
+    <div id="sizeChartModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center;padding:16px;" onclick="if(event.target===this)this.style.display='none'">
+        <div style="background:#fff;border-radius:20px;padding:28px;max-width:520px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                <h5 style="font-family:var(--fd);font-size:1.3rem;color:var(--td);margin:0;">📏 Bangle Size Chart</h5>
+                <button onclick="document.getElementById('sizeChartModal').style.display='none'" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--ts);">✕</button>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-family:var(--fb);font-size:.82rem;">
+                <thead>
+                    <tr style="background:linear-gradient(135deg,var(--gold),var(--shine));color:#fff;">
+                        <th style="padding:10px 14px;text-align:center;">Size</th>
+                        <th style="padding:10px 14px;text-align:center;">Dia (MM)</th>
+                        <th style="padding:10px 14px;text-align:center;">Fit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background:var(--smoke);"><td style="padding:9px 14px;text-align:center;font-weight:700;color:var(--gold);">2.2</td><td style="text-align:center;">54mm</td><td style="text-align:center;color:var(--ts);">XS</td></tr>
+                    <tr><td style="padding:9px 14px;text-align:center;font-weight:700;color:var(--gold);">2.4</td><td style="text-align:center;">57mm</td><td style="text-align:center;color:var(--ts);">Small</td></tr>
+                    <tr style="background:#FFF8F0;border:1.5px solid var(--gold);"><td style="padding:9px 14px;text-align:center;"><span style="font-weight:700;color:var(--gold);">2.6</span><br><span style="font-size:.6rem;background:var(--gold);color:#fff;border-radius:4px;padding:1px 5px;">POPULAR</span></td><td style="text-align:center;font-weight:600;color:#B8860B;">60mm</td><td style="text-align:center;color:#B8860B;font-weight:600;">Medium</td></tr>
+                    <tr><td style="padding:9px 14px;text-align:center;font-weight:700;color:var(--gold);">2.8</td><td style="text-align:center;">63mm</td><td style="text-align:center;color:var(--ts);">Large</td></tr>
+                    <tr style="background:var(--smoke);"><td style="padding:9px 14px;text-align:center;font-weight:700;color:var(--gold);">2.10</td><td style="text-align:center;">67mm</td><td style="text-align:center;color:var(--ts);">XL</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- CART MODAL -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <form method="post" action="/Bangles/savecustomerdetail" id="orderForm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-bag me-2" style="color:var(--gold);"></i>Your Bag</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-borderless text-center align-middle">
+                            <thead>
+                                <tr style="border-bottom:1px solid var(--border);">
+                                    <th class="cart-thead">Image</th>
+                                    <th class="cart-thead">Product</th>
+                                    <th class="cart-thead">Qty</th>
+                                    <th class="cart-thead">Price</th>
+                                    <th class="cart-thead">Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="cartItems"></tbody>
+                        </table>
+                        <div class="py-3" style="border-top:1px solid var(--border);">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span style="font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ts);">Subtotal</span>
+                                <span id="subTotal">₹0</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span style="font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ts);">Shipping</span>
+                                <span id="shippingCharge">—</span>
+                            </div>
+                            <div class="d-flex justify-content-between pt-2" style="border-top:1px dashed var(--border);">
+                                <span style="font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);">Grand Total</span>
+                                <span id="grandTotal" style="font-size:1.15rem;font-weight:600;color:var(--gold);">₹0</span>
+                            </div>
+                            <input type="hidden" id="shippingAmount" name="shippingAmount" value="0" />
+                        </div>
+                        <hr style="border-color:var(--border);">
+                        <p style="font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">Customer Details</p>
+                        <input name="customername" class="cart-input" placeholder="Full Name" required />
+                        <input name="mobileNo" class="cart-input" placeholder="Mobile Number" required />
+                        <select id="stateSelect" name="state" class="cart-input" onchange="updateShipping()" required>
+                            <option value="">— Select State —</option>
+                            <option value="TN">Tamil Nadu</option>
+                            <option value="AP">Andhra Pradesh</option>
+                            <option value="KA">Karnataka</option>
+                            <option value="KL">Kerala</option>
+                            <option value="MH">Maharashtra</option>
+                            <option value="DL">Delhi</option>
+                            <option value="OTHER">Other State</option>
+                        </select>
+                        <textarea name="address" class="cart-input" placeholder="Delivery Address" required></textarea>
+                        <input type="email" name="customerEmail" class="cart-input" placeholder="Email Address" required />
+                        <input type="hidden" id="productsJson" name="productsJson" />
+                        <input type="hidden" id="paymentMethod" name="paymentMethod" value="UPI" />
+
+                        <p class="pay-label">Payment Method</p>
+                        <div class="pay-options">
+                            <div class="pay-option selected" onclick="choosePayment(this,'UPI')" style="cursor:pointer;">
+                                <div class="pay-option-icon upi"><i class="bi bi-phone"></i></div>
+                                <div>
+                                    <div class="pay-option-name">UPI</div>
+                                    <div class="pay-option-sub">GPay · PhonePe · Paytm</div>
+                                </div>
+                            </div>
+                            <div class="pay-option" onclick="choosePayment(this,'BANK')" style="cursor:pointer;">
+                                <div class="pay-option-icon bank"><i class="bi bi-bank"></i></div>
+                                <div>
+                                    <div class="pay-option-name">Bank Transfer</div>
+                                    <div class="pay-option-sub">NEFT · IMPS</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pay-upi-apps" id="upiApps">
+                            <span class="pay-upi-chip" onclick="chooseUpi(this,'GPay')">GPay</span>
+                            <span class="pay-upi-chip" onclick="chooseUpi(this,'PhonePe')">PhonePe</span>
+                            <span class="pay-upi-chip" onclick="chooseUpi(this,'Paytm')">Paytm</span>
+                        </div>
+                    </div>
+                    <div class="cart-modal-footer">
+                        <button type="button" id="clearCart" class="btn-cart-clear">Clear Bag</button>
+                        <button type="button" class="btn-cart-order" onclick="processPayment()">
+                            <i class="bi bi-lightning-charge me-1"></i> Pay Now
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCROLL BUTTONS -->
+    <div class="scroll-btns">
+        <button class="scroll-btn" id="scrollUpBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+            <i class="bi bi-arrow-up"></i>
+        </button>
+        <button class="scroll-btn show" id="scrollDownBtn" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})">
+            <i class="bi bi-arrow-down"></i>
+        </button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="/js/cart.js"></script>
+
+    <script>
+        /* ── Product Detail Modal — Category page ── */
+        var _allProductImages = [];
+        var _colorImageMap = {};
+
+        document.querySelectorAll('.open-product-detail').forEach(function(wrap) {
+            wrap.addEventListener('click', function(e) {
+                if (e.target.closest('.addToCart')) return;
+                var d = this.dataset;
+                fetch('/Bangles/GetProduct?id=' + d.id)
+                    .then(function(r){ return r.json(); })
+                    .then(function(data){ openPdmWithData(data); })
+                    .catch(function(){
+                        openPdmWithData({ id:d.id, name:d.name, price:d.price, img:d.img, cat:d.cat, desc:d.desc||'Handcrafted with love from Pattukottai.', sizes:'2.4,2.6,2.8', isGlass:d.isglass==='true', colors:d.colors||'', colorImages:[] });
+                    });
+            });
+        });
+
+        function openPdmWithData(data) {
+            var firstImg = data.img ? data.img.split(',')[0].trim() : '';
+            document.getElementById('pdmImage').style.opacity = '1';
+            document.getElementById('pdmImage').src = firstImg;
+            document.getElementById('pdmImage').alt = data.name;
+            setupThumbnails(data.img);
+            document.getElementById('pdmName').textContent    = data.name;
+            document.getElementById('pdmPrice').textContent   = '₹' + data.price;
+            document.getElementById('pdmCategory').textContent= data.cat;
+            document.getElementById('pdmDesc').textContent    = data.desc;
+
+            var isBangle = data.cat && data.cat.toLowerCase().indexOf('bangle') !== -1;
+            document.getElementById('pdmSizeSection').style.display = isBangle ? 'block' : 'none';
+
+            document.getElementById('pdmAddToCart').setAttribute('data-id',    data.id);
+            document.getElementById('pdmAddToCart').setAttribute('data-name',  data.name);
+            document.getElementById('pdmAddToCart').setAttribute('data-price', data.price);
+            document.getElementById('pdmAddToCart').setAttribute('data-base-price', data.price);
+            document.getElementById('pdmAddToCart').setAttribute('data-img',   data.img);
+
+            var availSizes = data.sizes ? data.sizes.split(',') : ['2.4','2.6','2.8'];
+            document.querySelectorAll('.pdm-size-btn').forEach(function(b){
+                var sz = b.getAttribute('data-size').trim();
+                var avail = availSizes.map(function(s){return s.trim();}).indexOf(sz) !== -1;
+                b.style.background = 'var(--smoke)'; b.style.borderColor = 'var(--border)'; b.style.color = avail ? 'var(--td)' : '#bbb';
+                b.style.opacity = avail ? '1' : '0.4'; b.style.cursor = avail ? 'pointer' : 'not-allowed';
+                b.style.textDecoration = avail ? 'none' : 'line-through'; b.disabled = !avail;
+            });
+            var firstAvail = (availSizes[0] || '2.4').trim();
+            var defSzBtn = document.querySelector('.pdm-size-btn[data-size="' + firstAvail + '"]');
+            if(defSzBtn){defSzBtn.style.background='linear-gradient(135deg,var(--gold),var(--shine))';defSzBtn.style.borderColor='var(--gold)';defSzBtn.style.color='#fff';defSzBtn.style.opacity='1';}
+            document.getElementById('pdmSelectedSize').value = isBangle ? firstAvail : '';
+
+            renderColorSection(data.isGlass, data.colors, data.colorImages || []);
+            if(document.getElementById('pdmExtraPrice')) document.getElementById('pdmExtraPrice').value = '0';
+            if(document.getElementById('pdmSizePrice'))  document.getElementById('pdmSizePrice').innerHTML = '';
+
+            new bootstrap.Modal(document.getElementById('productDetailModal')).show();
+        }
+
+        function setupThumbnails(imgPath) {
+            var thumbWrap = document.getElementById('pdmThumbnails');
+            thumbWrap.innerHTML = '';
+            if (!imgPath) { thumbWrap.style.display='none'; return; }
+            var imgs = imgPath.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+            _allProductImages = imgs;
+            if (imgs.length <= 1) { thumbWrap.style.display='none'; return; }
+            thumbWrap.style.display = 'flex';
+            imgs.forEach(function(url, i) {
+                var th = document.createElement('img');
+                th.src = url;
+                th.style.cssText = 'width:60px;height:60px;object-fit:cover;border-radius:8px;cursor:pointer;border:2.5px solid '+(i===0?'var(--gold)':'var(--border)')+';opacity:'+(i===0?'1':'0.6')+';transition:all .2s;flex-shrink:0;';
+                th.addEventListener('click', function() {
+                    document.querySelectorAll('#pdmThumbnails img').forEach(function(t){ t.style.borderColor='var(--border)';t.style.opacity='0.6'; });
+                    this.style.borderColor='var(--gold)';this.style.opacity='1';
+                    switchMainImage(url);
+                });
+                thumbWrap.appendChild(th);
+            });
+        }
+
+        function switchMainImage(url) {
+            var main = document.getElementById('pdmImage');
+            main.style.opacity = '0';
+            setTimeout(function(){ main.src = url; main.style.opacity = '1'; }, 200);
+        }
+
+        function renderColorSection(isGlass, colorsStr, colorImages) {
+            var section = document.getElementById('pdmColorSection');
+            var chips   = document.getElementById('pdmColorChips');
+            if (!isGlass || !colorsStr) { section.style.display='none'; document.getElementById('pdmSelectedColor').value=''; return; }
+            section.style.display = 'block';
+            _colorImageMap = {};
+            if (colorImages && colorImages.length > 0) {
+                colorImages.forEach(function(ci){ if(ci.color) _colorImageMap[ci.color.trim()] = ci.img; });
+            }
+            var colors = colorsStr.split(',');
+            chips.innerHTML = '';
+            colors.forEach(function(c, i) {
+                var colorName = c.trim();
+                var btn = document.createElement('button');
+                btn.type = 'button'; btn.textContent = colorName; btn.className = 'color-chip';
+                btn.style.cssText = 'padding:7px 14px;border:1.5px solid var(--border);border-radius:20px;font-family:var(--fb);font-size:.78rem;background:var(--smoke);cursor:pointer;transition:all .2s;';
+                btn.onclick = function() {
+                    document.querySelectorAll('.color-chip').forEach(function(b){ b.style.background='var(--smoke)';b.style.borderColor='var(--border)';b.style.color='var(--td)'; });
+                    this.style.background='linear-gradient(135deg,var(--gold),var(--shine))';this.style.borderColor='var(--gold)';this.style.color='#fff';
+                    var cName = this.textContent.trim();
+                    document.getElementById('pdmSelectedColor').value = cName;
+                    var imgUrl = null;
+                    Object.keys(_colorImageMap).forEach(function(k){ if(k.toLowerCase()===cName.toLowerCase()) imgUrl=_colorImageMap[k]; });
+                    if (imgUrl) { switchMainImage(imgUrl); }
+                    else { var idx=Array.from(document.querySelectorAll('.color-chip')).indexOf(this); if(_allProductImages[idx]) switchMainImage(_allProductImages[idx]); }
+                };
+                if (i === 0) {
+                    btn.style.background='linear-gradient(135deg,var(--gold),var(--shine))';btn.style.borderColor='var(--gold)';btn.style.color='#fff';
+                    document.getElementById('pdmSelectedColor').value = colorName;
+                    var firstImg = _colorImageMap[colorName];
+                    if(firstImg){ document.getElementById('pdmImage').src = firstImg; }
+                }
+                chips.appendChild(btn);
+            });
+        }
+
+        function selectPdmSize(btn) {
+            if (btn.disabled) return;
+            document.querySelectorAll('.pdm-size-btn').forEach(function(b){ if(!b.disabled){ b.style.background='var(--smoke)';b.style.borderColor='var(--border)';b.style.color='var(--td)'; } });
+            btn.style.background='linear-gradient(135deg,var(--gold),var(--shine))';btn.style.borderColor='var(--gold)';btn.style.color='#fff';
+            var size  = btn.getAttribute('data-size');
+            var extra = Number(btn.getAttribute('data-extra') || 0);
+            document.getElementById('pdmSelectedSize').value = size;
+            if(document.getElementById('pdmExtraPrice')) document.getElementById('pdmExtraPrice').value = extra;
+            var addBtn = document.getElementById('pdmAddToCart');
+            var basePrice = Number(addBtn.getAttribute('data-base-price') || addBtn.getAttribute('data-price'));
+            var total = basePrice + extra;
+            document.getElementById('pdmPrice').textContent = '₹' + total;
+            addBtn.setAttribute('data-price', total);
+            var sp = document.getElementById('pdmSizePrice');
+            if(sp) sp.innerHTML = extra>0 ? '<span style="color:var(--gold);">Base ₹'+basePrice+' + Size extra ₹'+extra+'</span>' : '';
+        }
+
+        // pdmAddToCart handler
+        document.addEventListener('DOMContentLoaded', function() {
+            var pdmBtn = document.getElementById('pdmAddToCart');
+            if (pdmBtn) {
+                pdmBtn.addEventListener('click', function() {
+                    var id    = Number(this.getAttribute('data-id'));
+                    var name  = this.getAttribute('data-name');
+                    var price = Number(this.getAttribute('data-price'));
+                    var img   = this.getAttribute('data-img');
+                    var selSize  = document.getElementById('pdmSelectedSize') ? document.getElementById('pdmSelectedSize').value : '';
+                    var selColor = document.getElementById('pdmSelectedColor') ? document.getElementById('pdmSelectedColor').value : '';
+                    if (!selSize) selSize = '—';
+                    var existing = cart.find(function(x){ return x.ProductID===id && x.Size===selSize && x.Color===selColor; });
+                    if (existing) { existing.Stock_Qty++; existing.Total = existing.Price * existing.Stock_Qty; }
+                    else cart.push({ ProductID:id, ProductName:name, Price:price, Stock_Qty:1, ImagePath:img, Total:price, Size:selSize, Color:selColor });
+                    updateCount(); saveCart();
+                    bootstrap.Modal.getInstance(document.getElementById('productDetailModal')).hide();
+                    var colorMsg = selColor ? ', Color: '+selColor : '';
+                    Swal.fire({ icon:'success', title:'Added to Bag!', text:name+' (Size: '+selSize+colorMsg+') added.', timer:1800, showConfirmButton:false, toast:true, position:'top-end', background:'#FDF5F0', color:'#1A1614', iconColor:'#C8956C' });
+                });
+            }
+        });
+    </script>
+
+    <script>
+        // Scroll buttons
+        window.addEventListener('scroll', function() {
+            var upBtn = document.getElementById('scrollUpBtn');
+            var downBtn = document.getElementById('scrollDownBtn');
+            var scrolled = window.scrollY;
+            var maxScroll = document.body.scrollHeight - window.innerHeight;
+
+            if (scrolled > 300) upBtn.classList.add('show');
+            else upBtn.classList.remove('show');
+
+            if (scrolled < maxScroll - 100) downBtn.classList.add('show');
+            else downBtn.classList.remove('show');
+        });
+    </script>
+</body>
+</html>
+
+        </main>
+    </div>
+
+    <footer b-o5l447ku4h class="border-top footer text-muted">
+        <div b-o5l447ku4h class="container" style="color: wheat;">
+            &copy; 2025 - Bangles_byBeauty - <a href="/Home/Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/site.js?v=hRQyftXiu1lLX2P9Ly9xa4gHJgLeR1uGN5qegUobtGo"></script>
+    
+  
+
+</body>
+
+</html>
+

@@ -1,0 +1,837 @@
+{
+  "banners/hero-13.jpg": {
+    "w": 1440,
+    "h": 1440,
+    "kb": 267
+  },
+  "brand/logo.png": {
+    "w": 1024,
+    "h": 1024,
+    "kb": 1940
+  },
+  "lifestyle/18.jpg": {
+    "w": 1200,
+    "h": 1600,
+    "kb": 332
+  },
+  "lifestyle/51.jpg": {
+    "w": 1200,
+    "h": 1600,
+    "kb": 365
+  },
+  "lifestyle/53.jpg": {
+    "w": 1200,
+    "h": 1600,
+    "kb": 367
+  },
+  "lifestyle/54.jpg": {
+    "w": 1200,
+    "h": 1600,
+    "kb": 338
+  },
+  "products/bng-10-lotus-bangles-red-flower-with-gold-leaves.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 110
+  },
+  "products/bng-100-alangara-teal-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 108
+  },
+  "products/bng-101-alangara-ink-blue.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 110
+  },
+  "products/bng-102-alangara-orange.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 106
+  },
+  "products/bng-103-alangara-red.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 108
+  },
+  "products/bng-104-rishi-pink-with-lemon-yellow.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 116
+  },
+  "products/bng-105-kalyani-dark-green-with-lavender.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 122
+  },
+  "products/bng-106-thiya-rani-pink-with-marron.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 111
+  },
+  "products/bng-107-jadu-navy-blue-with-pink.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 119
+  },
+  "products/bng-108-mrinal-green-with-red.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 123
+  },
+  "products/bng-109-venthamarai-purple-with-pistachio-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 109
+  },
+  "products/bng-11-lotus-bangles-gold-with-white-leaves.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 113
+  },
+  "products/bng-110-thamarai-1-0-onion-pink.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 102
+  },
+  "products/bng-111-anjanavahi-2-0-red-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 109
+  },
+  "products/bng-112-thiya-ink-blue-with-creamy-white.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 118
+  },
+  "products/bng-113-kili-2-0-violet-with-yellow.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 133
+  },
+  "products/bng-114-chandrika-orange-with-pink.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 99
+  },
+  "products/bng-115-chandrika-pink-with-mild-peach.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 99
+  },
+  "products/bng-116-jadu-pink-with-bottle-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 126
+  },
+  "products/bng-117-thamarai-1-0-orange-with-ramar-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 108
+  },
+  "products/bng-118-thamarai-1-0-peach-with-ramar-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 106
+  },
+  "products/bng-119-abarna-sky-blue-with-orange.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 120
+  },
+  "products/bng-12-lotus-bangles-dark-baby-pink-with-white-leaves.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 116
+  },
+  "products/bng-120-thamarai-1-0-peacock-blue-with-lemon-yellow.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 122
+  },
+  "products/bng-121-thamarai-1-0-marron-with-dark-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 130
+  },
+  "products/bng-122-prabha-red-with-golden-yellow.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 139
+  },
+  "products/bng-123-thamarai-1-0-red-with-dark-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 132
+  },
+  "products/bng-124-mridu-red.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 120
+  },
+  "products/bng-125-radha-krishna-sky-blue.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 113
+  },
+  "products/bng-126-hamsa-red-with-peach.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 121
+  },
+  "products/bng-127-mini-kalyani-violet-with-light-pink.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 124
+  },
+  "products/bng-128-marygold-red-with-mirror-white.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 117
+  },
+  "products/bng-129-marygold-orange-with-white.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 125
+  },
+  "products/bng-13-parrot-bangles-dark-pink-with-pista-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 97
+  },
+  "products/bng-130-marygold-red-with-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 136
+  },
+  "products/bng-131-lotus-mini-yemon-yellow-with-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 94
+  },
+  "products/bng-132-lotus-mini-dark-pink-with-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 109
+  },
+  "products/bng-133-hexa-baby-pink-with-mirror-white.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 94
+  },
+  "products/bng-134-oval-crystal-center-clip-parrot-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 172
+  },
+  "products/bng-135-round-crystal-centre-clip-baby-pink.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 164
+  },
+  "products/bng-136-hanging-lotus-centre-clip-dark-pink.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 164
+  },
+  "products/bng-137-flower-center-clip-blue.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 166
+  },
+  "products/bng-138-flower-with-core-petal-center-clips-pink-with-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 83
+  },
+  "products/bng-139-lotus-with-coin-pearl-chain-jada-pillai.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 107
+  },
+  "products/bng-14-parrot-bangles-dark-blue-with-baby-pink.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 100
+  },
+  "products/bng-140-moon-brooch-pin.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 71
+  },
+  "products/bng-141-3-leaf-brooch-pin.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 65
+  },
+  "products/bng-142-crystal-brooch-pin.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 65
+  },
+  "products/bng-143-square-finish-pearl-brooch-pin.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 64
+  },
+  "products/bng-144-coin-brooch-pin.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 67
+  },
+  "products/bng-145-star-brooch-pin.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 62
+  },
+  "products/bng-147-diamond-look-brooch-pin.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 58
+  },
+  "products/bng-148-5-leaf-brooch-pin.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 62
+  },
+  "products/bng-149-red-leaf-brooch-pin.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 62
+  },
+  "products/bng-15-dark-gold-coin-bangles.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 96
+  },
+  "products/bng-150-jasmine-hair-accessories-combo.jpg": {
+    "w": 620,
+    "h": 1100,
+    "kb": 73
+  },
+  "products/bng-151-laksmi-with-coin-hair-hook.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 119
+  },
+  "products/bng-152-artha-red-with-orange.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 186
+  },
+  "products/bng-158-thamarai-1-0-blue-with-red.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 198
+  },
+  "products/bng-159-raindrop-glass-bangles.jpg": {
+    "w": 1100,
+    "h": 1100,
+    "kb": 169
+  },
+  "products/bng-16-lotus-bangles-marron-with-white-leaves.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 96
+  },
+  "products/bng-161-rectangle-crystal-mirror-white.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 98
+  },
+  "products/bng-162-rectangle-crystal-candy-skyblue.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 88
+  },
+  "products/bng-163-rectangle-crystal-black.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 93
+  },
+  "products/bng-164-rectangle-crystal-grey.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 96
+  },
+  "products/bng-165-rectangle-crystal-dark-skyblue.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 105
+  },
+  "products/bng-166-rectangle-crystal-light-green.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 99
+  },
+  "products/bng-167-rectangle-crystal-marron.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 94
+  },
+  "products/bng-168-rectangle-crystal-multi-shade.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 93
+  },
+  "products/bng-169-rectangle-crystal-lavender.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 102
+  },
+  "products/bng-17-3d-floral-bangles-orange-with-dark-sky-blue.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 102
+  },
+  "products/bng-170-dimond-lotus-x1fab7.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 134
+  },
+  "products/bng-171-antique-peacock-charm-bangles.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 152
+  },
+  "products/bng-172-pink-flower-bangles.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 143
+  },
+  "products/bng-173-ad-stone-inspired-border-bangles.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 118
+  },
+  "products/bng-175-golden-square-kundan-bangles.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 109
+  },
+  "products/bng-177-yazhi-bridal-set-2-0.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 165
+  },
+  "products/bng-18-coin-with-kundan-flower-bangles.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 74
+  },
+  "products/bng-19-2d-crystal-bangles-dark-pink-with-light-pink.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 118
+  },
+  "products/bng-20-lotus-bangles-dark-green-with-golden-leaves.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 129
+  },
+  "products/bng-21-lotus-bangles-pink-with-green-leaves.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 131
+  },
+  "products/bng-22-2d-crystal-bangles-light-green-with-sky-blue.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 113
+  },
+  "products/bng-23-2d-crystal-bangles-blue-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 112
+  },
+  "products/bng-24-lotus-bangles-red-with-green-leaves.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 105
+  },
+  "products/bng-25-2d-crystal-bangles-parrot-green-with-dark-skyblue.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 117
+  },
+  "products/bng-26-lotus-bangles-green-with-pink-leaves.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 111
+  },
+  "products/bng-27-lotus-bangles-rani-pink-with-green-leaves.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 116
+  },
+  "products/bng-28-lotus-bangles-gold-with-green-leaves.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 97
+  },
+  "products/bng-29-leaf-flower-pink-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 108
+  },
+  "products/bng-30-ganesh-bangles.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 90
+  },
+  "products/bng-31-artha-dark-pink-with-light-pink.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 140
+  },
+  "products/bng-32-mayil-lavender-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 133
+  },
+  "products/bng-33-thamarai-1-0-dark-purple-with-orange.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 141
+  },
+  "products/bng-34-roopika-mix-of-gold-brown-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 135
+  },
+  "products/bng-35-tanirika-dark-pink-with-bottle-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 134
+  },
+  "products/bng-36-baby-foot-bangles-dark-pink-with-bottle-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 138
+  },
+  "products/bng-37-thamarai-2-0-orange-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 121
+  },
+  "products/bng-38-vasutha-cream.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 108
+  },
+  "products/bng-39-thamarai-2-0-dark-pink-with-pista-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 127
+  },
+  "products/bng-40-thamarai-3-0-dark-pink-with-pista-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 135
+  },
+  "products/bng-41-roopika-purple-with-dark-pink.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 148
+  },
+  "products/bng-42-artha-dark-pink-with-dark-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 155
+  },
+  "products/bng-43-kili-red-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 144
+  },
+  "products/bng-44-manjari-pink-with-light-onion-pink.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 136
+  },
+  "products/bng-45-thamarai-2-0-dark-purple-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 126
+  },
+  "products/bng-46-anjanavahi-marron-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 133
+  },
+  "products/bng-47-ganesha-1-0-dark-green-with-lime-yellow-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 142
+  },
+  "products/bng-48-abarna-dark-pink-with-forest-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 116
+  },
+  "products/bng-49-kasu-mix-of-pink-green-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 103
+  },
+  "products/bng-50-ganesha-2-0-peach-pink-with-aqua-blue.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 135
+  },
+  "products/bng-51-thamarai-1-0-red-with-lemon-yellow.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 127
+  },
+  "products/bng-52-artha-sky-blue-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 136
+  },
+  "products/bng-53-ratna-dark-green-with-grey.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 127
+  },
+  "products/bng-54-minimal-red-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 95
+  },
+  "products/bng-55-minimal-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 102
+  },
+  "products/bng-56-minimal-white-glass-with-peacock-blue.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 96
+  },
+  "products/bng-57-minimal-orange.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 98
+  },
+  "products/bng-58-minimal-green-with-pistachio-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 106
+  },
+  "products/bng-59-minimal-grape.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 108
+  },
+  "products/bng-60-varnika-red-green-gold-white-crystal.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 134
+  },
+  "products/bng-61-pangajam-gray-with-crystal-white.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 114
+  },
+  "products/bng-62-veena-peach-with-royal-blue.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 124
+  },
+  "products/bng-63-mini-vasutha-peach-with-white.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 113
+  },
+  "products/bng-64-roopika-deep-marron-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 133
+  },
+  "products/bng-65-jadu-violet-with-dark-sky-blue.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 159
+  },
+  "products/bng-66-artha-pink-with-bottle-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 135
+  },
+  "products/bng-67-nila-marron-with-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 142
+  },
+  "products/bng-68-thamarai-1-0-red-with-dark-sky-blue.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 128
+  },
+  "products/bng-69-harini-teal-green-with-white.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 105
+  },
+  "products/bng-70-vasutha-muti-with-red.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 127
+  },
+  "products/bng-71-mukta-mix-of-parrot-green-light-blue-royal-blue.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 124
+  },
+  "products/bng-72-jadu-dark-pink-with-lemon-yellow.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 134
+  },
+  "products/bng-73-varnika-marron-with-creamy-white.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 135
+  },
+  "products/bng-74-thiya-ink-blue-with-creamy-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 133
+  },
+  "products/bng-75-thiya-light-green-with-sky-blue.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 137
+  },
+  "products/bng-76-thamarai-1-0-violet-with-kanakambaram.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 152
+  },
+  "products/bng-77-thiya-2-0-marron-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 153
+  },
+  "products/bng-78-jadu-purple-with-aqua-blue.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 158
+  },
+  "products/bng-79-yohitha-dark-green-with-yellowish-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 151
+  },
+  "products/bng-8-light-gold-coin-bangles.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 110
+  },
+  "products/bng-80-mulari-red-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 136
+  },
+  "products/bng-81-thiya-3-0-parrot-green-with-ink-blue.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 135
+  },
+  "products/bng-82-senthamarai-pink-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 148
+  },
+  "products/bng-83-kili-2-0-marron-with-bottle-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 147
+  },
+  "products/bng-84-thamarai-1-0-red-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 138
+  },
+  "products/bng-85-crystal-grape-with-gold.jpg": {
+    "w": 825,
+    "h": 1100,
+    "kb": 185
+  },
+  "products/bng-86-crystal-purple-with-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 153
+  },
+  "products/bng-87-jadu-baby-pink-with-leaf-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 139
+  },
+  "products/bng-88-senthamarai-2-0-dark-onion-pink.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 122
+  },
+  "products/bng-89-vasutha-pink-with-orange.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 114
+  },
+  "products/bng-9-big-coin-border-bangles.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 94
+  },
+  "products/bng-90-jadu-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 135
+  },
+  "products/bng-91-harini-lilac-with-teal-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 143
+  },
+  "products/bng-92-jadu-dark-pink-with-bottle-green.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 151
+  },
+  "products/bng-93-thamarai-1-0-red-green-mustard-white.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 127
+  },
+  "products/bng-94-ranjini-purple-with-gold-lakshmi-embossed.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 112
+  },
+  "products/bng-95-thamarai-1-0-peacock-blue-with-onion-pink.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 102
+  },
+  "products/bng-96-jadu-red-bright-yellow.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 116
+  },
+  "products/bng-97-menaka-green-with-yellowish-gold.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 102
+  },
+  "products/bng-98-lakshmi-green-with-red.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 114
+  },
+  "products/bng-99-alangara-pink.jpg": {
+    "w": 778,
+    "h": 1100,
+    "kb": 107
+  }
+}

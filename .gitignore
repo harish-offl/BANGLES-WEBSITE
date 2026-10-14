@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +40,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local dev tooling
+/dev-server.log
+/run-dev.cmd
+
+# local data fixture (development only)
+/.data/
+
+# audit bulk assets — provenance lives in audit/*.json; keep the binaries out
+/audit/raw-images/
+/audit/legacy-screenshots/
+

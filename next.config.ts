@@ -1,9 +1,49 @@
 import type { NextConfig } from "next";
 
+/**
+ * Security headers applied to every response. The Content-Security-Policy is
+ * intentionally permissive for images so catalogue photography can be served
+ * from local storage or Supabase Storage/CDN hosts, while script sources stay
+ * self-hosted.
+ */
+const scriptSrc = process.env.NODE_ENV === "production" ? "'self'" : "'self' 'unsafe-eval'";
+
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  `script-src ${scriptSrc} 'unsafe-inline'`,
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' https://fonts.gstatic.com data:",
+  "img-src 'self' data: blob: https:",
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://res.cloudinary.com",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "object-src 'none'",
+].join("; ");
+
+const securityHeaders = [
+  { key: "Content-Security-Policy", value: contentSecurityPolicy },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "X-DNS-Prefetch-Control", value: "on" },
+  {
+    key: "Permissions-Policy",
+    value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+  },
+  {
+    key: "Strict-Transport-Security",
+    value: "max-age=63072000; includeSubDomains; preload",
+  },
+];
+
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+  // Kept off so data fetching follows the standard App Router model
+  // (explicit `revalidate`/dynamic rendering) rather than the Cache
+  // Components model. See docs/architecture.md for the rationale.
+  cacheComponents: false,
+  poweredByHeader: false,
+  reactStrictMode: true,
   turbopack: {
     rules: {
       "*.css": {
@@ -11,6 +51,39 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  images: {
+    // Next.js 16 requires explicit remote patterns instead of `domains`.
+    remotePatterns: [
+      { protocol: "https", hostname: "*.supabase.co", pathname: "/storage/v1/object/public/**" },
+      { protocol: "https", hostname: "res.cloudinary.com" },
+    ],
+    formats: ["image/avif", "image/webp"],
+    qualities: [60, 75, 85],
+    minimumCacheTTL: 3600,
+  },
+  async headers() {
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      {
+        // Never cache authenticated admin surfaces or API mutations.
+        source: "/admin/:path*",
+        headers: [
+          { key: "Cache-Control", value: "no-store, max-age=0" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      },
+      {
+        source: "/api/:path*",
+        headers: [{ key: "Cache-Control", value: "no-store, max-age=0" }],
+      },
+      {
+        source: "/images/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+    ];
   },
 };
 

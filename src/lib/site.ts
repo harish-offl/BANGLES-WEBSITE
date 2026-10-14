@@ -1,0 +1,75 @@
+import type { StoreSettings } from "@/types";
+
+/**
+ * Business facts transcribed from the live legacy site (banglesbybeauty.com)
+ * during the Stage 1 audit. Nothing here is invented: every value was read
+ * from the original pages. Anything the owner has never published is `null`
+ * rather than a guess, and the UI renders an explicit "pending" state for it.
+ */
+export const LEGACY_FACTS = {
+  brandName: "Bangles by Beauty",
+  tagline: "Crafted for Every Occasion",
+  location: "Pattukottai",
+  whatsappNumber: "916381137076",
+  freeDeliveryThreshold: 2499,
+  announcement:
+    "Free delivery on orders above ₹2499 · Handcrafted with love from Pattukottai",
+  heroEyebrow: "Handcrafted in Pattukottai",
+  heroHeading: "Crafted for Every Occasion",
+  heroBody:
+    "From bridal bangles to everyday elegance — handcrafted jewellery that tells your story, made with love in Pattukottai.",
+  supportHours: "10AM – 7PM",
+  processingNote: "Made to order · 5 to 7 days processing",
+  social: {
+    facebook: "https://www.facebook.com/share/1Csucpqcd4/",
+    instagram: "https://www.instagram.com/bangles_by_beauty?igsh=MnJienJqMWludTNz",
+    youtube: "https://youtube.com/%40bangles_by_beauty?si=WI2bStYuMaPkxQxy",
+  },
+  /** No Pinterest profile was published; only the bare domain was linked. */
+  pinterest: null,
+  /** The legacy site never published a contact email address. */
+  contactEmail: null,
+  mapUrl: "https://www.openstreetmap.org/directions?to=Pattukkottai",
+  legacyUrl: "https://banglesbybeauty.com/",
+} as const;
+
+export const DEFAULT_SETTINGS: StoreSettings = {
+  store_name: LEGACY_FACTS.brandName,
+  whatsapp_number: LEGACY_FACTS.whatsappNumber,
+  contact_email: LEGACY_FACTS.contactEmail,
+  currency: "INR",
+  announcement: LEGACY_FACTS.announcement,
+  shipping_info:
+    "Made to order with a processing time of 5 to 7 days. Free delivery on orders above ₹2499.",
+  footer_note: "Handcrafted with love from Pattukottai.",
+  facebook_url: LEGACY_FACTS.social.facebook,
+  instagram_url: LEGACY_FACTS.social.instagram,
+  youtube_url: LEGACY_FACTS.social.youtube,
+  pinterest_url: LEGACY_FACTS.pinterest,
+  location: LEGACY_FACTS.location,
+  seo_title_template: "%s · Bangles by Beauty",
+  seo_default_description:
+    "Handcrafted bangles, bridal sets and traditional jewellery from Pattukottai. Shop border bangles, bridal bangles, kundan hair bands and more.",
+  free_shipping_threshold: LEGACY_FACTS.freeDeliveryThreshold,
+};
+
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+).replace(/\/$/, "");
+
+export const SITE_NAME = DEFAULT_SETTINGS.store_name;
+
+/** Admin routes are excluded from indexing. */
+export const PROTECTED_ROUTES = ["/admin"];
+
+export const CURRENCY_SYMBOL = "₹";
+
+export function formatPrice(value: number, currency = "INR"): string {
+  if (!Number.isFinite(value)) return "—";
+  const symbol = currency === "INR" ? CURRENCY_SYMBOL : "";
+  const formatted = new Intl.NumberFormat("en-IN", {
+    minimumFractionDigits: value % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+  return `${symbol}${formatted}`;
+}
