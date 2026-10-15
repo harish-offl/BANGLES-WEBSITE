@@ -1,47 +1,52 @@
 import { CategoryTiles } from "@/components/home/category-tiles";
+import { CollectionShowcase, SHOWCASE_SIZE } from "@/components/home/collection-showcase";
 import { CtaBand } from "@/components/home/cta-band";
 import { FaqSection } from "@/components/home/faq-section";
 import { Hero } from "@/components/home/hero";
 import { MapSection } from "@/components/home/map-section";
-import { ProductCatalogue } from "@/components/home/product-catalogue";
+import { ReviewSection } from "@/components/reviews/review-section";
 import { StorySection } from "@/components/home/story-section";
 import { TrustStrip } from "@/components/home/trust-strip";
 import { JsonLd } from "@/components/shared/json-ld";
 import { FAQ_ITEMS } from "@/lib/content/faq";
 import { getCatalog } from "@/lib/data";
 import { LEGACY_FACTS, SITE_NAME, SITE_URL } from "@/lib/site";
-import type { CatalogDriver } from "@/lib/data/driver";
-import type { Product } from "@/types";
+import type { ShowcaseGroup } from "@/components/home/collection-showcase";
+import type { Category, Product } from "@/types";
 
 /** Catalogue changes rarely; revalidate so new admin edits appear without a redeploy. */
 export const revalidate = 300;
 
 /**
- * The catalogue is published as one continuous page, so the home route loads
- * every active product. The drivers cap a single page at 100 rows, so we page
- * through until the full set is collected.
+ * Loads a short preview of each active collection — a handful of pieces per
+ * category rather than the whole catalogue, so the home page stays light. The
+ * full collection is one tap away at `/collections/[slug]`.
  */
-async function getAllProducts(catalog: CatalogDriver): Promise<Product[]> {
-  const first = await catalog.listProducts({ pageSize: 100, page: 1, sort: "newest" });
-  const products = [...first.items];
+async function getShowcaseGroups(categories: Category[]): Promise<ShowcaseGroup[]> {
+  const catalog = getCatalog();
+  const active = categories.filter((category) => category.is_active);
 
-  for (let page = 2; page <= first.pageCount; page += 1) {
-    const next = await catalog.listProducts({ pageSize: 100, page, sort: "newest" });
-    if (next.items.length === 0) break;
-    products.push(...next.items);
-  }
-
-  return products;
+  return Promise.all(
+    active.map(async (category) => {
+      const result = await catalog.listProducts({
+        category: category.slug,
+        pageSize: SHOWCASE_SIZE,
+        sort: "newest",
+      });
+      return { category, products: result.items, total: result.total };
+    }),
+  );
 }
 
 export default async function HomePage() {
   const catalog = getCatalog();
 
-  const [categories, products, settings] = await Promise.all([
+  const [categories, settings] = await Promise.all([
     catalog.listCategories({ activeOnly: true }),
-    getAllProducts(catalog),
     catalog.getSettings(),
   ]);
+  const groups = await getShowcaseGroups(categories);
+  const showcaseProducts: Product[] = groups.flatMap((group) => group.products);
 
   return (
     <>
@@ -76,8 +81,8 @@ export default async function HomePage() {
           "@context": "https://schema.org",
           "@type": "ItemList",
           name: `${SITE_NAME} catalogue`,
-          numberOfItems: products.length,
-          itemListElement: products.map((product, index) => ({
+          numberOfItems: showcaseProducts.length,
+          itemListElement: showcaseProducts.map((product, index) => ({
             "@type": "ListItem",
             position: index + 1,
             name: product.name,
@@ -103,8 +108,13 @@ export default async function HomePage() {
       <Hero />
       <TrustStrip />
       <CategoryTiles categories={categories} />
-      <ProductCatalogue products={products} categories={categories} />
+      <CollectionShowcase groups={groups} />
       <StorySection />
+      <ReviewSection
+        storeName={settings.store_name}
+        whatsappNumber={settings.whatsapp_number}
+        siteUrl={SITE_URL}
+      />
       <MapSection
         location={settings.location}
         whatsappNumber={settings.whatsapp_number}

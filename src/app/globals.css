@@ -5,68 +5,80 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Bangles by Beauty design tokens.
- * Palette and type scale transcribed from the legacy site's own CSS custom
- * properties (--gold, --deep, --c100 ... --ts) so the redesign keeps the
- * original brand identity rather than a generic jewellery template.
+ * Bangles by Beauty — "Luxury Blush" design tokens.
+ * The palette is built from the brand's two signature tones (#F0ADA2 and
+ * #F4BBB1) with a dark mocha text colour and a single gold accent. Semantic
+ * tokens keep the storefront, cart, forms and admin surfaces consistent.
  */
 :root {
-  /* Brand palette (legacy values) */
-  --brand-gold: #c8956c;
-  --brand-shine: #e8c4a0;
-  --brand-deep: #8b5e3c;
-  --brand-c100: #fdf5f0;
-  --brand-c200: #f7e8df;
-  --brand-c300: #eec9b4;
-  --brand-c500: #b87c58;
-  --brand-paper: #f8f5f1;
-  --brand-smoke: #f2ede8;
-  --brand-ink: #1a1614;
-  --brand-ink-mid: #3a2e28;
-  --brand-ink-soft: #5c4f46;
+  /* Brand palette */
+  --brand-gold: #c6a15b;      /* gold accent */
+  --brand-shine: #e3c98f;     /* light gold highlight */
+  --brand-deep: #925b63;      /* deep rose: links, prices, focus */
+  --brand-c100: #fbece8;      /* subtle pink surface */
+  --brand-c200: #f8dcd6;      /* soft pink surface */
+  --brand-c300: #f4bbb1;      /* light pink */
+  --brand-c500: #e69a8e;      /* pink hover */
+  --brand-paper: #faf0ed;     /* secondary background */
+  --brand-smoke: #f0e8e5;     /* disabled / muted background */
+  --brand-ink: #342625;       /* primary text + dark surfaces */
+  --brand-ink-mid: #66514d;   /* secondary text */
+  --brand-ink-soft: #796966;  /* muted text */
 
   /* Semantic tokens */
-  --background: #fffdfb;
+  --background: #fff8f6;
   --foreground: var(--brand-ink);
   --card: #ffffff;
   --card-foreground: var(--brand-ink);
   --popover: #ffffff;
   --popover-foreground: var(--brand-ink);
-  --primary: #8b5e3c;
-  --primary-foreground: #fffdfb;
-  --secondary: var(--brand-c100);
-  --secondary-foreground: var(--brand-ink-mid);
+  --primary: #f0ada2;
+  --primary-foreground: #342625;
+  --secondary: #342625;
+  --secondary-foreground: #ffffff;
   --muted: var(--brand-smoke);
   --muted-foreground: var(--brand-ink-soft);
-  --accent: var(--brand-c200);
-  --accent-foreground: var(--brand-ink-mid);
-  --destructive: #b42318;
-  --destructive-foreground: #fffdfb;
-  --success: #1f7a4d;
-  --border: #eae4dc;
-  --input: #e3dad0;
-  --ring: #8b5e3c;
-  --gold: #c8956c;
-  --gold-strong: #a26b3c;
-  --chart-1: #c8956c;
-  --chart-2: #8b5e3c;
-  --chart-3: #b87c58;
-  --chart-4: #5c4f46;
-  --chart-5: #eec9b4;
+  --accent: #f8dcd6;
+  --accent-foreground: #342625;
+  --destructive: #b42332;
+  --destructive-foreground: #ffffff;
+  --success: #347653;
+  --warning: #a66a19;
+  --info: #496c94;
+  --disabled: #f0e8e5;
+  --disabled-foreground: #a39490;
+  --border: #ebd9d4;
+  --input: #d9c3bd;
+  --ring: #925b63;
+  --gold: #c6a15b;
+  --gold-hover: #ae8847;
+  --gold-strong: #925b63;
+  --chart-1: #f0ada2;
+  --chart-2: #c6a15b;
+  --chart-3: #925b63;
+  --chart-4: #66514d;
+  --chart-5: #f4bbb1;
   --radius: 0.875rem;
-  --sidebar: #fffdfb;
+  --sidebar: #fff8f6;
   --sidebar-foreground: var(--brand-ink);
-  --sidebar-primary: #8b5e3c;
-  --sidebar-primary-foreground: #fffdfb;
-  --sidebar-accent: var(--brand-c100);
-  --sidebar-accent-foreground: var(--brand-ink-mid);
+  --sidebar-primary: #f0ada2;
+  --sidebar-primary-foreground: #342625;
+  --sidebar-accent: #fbece8;
+  --sidebar-accent-foreground: var(--brand-ink);
   --sidebar-border: var(--border);
-  --sidebar-ring: #8b5e3c;
+  --sidebar-ring: #925b63;
+
+  /* Shadows & gradients */
+  --shadow-card: 0 4px 18px rgba(52, 38, 37, 0.06);
+  --shadow-hover: 0 10px 28px rgba(52, 38, 37, 0.12);
+  --gradient-brand: linear-gradient(135deg, #f0ada2 0%, #f4bbb1 100%);
+  --gradient-hero: linear-gradient(135deg, #fff8f6 0%, #fbece8 55%, #f8dcd6 100%);
+  --transition-base: 200ms ease;
 
   /* Type families (populated by next/font in app/layout.tsx) */
-  --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-cormorant), ui-serif, Georgia, serif;
-  --font-display: var(--font-italiana), var(--font-cormorant), ui-serif, Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
+  --font-display: var(--font-playfair), ui-serif, Georgia, serif;
   --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
@@ -88,10 +100,15 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-disabled: var(--disabled);
+  --color-disabled-foreground: var(--disabled-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-gold: var(--gold);
+  --color-gold-hover: var(--gold-hover);
   --color-gold-strong: var(--gold-strong);
   --color-brand-ink: var(--brand-ink);
   --color-brand-paper: var(--brand-paper);

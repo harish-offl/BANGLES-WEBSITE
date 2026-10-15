@@ -32,6 +32,59 @@ function slugify(s) {
     .slice(0, 90);
 }
 
+function decodeEntities(value) {
+  return value.replace(/&(#x[0-9a-fA-F]+|#\d+|[a-zA-Z][a-zA-Z0-9]*);/g, (match, entity) => {
+    if (entity.charCodeAt(0) === 35) {
+      const code =
+        entity[1] === "x" || entity[1] === "X"
+          ? Number.parseInt(entity.slice(2), 16)
+          : Number.parseInt(entity.slice(1), 10);
+      if (!Number.isInteger(code) || code < 0 || code > 0x10ffff) return match;
+      return String.fromCodePoint(code);
+    }
+    return entity.toLowerCase() === "rupee" ? "\u20B9" : match;
+  });
+}
+
+/**
+ * Rewrites the migrated pack/price phrasing into plain English. Only touches
+ * descriptions that actually carry a legacy "pack of … price …" fragment; every
+ * other description is left as-is for the runtime entity decoder.
+ */
+function normalizeLegacyPriceText(text) {
+  if (!/pack\s+of/i.test(text) || !/price/i.test(text)) return text;
+  const decoded = decodeEntities(text);
+  const packs = [...decoded.matchAll(/pack\s+of\s+(\d+)/gi)].map((m) => m[1]);
+  const prices = [...decoded.matchAll(/\u20B9\s*([\d,]+)/g)]
+    .map((m) => m[1])
+    .join(",")
+    .split(",")
+    .map((p) => p.trim())
+    .filter(Boolean);
+  if (!packs.length || packs.length !== prices.length) return decoded;
+  const options = packs.map((size, i) => `${size} (\u20B9${prices[i]})`);
+  const list =
+    options.length <= 1
+      ? options.join("")
+      : `${options.slice(0, -1).join(", ")} and ${options[options.length - 1]}`;
+  const sentence = `Available in packs of ${list}.`;
+  const remainder = decoded
+    .replace(
+      /\(?\s*pack\s+of\s+[\d,\s]*(?:pack\s+of\s+[\d,\s]*)*\)?\s*\(?\s*price\s+[^)]*\)?/i,
+      "",
+    )
+    .replace(/[\s.]+$/g, "")
+    .trim();
+  if (!remainder) return `${sentence} Handcrafted with love from Pattukottai.`;
+  return decoded
+    .replace(
+      /\(?\s*pack\s+of\s+[\d,\s]*(?:pack\s+of\s+[\d,\s]*)*\)?\s*\(?\s*price\s+[^)]*\)?/i,
+      sentence,
+    )
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 /** url -> relative path under public/ */
 const urlToPath = new Map();
 for (const r of report) {
@@ -143,7 +196,7 @@ const out = products.map((p, i) => {
     category_id: catIdByName[p.category] ?? null,
     name: p.name.trim().replace(/\s+/g, " "),
     slug,
-    description: (p.description || "").trim(),
+    description: normalizeLegacyPriceText((p.description || "").trim()),
     sku: p.sku,
     price: Number(p.price),
     compare_at_price: null,

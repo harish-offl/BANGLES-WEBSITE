@@ -53,7 +53,7 @@ export function CategoryTiles({ categories, limit = 8 }: CategoryTilesProps) {
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <span
-                className="absolute inset-0 bg-gradient-to-t from-[#1a1614]/85 via-[#1a1614]/20 to-transparent"
+                className="absolute inset-0 bg-gradient-to-t from-[#342625]/85 via-[#342625]/20 to-transparent"
                 aria-hidden="true"
               />
               <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-4">

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant, Italiana, Jost } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
@@ -12,22 +12,15 @@ import { cn } from "@/lib/utils";
 
 import "./globals.css";
 
-const italiana = Italiana({
-  weight: "400",
+const playfair = Playfair_Display({
   subsets: ["latin"],
-  variable: "--font-italiana",
+  variable: "--font-playfair",
   display: "swap",
 });
 
-const cormorant = Cormorant({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-cormorant",
-  display: "swap",
-});
-
-const jost = Jost({
-  subsets: ["latin"],
-  variable: "--font-jost",
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -69,7 +62,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#fdf5f0",
+  themeColor: "#FFF8F6",
   width: "device-width",
   initialScale: 1,
 };
@@ -85,12 +78,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={cn(
-        italiana.variable,
-        cormorant.variable,
-        jost.variable,
-        "h-full",
-      )}
+      className={cn(playfair.variable, inter.variable, "h-full")}
     >
       <body className="flex min-h-full flex-col">
         <a

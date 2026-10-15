@@ -7,6 +7,7 @@ import { DEFAULT_SETTINGS } from "@/lib/site";
 import type { Category, Paginated, Product, ProductFilters, StoreSettings } from "@/types";
 
 import type { CatalogDriver } from "./driver";
+import { decodeHtmlEntities, normalizeDescription } from "./text";
 
 interface CatalogFile {
   categories: Category[];
@@ -20,15 +21,45 @@ const SETTINGS_PATH = path.join(RUNTIME_DIR, "settings.json");
 
 let cache: { mtimeMs: number; data: CatalogFile } | null = null;
 
+/** Decodes migrated HTML entities in the free-text fields we display. */
+function decodeProductText(product: Product): Product {
+  return {
+    ...product,
+    name: decodeHtmlEntities(product.name),
+    description: normalizeDescription(product.description),
+    seo_title: product.seo_title ? decodeHtmlEntities(product.seo_title) : product.seo_title,
+    seo_description: product.seo_description
+      ? decodeHtmlEntities(product.seo_description)
+      : product.seo_description,
+  };
+}
+
+function decodeCategoryText(category: Category): Category {
+  return {
+    ...category,
+    name: decodeHtmlEntities(category.name),
+    description: category.description ? decodeHtmlEntities(category.description) : category.description,
+  };
+}
+
+function decodeCatalog(data: CatalogFile): CatalogFile {
+  return {
+    categories: data.categories.map(decodeCategoryText),
+    products: data.products.map(decodeProductText),
+  };
+}
+
 function readCatalog(): CatalogFile {
   try {
     const stat = fs.statSync(RUNTIME_PATH);
     if (cache && cache.mtimeMs === stat.mtimeMs) return cache.data;
-    const data = JSON.parse(fs.readFileSync(RUNTIME_PATH, "utf8")) as CatalogFile;
+    const parsed = JSON.parse(fs.readFileSync(RUNTIME_PATH, "utf8")) as CatalogFile;
+    const data = decodeCatalog(parsed);
     cache = { mtimeMs: stat.mtimeMs, data };
     return data;
   } catch {
-    const data = JSON.parse(fs.readFileSync(SEED_PATH, "utf8")) as CatalogFile;
+    const parsed = JSON.parse(fs.readFileSync(SEED_PATH, "utf8")) as CatalogFile;
+    const data = decodeCatalog(parsed);
     cache = { mtimeMs: -1, data };
     return data;
   }

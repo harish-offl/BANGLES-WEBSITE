@@ -13,7 +13,7 @@ export function PolicyContent({ page }: PolicyContentProps) {
     <div className="space-y-8">
       {page.pendingApproval ? (
         <div className="flex max-w-2xl gap-3 rounded-xl border border-gold/40 bg-brand-c100 px-4 py-3.5">
-          <Info className="mt-0.5 size-4 shrink-0 text-gold-strong" aria-hidden="true" />
+          <Info className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden="true" />
           <p className="text-xs leading-relaxed text-foreground sm:text-sm">
             This policy is a working draft prepared for the site rebuild and is awaiting the
             owner&rsquo;s approval. The essentials are accurate, but the final wording should be

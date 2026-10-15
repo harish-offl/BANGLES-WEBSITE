@@ -31,7 +31,7 @@ export function TrustStrip() {
       <div className="container-page grid gap-6 py-8 sm:grid-cols-2 lg:grid-cols-4">
         {POINTS.map(({ Icon, title, body }) => (
           <div key={title} className="flex items-start gap-3">
-            <span className="mt-0.5 grid size-9 shrink-0 place-items-center rounded-full bg-brand-c100 text-gold-strong">
+            <span className="mt-0.5 grid size-9 shrink-0 place-items-center rounded-full bg-brand-c100 text-gold">
               <Icon className="size-4" aria-hidden="true" />
             </span>
             <div>

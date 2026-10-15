@@ -72,7 +72,7 @@ export function MapSection({
 
           <div className="flex flex-col gap-4">
             <div className="rounded-2xl border border-border bg-card p-6">
-              <span className="grid size-10 place-items-center rounded-full bg-brand-c100 text-gold-strong">
+              <span className="grid size-10 place-items-center rounded-full bg-brand-c100 text-gold">
                 <MapPin className="size-5" aria-hidden="true" />
               </span>
               <h3 className="mt-4 font-display text-xl">{LEGACY_FACTS.brandName}</h3>
@@ -89,12 +89,12 @@ export function MapSection({
             </div>
 
             <div className="rounded-2xl border border-border bg-card p-6">
-              <span className="grid size-10 place-items-center rounded-full bg-brand-c100 text-gold-strong">
+              <span className="grid size-10 place-items-center rounded-full bg-brand-c100 text-gold">
                 <MessageCircle className="size-5" aria-hidden="true" />
               </span>
               <h3 className="mt-4 font-display text-xl">WhatsApp</h3>
               <p className="mt-1.5 flex items-center gap-1.5 text-sm leading-relaxed text-muted-foreground">
-                <Clock className="size-3.5 text-gold-strong" aria-hidden="true" />
+                <Clock className="size-3.5 text-gold" aria-hidden="true" />
                 {LEGACY_FACTS.supportHours}, seven days a week
               </p>
               {whatsappDigits ? (
@@ -125,7 +125,7 @@ export function MapSection({
                         href={href as string}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="grid size-10 place-items-center rounded-full border border-border bg-background text-muted-foreground transition-colors hover:border-gold hover:text-gold-strong"
+                        className="grid size-10 place-items-center rounded-full border border-border bg-background text-muted-foreground transition-colors hover:border-gold hover:text-gold"
                         aria-label={`${LEGACY_FACTS.brandName} on ${label} (opens in a new tab)`}
                       >
                         <Icon className="size-4" aria-hidden="true" />

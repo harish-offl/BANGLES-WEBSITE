@@ -22,15 +22,15 @@ export function Hero() {
         className="object-cover object-center opacity-60"
       />
       <div
-        className="absolute inset-0 bg-gradient-to-r from-[#1a1614]/92 via-[#1a1614]/70 to-[#1a1614]/20"
+        className="absolute inset-0 bg-gradient-to-r from-[#342625]/92 via-[#342625]/70 to-[#342625]/25"
         aria-hidden="true"
       />
 
       <div className="container-page relative py-20 sm:py-28 lg:py-36">
         <div className="max-w-2xl">
-          <p className="eyebrow text-[#eec9b4]">{LEGACY_FACTS.heroEyebrow}</p>
+          <p className="eyebrow text-[#f4bbb1]">{LEGACY_FACTS.heroEyebrow}</p>
           <h1 className="text-display mt-4 text-white">{LEGACY_FACTS.heroHeading}</h1>
-          <p className="mt-5 max-w-xl text-base leading-relaxed text-[#f7e8df] sm:text-lg">
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-[#f8dcd6] sm:text-lg">
             {LEGACY_FACTS.heroBody}
           </p>
 
@@ -39,7 +39,7 @@ export function Hero() {
               href="#products"
               className={cn(
                 buttonVariants({ size: "lg" }),
-                "h-11 gap-2 bg-gold px-6 text-base text-brand-ink hover:bg-[#d8a878]",
+                "h-11 gap-2 px-6 text-base text-primary-foreground",
               )}
             >
               Shop the collection
@@ -61,19 +61,19 @@ export function Hero() {
 
           <dl className="mt-10 grid max-w-lg grid-cols-3 gap-4 border-t border-white/15 pt-6 text-white">
             <div>
-              <dt className="text-[0.65rem] uppercase tracking-[0.18em] text-[#eec9b4]">
+              <dt className="text-[0.65rem] uppercase tracking-[0.18em] text-[#f4bbb1]">
                 Handmade
               </dt>
               <dd className="mt-1 font-display text-lg">Silk thread</dd>
             </div>
             <div>
-              <dt className="text-[0.65rem] uppercase tracking-[0.18em] text-[#eec9b4]">
+              <dt className="text-[0.65rem] uppercase tracking-[0.18em] text-[#f4bbb1]">
                 Studio
               </dt>
               <dd className="mt-1 font-display text-lg">Pattukottai</dd>
             </div>
             <div>
-              <dt className="text-[0.65rem] uppercase tracking-[0.18em] text-[#eec9b4]">
+              <dt className="text-[0.65rem] uppercase tracking-[0.18em] text-[#f4bbb1]">
                 Delivery
               </dt>
               <dd className="mt-1 font-display text-lg">

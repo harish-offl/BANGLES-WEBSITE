@@ -15,17 +15,18 @@ interface FooterProps {
 }
 
 const SHOP_LINKS: { href: string; label: string }[] = [
-  { href: "#products", label: "All products" },
-  { href: "#cat-bridal-bangles", label: "Bridal bangles" },
-  { href: "#cat-border-bangles", label: "Border bangles" },
-  { href: "#cat-glass-bangles", label: "Glass bangles" },
-  { href: "#cat-kundan-hair-bands", label: "Kundan hair bands" },
+  { href: "/shop", label: "All products" },
+  { href: "/collections", label: "Collections" },
+  { href: "/gallery", label: "Gallery" },
+  { href: "/cart", label: "Your bag" },
+  { href: "/wishlist", label: "Saved items" },
 ];
 
 const INFO_LINKS = [
-  { href: "#about", label: "About us" },
-  { href: "#visit", label: "Contact" },
-  { href: "#faq", label: "FAQ" },
+  { href: "/about", label: "About us" },
+  { href: "/customize", label: "Customize your order" },
+  { href: "/contact", label: "Contact" },
+  { href: "/contact#faq", label: "FAQ" },
 ] as const;
 
 const POLICY_LINKS = [
@@ -45,14 +46,14 @@ export function Footer({ settings }: FooterProps) {
   ].filter((s) => Boolean(s.href));
 
   return (
-    <footer className="mt-auto border-t border-border bg-brand-paper">
+    <footer className="mt-auto bg-brand-ink text-white">
       <div className="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
         <div className="sm:col-span-2 lg:col-span-1">
-          <p className="font-display text-2xl tracking-[0.06em] text-foreground">
-            Bangles <span className="text-gold-strong">by Beauty</span>
+          <p className="font-display text-2xl tracking-[0.06em] text-white">
+            Bangles <span className="text-[#f4bbb1]">by Beauty</span>
           </p>
           <div className="gold-rule mt-3 h-px w-24" aria-hidden="true" />
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-4 max-w-sm text-sm leading-relaxed text-[#d8c7c1]">
             {settings.footer_note ?? LEGACY_FACTS.heroBody}
           </p>
 
@@ -64,7 +65,7 @@ export function Footer({ settings }: FooterProps) {
                     href={href as string}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="grid size-9 place-items-center rounded-full border border-border bg-background text-muted-foreground transition-colors hover:border-gold hover:text-gold-strong"
+                    className="grid size-9 place-items-center rounded-full border border-white/15 text-[#f4bbb1] transition-colors hover:border-[#f4bbb1] hover:text-white"
                     aria-label={`${settings.store_name} on ${label} (opens in a new tab)`}
                   >
                     <Icon className="size-4" aria-hidden="true" />
@@ -76,7 +77,7 @@ export function Footer({ settings }: FooterProps) {
         </div>
 
         <nav aria-label="Shop">
-          <h2 className="text-[0.7rem] font-medium tracking-[0.2em] text-foreground uppercase">
+          <h2 className="text-[0.7rem] font-medium tracking-[0.2em] text-[#f4bbb1] uppercase">
             Shop
           </h2>
           <ul className="mt-4 space-y-2.5">
@@ -84,7 +85,7 @@ export function Footer({ settings }: FooterProps) {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  className="text-sm text-[#d8c7c1] transition-colors hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -94,7 +95,7 @@ export function Footer({ settings }: FooterProps) {
         </nav>
 
         <nav aria-label="Information">
-          <h2 className="text-[0.7rem] font-medium tracking-[0.2em] text-foreground uppercase">
+          <h2 className="text-[0.7rem] font-medium tracking-[0.2em] text-[#f4bbb1] uppercase">
             Information
           </h2>
           <ul className="mt-4 space-y-2.5">
@@ -102,7 +103,7 @@ export function Footer({ settings }: FooterProps) {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  className="text-sm text-[#d8c7c1] transition-colors hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -112,7 +113,7 @@ export function Footer({ settings }: FooterProps) {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  className="text-sm text-[#d8c7c1] transition-colors hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -122,25 +123,25 @@ export function Footer({ settings }: FooterProps) {
         </nav>
 
         <div>
-          <h2 className="text-[0.7rem] font-medium tracking-[0.2em] text-foreground uppercase">
+          <h2 className="text-[0.7rem] font-medium tracking-[0.2em] text-[#f4bbb1] uppercase">
             Get in touch
           </h2>
-          <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+          <ul className="mt-4 space-y-3 text-sm text-[#d8c7c1]">
             {settings.location ? (
               <li className="flex items-start gap-2.5">
-                <MapPin className="mt-0.5 size-4 shrink-0 text-gold-strong" aria-hidden="true" />
+                <MapPin className="mt-0.5 size-4 shrink-0 text-[#f4bbb1]" aria-hidden="true" />
                 <span>{settings.location}, Tamil Nadu, India</span>
               </li>
             ) : null}
 
             {whatsappDigits ? (
               <li className="flex items-start gap-2.5">
-                <MessageCircle className="mt-0.5 size-4 shrink-0 text-gold-strong" aria-hidden="true" />
+                <MessageCircle className="mt-0.5 size-4 shrink-0 text-[#f4bbb1]" aria-hidden="true" />
                 <a
                   href={`https://wa.me/${whatsappDigits}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-colors hover:text-foreground"
+                  className="transition-colors hover:text-white"
                 >
                   Chat on WhatsApp · {LEGACY_FACTS.supportHours}
                 </a>
@@ -149,10 +150,10 @@ export function Footer({ settings }: FooterProps) {
 
             {settings.contact_email ? (
               <li className="flex items-start gap-2.5">
-                <Mail className="mt-0.5 size-4 shrink-0 text-gold-strong" aria-hidden="true" />
+                <Mail className="mt-0.5 size-4 shrink-0 text-[#f4bbb1]" aria-hidden="true" />
                 <a
                   href={`mailto:${settings.contact_email}`}
-                  className="transition-colors hover:text-foreground"
+                  className="transition-colors hover:text-white"
                 >
                   {settings.contact_email}
                 </a>
@@ -160,21 +161,21 @@ export function Footer({ settings }: FooterProps) {
             ) : (
               <li className="text-xs leading-relaxed">
                 Contact email not published yet — set it in
-                <span className="text-foreground"> Admin → Settings</span>.
+                <span className="text-white"> Admin → Settings</span>.
               </li>
             )}
           </ul>
 
           {settings.announcement ? (
-            <p className="mt-5 rounded-lg border border-border bg-background px-3 py-2.5 text-xs leading-relaxed text-muted-foreground">
+            <p className="mt-5 rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-xs leading-relaxed text-[#d8c7c1]">
               {settings.announcement}
             </p>
           ) : null}
         </div>
       </div>
 
-      <div className="border-t border-border">
-        <div className="container-page flex flex-col gap-3 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+      <div className="border-t border-white/10">
+        <div className="container-page flex flex-col gap-3 py-5 text-xs text-[#d8c7c1] sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {year} {settings.store_name}. All rights reserved.
           </p>

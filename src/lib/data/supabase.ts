@@ -5,6 +5,7 @@ import { getAnonServerClient } from "@/lib/supabase/anon-server";
 import type { Category, Paginated, Product, ProductFilters, StoreSettings } from "@/types";
 
 import type { CatalogDriver } from "./driver";
+import { decodeHtmlEntities, normalizeDescription } from "./text";
 
 /** Strips characters that carry meaning in PostgREST `or=` filter syntax. */
 function sanitizeSearch(value: string): string {
@@ -66,10 +67,26 @@ function applyFilters<T>(query: T, filters: ProductFilters, categoryId?: string 
 function hydrate(row: Record<string, unknown> | null): Product | null {
   if (!row) return null;
   const category = (row.category ?? null) as Category | null;
+  const product = row as unknown as Product;
   return {
-    ...(row as unknown as Product),
+    ...product,
+    name: decodeHtmlEntities(product.name),
+    description: normalizeDescription(product.description),
+    seo_title: product.seo_title ? decodeHtmlEntities(product.seo_title) : product.seo_title,
+    seo_description: product.seo_description
+      ? decodeHtmlEntities(product.seo_description)
+      : product.seo_description,
     category,
     category_name: category?.name ?? null,
+  };
+}
+
+/** Decodes migrated HTML entities in a category's displayed text. */
+function hydrateCategory(category: Category): Category {
+  return {
+    ...category,
+    name: decodeHtmlEntities(category.name),
+    description: category.description ? decodeHtmlEntities(category.description) : category.description,
   };
 }
 
@@ -159,7 +176,10 @@ export const supabaseDriver: CatalogDriver = {
       const category = Object.fromEntries(
         Object.entries(rest).filter(([key]) => key !== "products"),
       );
-      return { ...(category as unknown as Category), product_count: products?.[0]?.count ?? 0 };
+      return hydrateCategory({
+        ...(category as unknown as Category),
+        product_count: products?.[0]?.count ?? 0,
+      });
     });
   },
 
@@ -177,7 +197,10 @@ export const supabaseDriver: CatalogDriver = {
     const category = Object.fromEntries(
       Object.entries(rest).filter(([key]) => key !== "products"),
     );
-    return { ...(category as unknown as Category), product_count: products?.[0]?.count ?? 0 };
+    return hydrateCategory({
+      ...(category as unknown as Category),
+      product_count: products?.[0]?.count ?? 0,
+    });
   },
 
   async getColours(): Promise<string[]> {

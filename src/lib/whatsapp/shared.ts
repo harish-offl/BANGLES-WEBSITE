@@ -99,3 +99,106 @@ export function buildWhatsAppUrl(
   if (!normalised) return null;
   return `https://wa.me/${normalised}?text=${encodeURIComponent(message)}`;
 }
+
+export interface WhatsAppCustomDesignInput {
+  storeName: string;
+  siteUrl: string;
+  size: string;
+  colours: string[];
+  customColour?: string | null;
+  comments?: string | null;
+  mobile: string;
+  address: string;
+  email: string;
+  imageName?: string | null;
+}
+
+/**
+ * Builds the custom-design brief as a WhatsApp message. Images cannot travel
+ * through a click-to-chat link, so the message asks the customer to attach the
+ * reference photo in the chat itself.
+ */
+export function buildCustomDesignMessage(input: WhatsAppCustomDesignInput): string {
+  const {
+    storeName,
+    siteUrl,
+    size,
+    colours,
+    customColour,
+    comments,
+    mobile,
+    address,
+    email,
+    imageName,
+  } = input;
+
+  const colourList = [...colours];
+  if (customColour) colourList.push(`${customColour} (custom)`);
+
+  const lines: string[] = [];
+  lines.push(`Hello ${storeName},`);
+  lines.push("");
+  lines.push("I would like to order a custom design.");
+  lines.push("");
+  lines.push(`Bangle size: ${size}`);
+  lines.push(`Colours: ${colourList.length ? colourList.join(", ") : "To be advised"}`);
+  if (comments) lines.push(`Design notes: ${comments}`);
+  lines.push("");
+  lines.push("My details:");
+  lines.push(`Mobile: ${mobile}`);
+  lines.push(`Email: ${email}`);
+  lines.push(`Address: ${address}`);
+  lines.push("");
+  if (imageName) {
+    lines.push(`I have a design reference image (${imageName}) to attach in this chat.`);
+  } else {
+    lines.push("I can share a design reference image in this chat if needed.");
+  }
+  lines.push("");
+  lines.push("Please confirm the price and delivery time.");
+  lines.push("");
+  lines.push(`— sent from ${siteUrl}`);
+
+  return lines.join("\n");
+}
+
+export interface WhatsAppReviewInput {
+  storeName: string;
+  siteUrl: string;
+  rating: number;
+  name: string;
+  mobile: string;
+  review: string;
+  imageName?: string | null;
+}
+
+/**
+ * Builds a customer review as a WhatsApp message. Photos cannot travel through
+ * a click-to-chat link, so the message asks the customer to attach the photo in
+ * the chat itself.
+ */
+export function buildReviewMessage(input: WhatsAppReviewInput): string {
+  const { storeName, siteUrl, rating, name, mobile, review, imageName } = input;
+
+  const stars = "★★★★★".slice(0, rating) + "☆☆☆☆☆".slice(0, 5 - rating);
+  const lines: string[] = [];
+  lines.push(`Hello ${storeName},`);
+  lines.push("");
+  lines.push("I would like to share a review.");
+  lines.push("");
+  lines.push(`Rating: ${stars} (${rating}/5)`);
+  lines.push(`Name: ${name}`);
+  lines.push(`Mobile: ${mobile}`);
+  lines.push("");
+  lines.push(`Review: ${review}`);
+  lines.push("");
+  if (imageName) {
+    lines.push(`I have a photo (${imageName}) to attach in this chat.`);
+  } else {
+    lines.push("I can share a photo in this chat if needed.");
+  }
+  lines.push("");
+  lines.push(`— sent from ${siteUrl}`);
+
+  return lines.join("\n");
+}
