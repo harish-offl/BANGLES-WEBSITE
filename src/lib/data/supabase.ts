@@ -54,7 +54,7 @@ function applyFilters<T>(query: T, filters: ProductFilters, categoryId?: string 
     const term = sanitizeSearch(filters.q);
     if (term) {
       q = q.or(
-        `name.ilike.%${term}%,description.ilike.%${term}%,sku.ilike.%${term}%,colours::text.ilike.%${term}%`,
+        `name.ilike.%${term}%,description.ilike.%${term}%,sku.ilike.%${term}%`,
       );
     }
   }
@@ -113,7 +113,7 @@ export const supabaseDriver: CatalogDriver = {
         .select("id")
         .eq("slug", filters.category)
         .maybeSingle();
-      categoryId = data?.id ?? "__no_match__";
+      categoryId = data?.id ?? "00000000-0000-0000-0000-000000000000";
     }
 
     let base = supabase.from("products").select(PRODUCT_SELECT, { count: "exact" });

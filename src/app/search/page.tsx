@@ -38,7 +38,7 @@ export default async function SearchPage(props: PageProps<"/search">) {
 
       <header className="mt-5 max-w-3xl">
         <p className="eyebrow mb-3">Find your piece</p>
-        <h1 className="section-title text-balance">
+        <h1 className="section-title text-balance break-words">
           {value.q ? (
             <>
               Results for <em>“{value.q}”</em>

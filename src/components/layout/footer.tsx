@@ -65,7 +65,7 @@ export function Footer({ settings }: FooterProps) {
                     href={href as string}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="grid size-9 place-items-center rounded-full border border-white/15 text-gold transition-colors hover:border-gold hover:text-white"
+                    className="grid size-11 place-items-center rounded-full border border-white/15 text-gold transition-colors hover:border-gold hover:text-white"
                     aria-label={`${settings.store_name} on ${label} (opens in a new tab)`}
                   >
                     <Icon className="size-4" aria-hidden="true" />
@@ -175,7 +175,7 @@ export function Footer({ settings }: FooterProps) {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="container-page flex flex-col gap-3 py-5 text-xs text-brand-c200 sm:flex-row sm:items-center sm:justify-between">
+        <div className="container-page flex flex-col gap-3 py-5 pb-24 text-xs text-brand-c200 sm:flex-row sm:items-center sm:justify-between sm:pb-5">
           <p>
             © {year} {settings.store_name}. All rights reserved.
           </p>

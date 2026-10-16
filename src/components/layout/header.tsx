@@ -45,7 +45,7 @@ export function Header({ categories, announcement }: HeaderProps) {
     <header className="sticky top-0 z-50 w-full">
       {announcement ? (
         <div className="bg-brand-ink px-4 py-2 text-center text-[0.72rem] uppercase tracking-[0.14em] text-gold">
-          <span className="mx-auto block max-w-5xl">{announcement}</span>
+          <span className="mx-auto line-clamp-2 block max-w-5xl">{announcement}</span>
         </div>
       ) : null}
 
@@ -68,7 +68,7 @@ export function Header({ categories, announcement }: HeaderProps) {
           </Button>
 
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetContent side="left" className="w-[86%] max-w-sm sm:max-w-md">
+            <SheetContent side="left" className="w-[86%] max-w-sm overflow-y-auto overscroll-contain sm:max-w-md">
               <SheetHeader>
                 <SheetTitle className="font-display text-lg tracking-wide">Menu</SheetTitle>
                 <SheetDescription className="sr-only">

@@ -44,7 +44,7 @@ export function ListingPagination({
   const items = pageWindow(page, pageCount);
 
   return (
-    <nav aria-label="Pagination" className="mt-10 flex items-center justify-center gap-1.5">
+    <nav aria-label="Pagination" className="mt-10 flex flex-wrap items-center justify-center gap-1.5">
       {page > 1 ? (
         <Link
           href={href(basePath, baseParams, page - 1)}

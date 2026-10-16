@@ -228,7 +228,7 @@ export function ShopFilters({
             <legend className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
               Price ({formatPrice(priceFloor)} – {formatPrice(priceCeil)})
             </legend>
-            <form onSubmit={submitPrice} className="flex items-center gap-2">
+            <form onSubmit={submitPrice} className="flex flex-wrap items-center gap-2">
               <input
                 type="number"
                 min={0}

@@ -46,7 +46,7 @@ export function MapSection({
   ].filter((s) => Boolean(s.href));
 
   return (
-    <section id="visit" className="scroll-mt-24 border-y border-border bg-brand-paper py-14 sm:py-20">
+    <section id="visit" className="scroll-mt-36 lg:scroll-mt-28 border-y border-border bg-brand-paper py-14 sm:py-20">
       <div className="container-page">
         <SectionHeading
           eyebrow="Visit us"

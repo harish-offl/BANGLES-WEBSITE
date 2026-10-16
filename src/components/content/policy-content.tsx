@@ -42,7 +42,7 @@ export function PolicyContent({ page }: PolicyContentProps) {
 
       <Prose className="max-w-2xl">
         {page.sections.map((section) => (
-          <section key={section.heading} className="scroll-mt-28">
+          <section key={section.heading} className="scroll-mt-36 lg:scroll-mt-28">
             <h2>{section.heading}</h2>
             {section.body ? <p className="mt-3">{section.body}</p> : null}
             {section.list ? (

@@ -88,10 +88,12 @@ export function ProductCard({
         ) : null}
 
         <div className="mt-auto space-y-3 pt-1">
-          <div className="flex items-end justify-between gap-3">
+          <div className="flex min-w-0 items-end justify-between gap-3">
             <Price price={product.price} compareAtPrice={product.compare_at_price} size="md" />
             {product.sku ? (
-              <span className="text-[0.7rem] text-muted-foreground">Code {product.sku}</span>
+              <span className="truncate text-[0.7rem] text-muted-foreground">
+                Code {product.sku}
+              </span>
             ) : null}
           </div>
           <AddToCartButton product={product} compact className="h-10 w-full" label="Add to bag" />

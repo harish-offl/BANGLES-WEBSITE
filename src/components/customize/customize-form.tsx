@@ -217,7 +217,7 @@ export function CustomizeForm({ whatsappNumber }: CustomizeFormProps) {
                     handleFile(null);
                     if (fileInputRef.current) fileInputRef.current.value = "";
                   }}
-                  className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-gold-strong hover:text-foreground"
+                  className="mt-2 inline-flex items-center gap-1 py-2 text-xs font-medium text-gold-strong hover:text-foreground"
                 >
                   <X className="size-3.5" aria-hidden="true" />
                   Remove image

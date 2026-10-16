@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
  */
 export function Hero() {
   return (
-    <section id="top" className="relative isolate scroll-mt-24 overflow-hidden bg-brand-ink">
+    <section id="top" className="relative isolate scroll-mt-36 lg:scroll-mt-28 overflow-hidden bg-brand-ink">
       <div
         className="animate-float-slow pointer-events-none absolute -right-20 -top-24 size-72 rounded-full bg-[radial-gradient(circle_at_40%_40%,rgba(226,200,120,0.4),transparent_70%)] blur-2xl sm:size-96"
         aria-hidden="true"

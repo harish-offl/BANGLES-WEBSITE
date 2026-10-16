@@ -107,7 +107,7 @@ export function ReviewSection({ storeName, whatsappNumber, siteUrl }: ReviewSect
   const activeRating = hoverRating || rating;
 
   return (
-    <section id="review" className="scroll-mt-24 border-y border-border bg-brand-paper py-14 sm:py-20">
+    <section id="review" className="scroll-mt-36 lg:scroll-mt-28 border-y border-border bg-brand-paper py-14 sm:py-20">
       <div className="container-page">
         <SectionHeading
           eyebrow="Share your experience"
@@ -230,7 +230,7 @@ export function ReviewSection({ storeName, whatsappNumber, siteUrl }: ReviewSect
                         handleFile(null);
                         if (fileInputRef.current) fileInputRef.current.value = "";
                       }}
-                      className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-gold-strong hover:text-foreground"
+                      className="mt-2 inline-flex items-center gap-1 py-2 text-xs font-medium text-gold-strong hover:text-foreground"
                     >
                       <X className="size-3.5" aria-hidden="true" />
                       Remove photo

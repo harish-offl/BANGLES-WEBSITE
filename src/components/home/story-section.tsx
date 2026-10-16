@@ -19,7 +19,7 @@ export function StorySection() {
   return (
     <section
       id="about"
-      className="scroll-mt-24 border-y border-border bg-brand-paper py-14 sm:py-20"
+      className="scroll-mt-36 lg:scroll-mt-28 border-y border-border bg-brand-paper py-14 sm:py-20"
     >
       <div className="container-page grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
         <div className="order-2 lg:order-1">

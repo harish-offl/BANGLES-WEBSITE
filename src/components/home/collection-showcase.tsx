@@ -30,7 +30,7 @@ export function CollectionShowcase({ groups }: CollectionShowcaseProps) {
   if (visible.length === 0) return null;
 
   return (
-    <section id="products" className="container-page scroll-mt-24 py-14 sm:py-20">
+    <section id="products" className="container-page scroll-mt-36 py-14 sm:py-20 lg:scroll-mt-28">
       <SectionHeading
         eyebrow="The collection"
         title={
@@ -46,7 +46,7 @@ export function CollectionShowcase({ groups }: CollectionShowcaseProps) {
           <div
             key={group.category.id}
             id={`cat-${group.category.slug}`}
-            className="scroll-mt-24"
+            className="scroll-mt-36 lg:scroll-mt-28"
           >
             <div className="flex items-baseline justify-between gap-4 border-b border-border pb-3">
               <h3 className="font-display text-xl text-foreground sm:text-2xl">
@@ -75,7 +75,7 @@ export function CollectionShowcase({ groups }: CollectionShowcaseProps) {
                 href={`/collections/${group.category.slug}`}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "lg" }),
-                  "h-11 gap-2 px-6",
+                  "h-auto min-h-11 max-w-full gap-2 whitespace-normal px-6 py-2.5 text-center",
                 )}
               >
                 View all {group.total} {group.category.name} items

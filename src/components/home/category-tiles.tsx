@@ -18,7 +18,7 @@ export function CategoryTiles({ categories, limit = 8 }: CategoryTilesProps) {
   if (visible.length === 0) return null;
 
   return (
-    <section id="collections" className="container-page scroll-mt-24 py-14 sm:py-20">
+    <section id="collections" className="container-page scroll-mt-36 lg:scroll-mt-28 py-14 sm:py-20">
       <SectionHeading
         eyebrow="Collections"
         title={

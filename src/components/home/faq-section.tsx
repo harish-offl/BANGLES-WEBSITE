@@ -21,7 +21,7 @@ export function FaqSection({ whatsappNumber }: FaqSectionProps) {
   const whatsappDigits = normaliseWhatsAppNumber(whatsappNumber);
 
   return (
-    <section id="faq" className="container-page scroll-mt-24 py-14 sm:py-20">
+    <section id="faq" className="container-page scroll-mt-36 lg:scroll-mt-28 py-14 sm:py-20">
       <SectionHeading
         eyebrow="Help"
         title={
