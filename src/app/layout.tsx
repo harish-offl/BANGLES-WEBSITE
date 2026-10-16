@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { WhatsAppFab } from "@/components/layout/whatsapp-fab";
 import { CartProvider } from "@/components/cart/cart-provider";
+import { ClickSparkLayer } from "@/components/effects/click-spark-layer";
 import { Toaster } from "@/components/ui/sonner";
 import { getCatalog } from "@/lib/data";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
@@ -101,7 +102,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             announcement={settings.announcement ?? null}
           />
           <main id="main-content" className="flex-1">
-            {children}
+            <ClickSparkLayer>{children}</ClickSparkLayer>
           </main>
           <Footer settings={settings} />
           <WhatsAppFab
