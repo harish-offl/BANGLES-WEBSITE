@@ -478,7 +478,7 @@ begin;
 insert into public.store_settings (key, value) values
   ('store_name', '"Bangles by Beauty"'::jsonb),
   ('whatsapp_number', '"916381137076"'::jsonb),
-  ('contact_email', 'null'::jsonb),
+  ('contact_email', '"banglesbybeauty@gmail.com"'::jsonb),
   ('currency', '"INR"'::jsonb),
   ('announcement', '"Free delivery on orders above â‚¹2499 Â· Handcrafted with love from Pattukottai"'::jsonb),
   ('shipping_info', '"Made to order with a processing time of 5 to 7 days. Free delivery on orders above â‚¹2499."'::jsonb),

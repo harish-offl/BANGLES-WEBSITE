@@ -67,6 +67,11 @@ export const metadata: Metadata = {
   },
   robots: { index: true, follow: true },
   alternates: { canonical: "/" },
+  icons: {
+    icon: "/images/brand/logo.png",
+    shortcut: "/images/brand/logo.png",
+    apple: "/images/brand/logo.png",
+  },
 };
 
 export const viewport: Viewport = {

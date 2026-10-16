@@ -13,14 +13,14 @@ export function AdminPageHeader({
   action?: ReactNode;
 }) {
   return (
-    <header className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <header className="mb-8 flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-start sm:justify-between">
       <div>
-        <h1 className="font-display text-2xl text-foreground sm:text-3xl">{title}</h1>
+        <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{title}</h1>
         {description ? (
-          <p className="mt-1.5 max-w-2xl text-sm text-muted-foreground">{description}</p>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{description}</p>
         ) : null}
       </div>
-      {action ? <div className="shrink-0">{action}</div> : null}
+      {action ? <div className="flex shrink-0 flex-wrap items-center gap-2 sm:pt-1">{action}</div> : null}
     </header>
   );
 }
@@ -37,14 +37,14 @@ export function StatCard({
   href?: string;
 }) {
   const body = (
-    <div className="rounded-xl border border-border bg-card p-4">
-      <p className="text-xs tracking-[0.14em] text-muted-foreground uppercase">{label}</p>
-      <p className="mt-2 font-display text-3xl text-foreground tabular-nums">{value}</p>
-      {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
+    <div className="h-full rounded-xl border border-border bg-card p-5 shadow-sm transition-colors group-hover:border-primary/40 sm:p-6">
+      <p className="text-sm font-medium text-muted-foreground">{label}</p>
+      <p className="mt-3 break-words font-display text-2xl font-semibold leading-tight tracking-tight text-foreground tabular-nums sm:text-3xl">{value}</p>
+      {hint ? <p className="mt-2 text-xs text-muted-foreground">{hint}</p> : null}
     </div>
   );
   return href ? (
-    <Link href={href} className="block transition-colors hover:border-gold/50">
+    <Link href={href} className="group block h-full rounded-xl">
       {body}
     </Link>
   ) : (

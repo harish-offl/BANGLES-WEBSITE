@@ -402,7 +402,7 @@ export const supabaseDriver: CatalogDriver = {
     const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
     const supabase = getServiceRoleClient();
     const rows = Object.entries(input)
-      .filter(([, value]) => value !== undefined)
+      .filter(([, value]) => value !== undefined && value !== null)
       .map(([key, value]) => ({ key, value }));
     if (rows.length) {
       const { error } = await supabase.from("store_settings").upsert(rows, { onConflict: "key" });

@@ -133,16 +133,16 @@ export function Header({ categories, announcement }: HeaderProps) {
             <img
               src="/images/brand/logo.png"
               alt=""
-              width={40}
-              height={40}
-              className="size-9 w-auto shrink-0 rounded-full object-contain sm:size-10"
+              width={48}
+              height={48}
+              className="size-10 w-auto shrink-0 object-contain sm:size-12"
             />
             <span className="flex min-w-0 flex-col leading-none">
               <span className="truncate font-display text-lg tracking-[0.06em] text-foreground sm:text-xl">
-                Bangles
+                BANGLES
               </span>
               <span className="truncate text-[0.6rem] uppercase tracking-[0.34em] text-gold-strong">
-                by Beauty
+                BY BEAUTY
               </span>
             </span>
           </Link>

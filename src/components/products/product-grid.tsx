@@ -10,7 +10,7 @@ interface ProductGridProps {
 }
 
 /** Responsive two-to-four column product grid used across listing pages. */
-export function ProductGrid({ products, className, priorityCount = 4 }: ProductGridProps) {
+export function ProductGrid({ products, className, priorityCount = Infinity }: ProductGridProps) {
   return (
     <ul className={cn("grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4", className)}>
       {products.map((product, index) => (

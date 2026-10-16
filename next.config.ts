@@ -45,6 +45,13 @@ const nextConfig: NextConfig = {
   cacheComponents: false,
   poweredByHeader: false,
   reactStrictMode: true,
+  // Product image uploads are handled by the admin Server Action. Keep this
+  // just above the form's 5 MB file limit to include multipart overhead.
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "6mb",
+    },
+  },
   turbopack: {
     rules: {
       "*.css": {

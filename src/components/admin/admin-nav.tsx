@@ -21,11 +21,11 @@ const LINKS = [
   { href: "/admin/settings", label: "Settings", Icon: Settings, exact: false },
 ] as const;
 
-export function AdminNav() {
+export function AdminNav({ collapsed = false }: { collapsed?: boolean }) {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Admin sections" className="flex flex-col gap-1">
+    <nav aria-label="Admin sections" className="flex flex-col gap-1.5">
       {LINKS.map(({ href, label, Icon, exact }) => {
         const active = exact ? pathname === href : pathname.startsWith(href);
         return (
@@ -34,14 +34,14 @@ export function AdminNav() {
             href={href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+              "flex min-h-11 items-center gap-3 rounded-lg border border-transparent px-3 py-2.5 text-sm font-medium transition-colors",
               active
-                ? "bg-brand-c100 font-medium text-foreground"
+                ? "border-primary/10 bg-brand-c100 font-semibold text-primary"
                 : "text-muted-foreground hover:bg-brand-c100/60 hover:text-foreground",
             )}
           >
             <Icon className="size-4 shrink-0" aria-hidden="true" />
-            {label}
+            <span className={cn("truncate", collapsed && "lg:hidden")}>{label}</span>
           </Link>
         );
       })}
@@ -50,10 +50,10 @@ export function AdminNav() {
         href="/"
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-2 flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-brand-c100/60 hover:text-foreground"
+        className="mt-4 flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-brand-c100/60 hover:text-foreground"
       >
         <Store className="size-4 shrink-0" aria-hidden="true" />
-        View store
+        <span className={cn("truncate", collapsed && "lg:hidden")}>View store</span>
       </Link>
     </nav>
   );

@@ -27,8 +27,8 @@ export const LEGACY_FACTS = {
   },
   /** No Pinterest profile was published; only the bare domain was linked. */
   pinterest: null,
-  /** The legacy site never published a contact email address. */
-  contactEmail: null,
+/** The business contact email address. */
+  contactEmail: "banglesbybeauty@gmail.com",
   mapUrl: "https://www.openstreetmap.org/directions?to=Pattukkottai",
   legacyUrl: "https://banglesbybeauty.com/",
 } as const;
