@@ -91,12 +91,20 @@ export default function DevelopersPage() {
               Connect on LinkedIn
             </Link>
             <Link
-              href="https://arrisedigital.vercel.app"
+              href="https://github.com/harish-offl"
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-md border border-border px-4 py-2 text-sm transition-colors hover:bg-muted"
             >
-              Explore Arrise Digital
+              View GitHub
+            </Link>
+            <Link
+              href="https://wa.me/9363973593"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-md border border-border px-4 py-2 text-sm transition-colors hover:bg-muted"
+            >
+              Message on WhatsApp
             </Link>
           </div>
         </article>

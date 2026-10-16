@@ -176,25 +176,11 @@ export function Footer({ settings }: FooterProps) {
 
       <div className="border-t border-white/10">
         <div className="container-page flex flex-col items-center gap-4 px-4 sm:px-0 py-5 pb-24 text-xs text-brand-c200 sm:flex-row sm:items-center sm:justify-center sm:text-center sm:pb-5 sm:gap-6">
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             <p>
               © {year} {settings.store_name}. All rights reserved.
             </p>
             <p>
-              Website designed &amp; developed by{" "}
-              <a
-                href="https://arrisedigital.vercel.app"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gold-strong underline-offset-2 transition-colors hover:underline"
-              >
-                Arrise Digital
-              </a>{" "}
-              — Partners in Progress.
-            </p>
-          </div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-            <p className="text-center sm:text-right">
               <a href="/developers" className="underline-offset-2 hover:underline">
                 Meet the developer
               </a>
