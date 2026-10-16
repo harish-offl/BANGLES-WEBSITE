@@ -3,7 +3,6 @@ import { MessageCircle, Palette, Ruler, Sparkles, Upload } from "lucide-react";
 
 import { CustomizeForm } from "@/components/customize/customize-form";
 import { getCatalog } from "@/lib/data";
-import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Customize your order",
@@ -53,11 +52,7 @@ export default async function CustomizePage() {
       <section className="container-page py-12 sm:py-16">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
           <div className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)] sm:p-8">
-            <CustomizeForm
-              storeName={settings.store_name}
-              whatsappNumber={settings.whatsapp_number}
-              siteUrl={SITE_URL}
-            />
+            <CustomizeForm whatsappNumber={settings.whatsapp_number} />
           </div>
 
           <aside className="space-y-4 lg:sticky lg:top-28">

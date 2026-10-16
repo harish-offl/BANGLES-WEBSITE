@@ -50,10 +50,10 @@ export function Footer({ settings }: FooterProps) {
       <div className="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
         <div className="sm:col-span-2 lg:col-span-1">
           <p className="font-display text-2xl tracking-[0.06em] text-white">
-            Bangles <span className="text-[#f4bbb1]">by Beauty</span>
+            Bangles <span className="text-gold">by Beauty</span>
           </p>
           <div className="gold-rule mt-3 h-px w-24" aria-hidden="true" />
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-[#d8c7c1]">
+          <p className="mt-4 max-w-sm text-sm leading-relaxed text-brand-c200">
             {settings.footer_note ?? LEGACY_FACTS.heroBody}
           </p>
 
@@ -65,7 +65,7 @@ export function Footer({ settings }: FooterProps) {
                     href={href as string}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="grid size-9 place-items-center rounded-full border border-white/15 text-[#f4bbb1] transition-colors hover:border-[#f4bbb1] hover:text-white"
+                    className="grid size-9 place-items-center rounded-full border border-white/15 text-gold transition-colors hover:border-gold hover:text-white"
                     aria-label={`${settings.store_name} on ${label} (opens in a new tab)`}
                   >
                     <Icon className="size-4" aria-hidden="true" />
@@ -77,7 +77,7 @@ export function Footer({ settings }: FooterProps) {
         </div>
 
         <nav aria-label="Shop">
-          <h2 className="text-[0.7rem] font-medium tracking-[0.2em] text-[#f4bbb1] uppercase">
+          <h2 className="text-[0.7rem] font-medium tracking-[0.2em] text-gold uppercase">
             Shop
           </h2>
           <ul className="mt-4 space-y-2.5">
@@ -85,7 +85,7 @@ export function Footer({ settings }: FooterProps) {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sm text-[#d8c7c1] transition-colors hover:text-white"
+                  className="text-sm text-brand-c200 transition-colors hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -95,7 +95,7 @@ export function Footer({ settings }: FooterProps) {
         </nav>
 
         <nav aria-label="Information">
-          <h2 className="text-[0.7rem] font-medium tracking-[0.2em] text-[#f4bbb1] uppercase">
+          <h2 className="text-[0.7rem] font-medium tracking-[0.2em] text-gold uppercase">
             Information
           </h2>
           <ul className="mt-4 space-y-2.5">
@@ -103,7 +103,7 @@ export function Footer({ settings }: FooterProps) {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sm text-[#d8c7c1] transition-colors hover:text-white"
+                  className="text-sm text-brand-c200 transition-colors hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -113,7 +113,7 @@ export function Footer({ settings }: FooterProps) {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sm text-[#d8c7c1] transition-colors hover:text-white"
+                  className="text-sm text-brand-c200 transition-colors hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -123,20 +123,20 @@ export function Footer({ settings }: FooterProps) {
         </nav>
 
         <div>
-          <h2 className="text-[0.7rem] font-medium tracking-[0.2em] text-[#f4bbb1] uppercase">
+          <h2 className="text-[0.7rem] font-medium tracking-[0.2em] text-gold uppercase">
             Get in touch
           </h2>
-          <ul className="mt-4 space-y-3 text-sm text-[#d8c7c1]">
+          <ul className="mt-4 space-y-3 text-sm text-brand-c200">
             {settings.location ? (
               <li className="flex items-start gap-2.5">
-                <MapPin className="mt-0.5 size-4 shrink-0 text-[#f4bbb1]" aria-hidden="true" />
+                <MapPin className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden="true" />
                 <span>{settings.location}, Tamil Nadu, India</span>
               </li>
             ) : null}
 
             {whatsappDigits ? (
               <li className="flex items-start gap-2.5">
-                <MessageCircle className="mt-0.5 size-4 shrink-0 text-[#f4bbb1]" aria-hidden="true" />
+                <MessageCircle className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden="true" />
                 <a
                   href={`https://wa.me/${whatsappDigits}`}
                   target="_blank"
@@ -150,7 +150,7 @@ export function Footer({ settings }: FooterProps) {
 
             {settings.contact_email ? (
               <li className="flex items-start gap-2.5">
-                <Mail className="mt-0.5 size-4 shrink-0 text-[#f4bbb1]" aria-hidden="true" />
+                <Mail className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden="true" />
                 <a
                   href={`mailto:${settings.contact_email}`}
                   className="transition-colors hover:text-white"
@@ -167,7 +167,7 @@ export function Footer({ settings }: FooterProps) {
           </ul>
 
           {settings.announcement ? (
-            <p className="mt-5 rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-xs leading-relaxed text-[#d8c7c1]">
+            <p className="mt-5 rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-xs leading-relaxed text-brand-c200">
               {settings.announcement}
             </p>
           ) : null}
@@ -175,7 +175,7 @@ export function Footer({ settings }: FooterProps) {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="container-page flex flex-col gap-3 py-5 text-xs text-[#d8c7c1] sm:flex-row sm:items-center sm:justify-between">
+        <div className="container-page flex flex-col gap-3 py-5 text-xs text-brand-c200 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {year} {settings.store_name}. All rights reserved.
           </p>

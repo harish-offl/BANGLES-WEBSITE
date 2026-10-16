@@ -53,6 +53,17 @@ export interface ProductVariant {
 }
 
 /**
+ * Photography that is specific to one colour option (used by glass bangles,
+ * where every colour has its own image). Colour names match the entries in
+ * `Product.colours` so the product page can swap the gallery image when a
+ * shopper picks a colour.
+ */
+export interface ColourImage {
+  colour: string;
+  image_url: string;
+}
+
+/**
  * `stock_quantity === null` means inventory is not tracked for this product.
  * Most legacy catalogue items are made to order, so the original site never
  * published stock numbers and none are invented here. A non-null value is an
@@ -70,6 +81,11 @@ export interface Product {
   stock_quantity: number | null;
   primary_image_url: string | null;
   colours: string[];
+  /**
+   * Optional per-colour photography. When present, the product page shows the
+   * matching image as the shopper switches colour. Absent for most products.
+   */
+  colour_images?: ColourImage[];
   is_active: boolean;
   is_featured: boolean;
   is_new_arrival: boolean;

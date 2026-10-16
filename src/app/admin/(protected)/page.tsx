@@ -48,7 +48,7 @@ export default async function AdminDashboardPage() {
           value={overview.missingImages}
           hint="Products without a photo"
         />
-        <StatCard label="Data source" value={modeInfo.mode === "supabase" ? "Supabase" : "Local"} />
+        <StatCard label="Data source" value={modeInfo.mode === "supabase" ? "beautybybangles" : "Local"} />
       </div>
 
       <div className="mt-8 grid gap-4 lg:grid-cols-2">

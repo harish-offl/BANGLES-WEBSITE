@@ -3222,7 +3222,7 @@
       "price": 30,
       "compare_at_price": null,
       "stock_quantity": null,
-      "primary_image_url": null,
+      "primary_image_url": "/images/products/bng-146-lotus-with-crystal-brooch-pin.jpg",
       "colours": [],
       "is_active": true,
       "is_featured": false,
@@ -3687,14 +3687,55 @@
       "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
       "name": "Raindrop Glass bangles",
       "slug": "raindrop-glass-bangles",
-      "description": "Handcrafted with love from Pattukottai &#x2014; a beautiful piece perfect for every occasion.",
+      "description": "Handcrafted with love from Pattukottai — a beautiful piece perfect for every occasion, from festive celebrations to everyday elegance.",
       "sku": "BNG-159",
       "price": 280,
       "compare_at_price": null,
       "stock_quantity": null,
       "primary_image_url": "/images/products/bng-159-raindrop-glass-bangles.jpg",
       "colours": [
-        "glass"
+        "Forest Green",
+        "Pista Green",
+        "Pink",
+        "Maroon",
+        "Red",
+        "Rust Orange",
+        "Orange",
+        "Pista"
+      ],
+      "colour_images": [
+        {
+          "colour": "Forest Green",
+          "image_url": "/images/products/colors/bng-159-forest-green.jpg"
+        },
+        {
+          "colour": "Pista Green",
+          "image_url": "/images/products/colors/bng-159-pista-green.jpg"
+        },
+        {
+          "colour": "Pink",
+          "image_url": "/images/products/colors/bng-159-pink.jpg"
+        },
+        {
+          "colour": "Maroon",
+          "image_url": "/images/products/colors/bng-159-maroon.jpg"
+        },
+        {
+          "colour": "Red",
+          "image_url": "/images/products/colors/bng-159-red.jpg"
+        },
+        {
+          "colour": "Rust Orange",
+          "image_url": "/images/products/colors/bng-159-rust-orange.jpg"
+        },
+        {
+          "colour": "Orange",
+          "image_url": "/images/products/colors/bng-159-rust-orange.jpg"
+        },
+        {
+          "colour": "Pista",
+          "image_url": "/images/products/colors/bng-159-pista-green.jpg"
+        }
       ],
       "is_active": true,
       "is_featured": true,

@@ -10,5 +10,5 @@ export const metadata: Metadata = {
  * route group so the sign-in page can render without a session.
  */
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-dvh bg-brand-smoke">{children}</div>;
+  return <div className="admin-scope min-h-dvh bg-brand-smoke">{children}</div>;
 }

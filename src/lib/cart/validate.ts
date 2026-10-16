@@ -1,6 +1,11 @@
 import "server-only";
 
 import { getCatalog } from "@/lib/data";
+import {
+  getSizeSurcharge,
+  isBangleCategory,
+  isValidBangleSize,
+} from "@/lib/product-sizes";
 import { getPurchaseState, getStockLabel, isVariantAvailable } from "@/lib/product-utils";
 import { isSupabaseConfigured } from "@/lib/data/driver";
 
@@ -23,6 +28,10 @@ export interface ValidatedLine {
   imageUrl: string | null;
   sku: string | null;
   variantLabel: string | null;
+  /** Validated bangle size, or null for non-bangles/invalid sizes. */
+  size: string | null;
+  /** Validated colour option, or null when not offered. */
+  colour: string | null;
   /** Authoritative price from the catalogue, or `null` when unavailable. */
   unitPrice: number | null;
   lineTotal: number | null;
@@ -50,7 +59,7 @@ export async function validateCartItems(items: EnquiryItemValues[]): Promise<Car
 
   const merged = new Map<string, EnquiryItemValues>();
   for (const item of items) {
-    const key = `${item.productId}::${item.variantId ?? ""}`;
+    const key = `${item.productId}::${item.variantId ?? ""}::${item.size ?? ""}::${item.colour ?? ""}`;
     const existing = merged.get(key);
     if (existing) {
       existing.quantity = Math.min(99, existing.quantity + item.quantity);
@@ -79,6 +88,8 @@ export async function validateCartItems(items: EnquiryItemValues[]): Promise<Car
         imageUrl: null,
         sku: null,
         variantLabel: null,
+        size: null,
+        colour: null,
         unitPrice: null,
         lineTotal: null,
         available: false,
@@ -118,7 +129,21 @@ export async function validateCartItems(items: EnquiryItemValues[]): Promise<Car
       stockLabel = getStockLabel(product);
     }
 
-    const unitPrice = available ? (variant?.price_override ?? product.price) : null;
+    const appliesSize = isBangleCategory(product.category_name);
+    const resolvedSize =
+      appliesSize && isValidBangleSize(item.size) ? item.size?.trim() ?? null : null;
+    const resolvedColour =
+      item.colour &&
+      (product.colours ?? []).some(
+        (c) => c.toLowerCase() === item.colour!.trim().toLowerCase(),
+      )
+        ? item.colour.trim()
+        : null;
+    const sizeSurcharge = appliesSize ? getSizeSurcharge(resolvedSize) : 0;
+
+    const unitPrice = available
+      ? (variant?.price_override ?? product.price) + sizeSurcharge
+      : null;
     const lineTotal = unitPrice === null ? null : unitPrice * item.quantity;
 
     const line: ValidatedLine = {
@@ -130,6 +155,8 @@ export async function validateCartItems(items: EnquiryItemValues[]): Promise<Car
       imageUrl: product.primary_image_url,
       sku: variant?.sku ?? product.sku,
       variantLabel: variant ? `${variant.variant_name}: ${variant.variant_value}` : null,
+      size: resolvedSize,
+      colour: resolvedColour,
       unitPrice,
       lineTotal,
       available,

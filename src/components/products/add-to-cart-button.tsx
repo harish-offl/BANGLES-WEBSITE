@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useCartActions } from "@/hooks/use-cart";
 import { toCartLine } from "@/lib/cart/line";
+import { isBangleCategory } from "@/lib/product-sizes";
 import { getPurchaseState } from "@/lib/product-utils";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +26,14 @@ interface AddToCartButtonProps {
   compact?: boolean;
   /** Sends the shopper to the bag after adding (used on the product page). */
   goToCart?: boolean;
+  /**
+   * Explicit bangle size for this line. Optional: when a bangle is added from a
+   * grid without one, the button routes to the detail page so a size is chosen
+   * rather than silently defaulting.
+   */
+  bangleSize?: string;
+  /** Selected colour option, when the caller already knows it. */
+  colour?: string;
 }
 
 export function AddToCartButton({
@@ -37,6 +46,8 @@ export function AddToCartButton({
   label = "Add to bag",
   compact = false,
   goToCart = false,
+  bangleSize,
+  colour,
 }: AddToCartButtonProps) {
   const { add } = useCartActions();
   const router = useRouter();
@@ -47,10 +58,21 @@ export function AddToCartButton({
   const variantUnavailable = variant ? variant.stock_quantity === 0 : false;
   const disabled = !purchase.available || variantUnavailable || pending;
 
+  // Bangles are sized per order, so a quick add without a chosen size must send
+  // the shopper to the detail page instead of creating a sizeless bag line.
+  const needsSize = isBangleCategory(product.category_name) && !bangleSize;
+  const displayLabel = needsSize ? "Select size" : label;
+
   function handleAdd() {
     if (disabled) return;
+
+    if (needsSize) {
+      router.push(`/products/${product.slug}`);
+      return;
+    }
+
     setPending(true);
-    add(toCartLine(product, { quantity, variant }));
+    add(toCartLine(product, { quantity, variant, size: bangleSize, colour }));
     setPending(false);
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1600);
@@ -70,7 +92,13 @@ export function AddToCartButton({
       size={size}
       onClick={handleAdd}
       disabled={disabled}
-      aria-label={disabled ? (purchase.reason ?? "Unavailable") : `${label}: ${product.name}`}
+      aria-label={
+        disabled
+          ? (purchase.reason ?? "Unavailable")
+          : needsSize
+            ? `Select a size for ${product.name}`
+            : `${displayLabel}: ${product.name}`
+      }
       className={cn("gap-2", className)}
     >
       {pending ? (
@@ -81,7 +109,7 @@ export function AddToCartButton({
         <ShoppingBag className="size-4" aria-hidden="true" />
       )}
       <span className={cn(compact && "hidden sm:inline")}>
-        {!purchase.available ? (purchase.reason ?? "Unavailable") : added ? "Added" : label}
+        {!purchase.available ? (purchase.reason ?? "Unavailable") : added ? "Added" : displayLabel}
       </span>
     </Button>
   );

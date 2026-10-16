@@ -31,7 +31,13 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
   const signatureRef = useRef<string>("");
 
   const signature = useMemo(
-    () => lines.map((l) => `${cartKey(l.productId, l.variantId)}:${l.quantity}`).join("|"),
+    () =>
+      lines
+        .map(
+          (l) =>
+            `${cartKey(l.productId, l.variantId, l.size, l.colour)}:${l.quantity}`,
+        )
+        .join("|"),
     [lines],
   );
 
@@ -50,6 +56,8 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
             productId: l.productId,
             variantId: l.variantId,
             quantity: l.quantity,
+            size: l.size,
+            colour: l.colour,
           })),
         }),
       });
@@ -57,7 +65,7 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
       const data = (await response.json()) as { lines: ValidatedLine[] };
       const map: Record<string, ValidatedLine> = {};
       for (const line of data.lines) {
-        map[cartKey(line.productId, line.variantId)] = line;
+        map[cartKey(line.productId, line.variantId, line.size, line.colour)] = line;
       }
       setValidated(map);
     } catch {
@@ -75,7 +83,7 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
   }, [signature, validate]);
 
   const enriched = lines.map((line) => {
-    const server = validated[cartKey(line.productId, line.variantId)];
+    const server = validated[cartKey(line.productId, line.variantId, line.size, line.colour)];
     const unitPrice = server?.unitPrice ?? line.unitPrice;
     const available = server ? server.available : true;
     const priceChanged =
@@ -96,7 +104,7 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
       enriched
         .filter((item) => !item.available || item.priceChanged)
         .map((item) => ({
-          key: cartKey(item.line.productId, item.line.variantId),
+          key: cartKey(item.line.productId, item.line.variantId, item.line.size, item.line.colour),
           name: item.line.name,
           kind: item.available ? ("price-changed" as const) : ("unavailable" as const),
           message: item.available
@@ -122,6 +130,8 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
             productId: l.productId,
             variantId: l.variantId,
             quantity: l.quantity,
+            size: l.size,
+            colour: l.colour,
           })),
         }),
       });
@@ -167,7 +177,12 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
       <div>
         <ul className="divide-y divide-border border-y border-border">
           {enriched.map(({ line, server, unitPrice, available, priceChanged }) => {
-            const key = cartKey(line.productId, line.variantId);
+            const key = cartKey(line.productId, line.variantId, line.size, line.colour);
+            const options = [
+              line.variantLabel,
+              line.size ? `Size: ${line.size}` : null,
+              line.colour ? `Colour: ${line.colour}` : null,
+            ].filter(Boolean);
             return (
               <li key={key} className="flex gap-4 py-5">
                 <Link
@@ -185,8 +200,10 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
                           {line.name}
                         </Link>
                       </h2>
-                      {line.variantLabel ? (
-                        <p className="mt-0.5 text-xs text-muted-foreground">{line.variantLabel}</p>
+                      {options.length > 0 ? (
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          {options.join(" · ")}
+                        </p>
                       ) : null}
                       {line.sku ? (
                         <p className="mt-0.5 text-xs text-muted-foreground">Code: {line.sku}</p>
@@ -195,7 +212,9 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
 
                     <button
                       type="button"
-                      onClick={() => remove(line.productId, line.variantId)}
+                      onClick={() =>
+                        remove(line.productId, line.variantId, line.size, line.colour)
+                      }
                       className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-destructive"
                       aria-label={`Remove ${line.name} from bag`}
                     >
@@ -223,7 +242,15 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
                         variant="ghost"
                         size="icon-sm"
                         className="rounded-r-none"
-                        onClick={() => setQuantity(line.productId, line.quantity - 1, line.variantId)}
+                        onClick={() =>
+                          setQuantity(
+                            line.productId,
+                            line.quantity - 1,
+                            line.variantId,
+                            line.size,
+                            line.colour,
+                          )
+                        }
                         disabled={line.quantity <= 1}
                         aria-label={`Decrease quantity of ${line.name}`}
                       >
@@ -237,7 +264,15 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
                         variant="ghost"
                         size="icon-sm"
                         className="rounded-l-none"
-                        onClick={() => setQuantity(line.productId, line.quantity + 1, line.variantId)}
+                        onClick={() =>
+                          setQuantity(
+                            line.productId,
+                            line.quantity + 1,
+                            line.variantId,
+                            line.size,
+                            line.colour,
+                          )
+                        }
                         disabled={line.quantity >= MAX_LINE_QUANTITY}
                         aria-label={`Increase quantity of ${line.name}`}
                       >

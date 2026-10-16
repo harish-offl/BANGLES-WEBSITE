@@ -95,7 +95,7 @@ async function main() {
   // Products -----------------------------------------------------------------
   lines.push("-- Products");
   const productColumns =
-    "id, category_id, name, slug, description, sku, price, compare_at_price, stock_quantity, primary_image_url, colours, is_active, is_featured, is_new_arrival, seo_title, seo_description, legacy_id, legacy_image_source, sort_index";
+    "id, category_id, name, slug, description, sku, price, compare_at_price, stock_quantity, primary_image_url, colours, colour_images, is_active, is_featured, is_new_arrival, seo_title, seo_description, legacy_id, legacy_image_source, sort_index";
   lines.push(`insert into public.products (${productColumns}) values`);
   const prodRows = catalog.products.map((p) =>
     `  (${sqlString(p.id)}, ${sqlString(p.category_id ?? null)}, ${sqlString(p.name)}, ${sqlString(
@@ -106,8 +106,9 @@ async function main() {
         : Number(p.compare_at_price)
     }, ${
       p.stock_quantity === null || p.stock_quantity === undefined ? "null" : Number(p.stock_quantity)
-    }, ${sqlString(p.primary_image_url ?? null)}, ${sqlArray(p.colours)}, ${
-      p.is_active === false ? "false" : "true"
+    }, ${sqlString(p.primary_image_url ?? null)}, ${sqlArray(p.colours)}, ${sqlJson(
+      Array.isArray(p.colour_images) ? p.colour_images : [],
+    )}, ${p.is_active === false ? "false" : "true"
     }, ${p.is_featured ? "true" : "false"}, ${p.is_new_arrival ? "true" : "false"}, ${sqlString(
       p.seo_title ?? null,
     )}, ${sqlString(p.seo_description ?? null)}, ${sqlString(p.legacy_id ?? null)}, ${sqlString(
@@ -116,7 +117,7 @@ async function main() {
   );
   lines.push(prodRows.join(",\n"));
   lines.push(
-    "on conflict (id) do update set category_id = excluded.category_id, name = excluded.name, slug = excluded.slug, description = excluded.description, sku = excluded.sku, price = excluded.price, compare_at_price = excluded.compare_at_price, stock_quantity = excluded.stock_quantity, primary_image_url = excluded.primary_image_url, colours = excluded.colours, is_active = excluded.is_active, is_featured = excluded.is_featured, is_new_arrival = excluded.is_new_arrival, seo_title = excluded.seo_title, seo_description = excluded.seo_description, legacy_id = excluded.legacy_id, legacy_image_source = excluded.legacy_image_source, sort_index = excluded.sort_index, updated_at = timezone('utc', now());",
+    "on conflict (id) do update set category_id = excluded.category_id, name = excluded.name, slug = excluded.slug, description = excluded.description, sku = excluded.sku, price = excluded.price, compare_at_price = excluded.compare_at_price, stock_quantity = excluded.stock_quantity, primary_image_url = excluded.primary_image_url, colours = excluded.colours, colour_images = excluded.colour_images, is_active = excluded.is_active, is_featured = excluded.is_featured, is_new_arrival = excluded.is_new_arrival, seo_title = excluded.seo_title, seo_description = excluded.seo_description, legacy_id = excluded.legacy_id, legacy_image_source = excluded.legacy_image_source, sort_index = excluded.sort_index, updated_at = timezone('utc', now());",
   );
   lines.push("");
   lines.push("commit;");

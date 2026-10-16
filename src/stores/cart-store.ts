@@ -13,6 +13,10 @@ export interface CartLine {
   unitPrice: number;
   variantId: string | null;
   variantLabel: string | null;
+  /** Selected bangle size, e.g. "2.10"; null for non-bangles. */
+  size: string | null;
+  /** Selected colour option; null when the product has no colour choice. */
+  colour: string | null;
   quantity: number;
 }
 
@@ -31,15 +35,34 @@ interface CartState {
   /** Populated after each server-side validation pass. */
   issues: CartValidationIssue[];
   add: (line: CartLine) => void;
-  remove: (productId: string, variantId?: string | null) => void;
-  setQuantity: (productId: string, quantity: number, variantId?: string | null) => void;
+  remove: (
+    productId: string,
+    variantId?: string | null,
+    size?: string | null,
+    colour?: string | null,
+  ) => void;
+  setQuantity: (
+    productId: string,
+    quantity: number,
+    variantId?: string | null,
+    size?: string | null,
+    colour?: string | null,
+  ) => void;
   clear: () => void;
   setIssues: (issues: CartValidationIssue[]) => void;
   setHydrated: (value: boolean) => void;
 }
 
-export const cartKey = (productId: string, variantId?: string | null): string =>
-  `${productId}::${variantId ?? ""}`;
+/**
+ * A line is identified by product + variant + size + colour, so the same bangle
+ * in two sizes or colours is kept as two separate bag lines.
+ */
+export const cartKey = (
+  productId: string,
+  variantId?: string | null,
+  size?: string | null,
+  colour?: string | null,
+): string => `${productId}::${variantId ?? ""}::${size ?? ""}::${colour ?? ""}`;
 
 /** Maximum quantity per line; keeps the enquiry readable for the store. */
 export const MAX_LINE_QUANTITY = 99;
@@ -53,14 +76,14 @@ export const useCartStore = create<CartState>()(
 
       add: (line) =>
         set((state) => {
-          const key = cartKey(line.productId, line.variantId);
+          const key = cartKey(line.productId, line.variantId, line.size, line.colour);
           const existing = state.lines.find(
-            (l) => cartKey(l.productId, l.variantId) === key,
+            (l) => cartKey(l.productId, l.variantId, l.size, l.colour) === key,
           );
           if (existing) {
             return {
               lines: state.lines.map((l) =>
-                cartKey(l.productId, l.variantId) === key
+                cartKey(l.productId, l.variantId, l.size, l.colour) === key
                   ? {
                       ...l,
                       quantity: Math.min(
@@ -84,26 +107,31 @@ export const useCartStore = create<CartState>()(
           };
         }),
 
-      remove: (productId, variantId = null) =>
+      remove: (productId, variantId = null, size = null, colour = null) =>
         set((state) => ({
           lines: state.lines.filter(
-            (l) => cartKey(l.productId, l.variantId) !== cartKey(productId, variantId),
+            (l) =>
+              cartKey(l.productId, l.variantId, l.size, l.colour) !==
+              cartKey(productId, variantId, size, colour),
           ),
         })),
 
-      setQuantity: (productId, quantity, variantId = null) =>
-        set((state) => ({
-          lines:
-            quantity <= 0
-              ? state.lines.filter(
-                  (l) => cartKey(l.productId, l.variantId) !== cartKey(productId, variantId),
-                )
-              : state.lines.map((l) =>
-                  cartKey(l.productId, l.variantId) === cartKey(productId, variantId)
-                    ? { ...l, quantity: Math.min(MAX_LINE_QUANTITY, Math.max(1, quantity)) }
-                    : l,
-                ),
-        })),
+      setQuantity: (productId, quantity, variantId = null, size = null, colour = null) =>
+        set((state) => {
+          const target = cartKey(productId, variantId, size, colour);
+          return {
+            lines:
+              quantity <= 0
+                ? state.lines.filter(
+                    (l) => cartKey(l.productId, l.variantId, l.size, l.colour) !== target,
+                  )
+                : state.lines.map((l) =>
+                    cartKey(l.productId, l.variantId, l.size, l.colour) === target
+                      ? { ...l, quantity: Math.min(MAX_LINE_QUANTITY, Math.max(1, quantity)) }
+                      : l,
+                  ),
+          };
+        }),
 
       clear: () => set({ lines: [], issues: [] }),
 

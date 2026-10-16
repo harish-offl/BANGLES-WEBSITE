@@ -1,7 +1,7 @@
 import "server-only";
 
 import { getCatalog } from "@/lib/data";
-import type { Category, Product } from "@/types";
+import type { Category, Order, Product } from "@/types";
 
 const MAX_PAGE_SIZE = 100;
 
@@ -65,6 +65,15 @@ export async function getAdminCategories(): Promise<Category[]> {
   return getCatalog().listCategories();
 }
 
+export async function getAdminCategory(id: string): Promise<Category | null> {
+  const categories = await getCatalog().listCategories();
+  return categories.find((category) => category.id === id) ?? null;
+}
+
 export async function getAdminProduct(id: string): Promise<Product | null> {
   return getCatalog().getProductById(id);
+}
+
+export async function getAllOrders(): Promise<Order[]> {
+  return getCatalog().listOrders();
 }

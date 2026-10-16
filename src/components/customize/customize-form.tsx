@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { buildCustomDesignMessage, buildWhatsAppUrl } from "@/lib/whatsapp/shared";
 import { CUSTOM_SIZES, customDesignSchema } from "@/lib/validation/custom-design";
 import { cn } from "@/lib/utils";
 
@@ -38,10 +37,20 @@ function normaliseHex(value: string): string | null {
   return (trimmed.startsWith("#") ? trimmed : `#${trimmed}`).toLowerCase();
 }
 
+/** Saves the reference photo so the customer can attach it if the upload fails. */
+function downloadFile(file: File): void {
+  const href = URL.createObjectURL(file);
+  const link = document.createElement("a");
+  link.href = href;
+  link.download = file.name || "design-reference.jpg";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(href), 4000);
+}
+
 interface CustomizeFormProps {
-  storeName: string;
   whatsappNumber: string | null;
-  siteUrl: string;
 }
 
 function fieldErrorsFrom(error: {
@@ -56,12 +65,14 @@ function fieldErrorsFrom(error: {
 }
 
 /**
- * Custom design brief. The customer composes a design (reference image,
- * colours, size and notes) and submits it as a WhatsApp enquiry — matching the
- * store's WhatsApp-first ordering flow. Images are previewed locally and the
- * customer attaches the file in the chat.
+ * Custom design brief. The customer composes a design (reference photo,
+ * colours, size and notes) and submits it straight to the store's configured
+ * WhatsApp number — matching the store's WhatsApp-first ordering flow. The
+ * photo is uploaded server-side and its link is embedded in the brief so it
+ * reaches the chat. If the upload is unavailable the file is downloaded so the
+ * customer can attach it, and the chat is still opened directly.
  */
-export function CustomizeForm({ storeName, whatsappNumber, siteUrl }: CustomizeFormProps) {
+export function CustomizeForm({ whatsappNumber }: CustomizeFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [size, setSize] = useState<string>("");
@@ -106,7 +117,7 @@ export function CustomizeForm({ storeName, whatsappNumber, siteUrl }: CustomizeF
     setPreviewUrl(URL.createObjectURL(file));
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const parsed = customDesignSchema.safeParse({
@@ -116,7 +127,6 @@ export function CustomizeForm({ storeName, whatsappNumber, siteUrl }: CustomizeF
       mobile,
       address,
       email,
-      imageName: imageFile?.name ?? null,
     });
 
     if (!parsed.success) {
@@ -133,29 +143,43 @@ export function CustomizeForm({ storeName, whatsappNumber, siteUrl }: CustomizeF
     setErrors({});
     setSubmitting(true);
 
-    const message = buildCustomDesignMessage({
-      storeName,
-      siteUrl,
-      size: parsed.data.size,
-      colours: parsed.data.colours,
-      customColour: parsed.data.customColour,
-      comments: parsed.data.comments,
-      mobile: parsed.data.mobile,
-      address: parsed.data.address,
-      email: parsed.data.email,
-      imageName: parsed.data.imageName,
-    });
+    const formData = new FormData();
+    formData.append("size", parsed.data.size);
+    for (const colour of parsed.data.colours) formData.append("colours", colour);
+    if (parsed.data.comments) formData.append("comments", parsed.data.comments);
+    formData.append("mobile", parsed.data.mobile);
+    formData.append("address", parsed.data.address);
+    formData.append("email", parsed.data.email);
+    if (imageFile) formData.append("design_image", imageFile);
 
-    const url = buildWhatsAppUrl(whatsappNumber, message);
-    if (!url) {
+    try {
+      const response = await fetch("/api/custom-design", { method: "POST", body: formData });
+      const data: { url?: string; error?: string; imageSent?: boolean } = await response
+        .json()
+        .catch(() => ({}));
+
+      if (!response.ok || !data.url) {
+        toast.error(data.error ?? "Could not send your design. Please try again.");
+        return;
+      }
+
+      // The server composes the brief and resolves the store's WhatsApp number,
+      // so this always opens the configured chat — never a share sheet.
+      window.open(data.url, "_blank", "noopener,noreferrer");
+
+      if (imageFile && data.imageSent === false) {
+        downloadFile(imageFile);
+        toast.success("WhatsApp opened — attach the photo we just saved to your device.");
+      } else if (imageFile) {
+        toast.success("Opening WhatsApp — your design photo is included in the brief.");
+      } else {
+        toast.success("Opening WhatsApp with your design brief.");
+      }
+    } catch {
+      toast.error("Network error — please check your connection and try again.");
+    } finally {
       setSubmitting(false);
-      toast.error("WhatsApp ordering is not configured yet. Please contact us another way.");
-      return;
     }
-
-    window.open(url, "_blank", "noopener,noreferrer");
-    toast.success("Opening WhatsApp with your design brief.");
-    setSubmitting(false);
   }
 
   const colourLabels = colours.map(
@@ -185,7 +209,7 @@ export function CustomizeForm({ storeName, whatsappNumber, siteUrl }: CustomizeF
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-foreground">{imageFile?.name}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  Attach this photo in the WhatsApp chat after you submit.
+                  This photo is sent with your brief on WhatsApp.
                 </p>
                 <button
                   type="button"
@@ -210,7 +234,7 @@ export function CustomizeForm({ storeName, whatsappNumber, siteUrl }: CustomizeF
                 <ImagePlus className="size-5" aria-hidden="true" />
               </span>
               <span className="text-sm font-medium text-foreground">Upload</span>
-              <span className="text-xs text-muted-foreground">JPG, PNG or WebP up to 5 MB</span>
+              <span className="text-xs text-muted-foreground">JPG, PNG, WebP or AVIF up to 5 MB</span>
             </button>
           )}
           <input
@@ -218,7 +242,7 @@ export function CustomizeForm({ storeName, whatsappNumber, siteUrl }: CustomizeF
             id="design_image"
             name="design_image"
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp,image/avif"
             className="sr-only"
             onChange={(event) => handleFile(event.target.files?.[0] ?? null)}
           />

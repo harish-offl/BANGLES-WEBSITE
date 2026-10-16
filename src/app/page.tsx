@@ -4,6 +4,7 @@ import { CtaBand } from "@/components/home/cta-band";
 import { FaqSection } from "@/components/home/faq-section";
 import { Hero } from "@/components/home/hero";
 import { MapSection } from "@/components/home/map-section";
+import { ParallaxBand } from "@/components/home/parallax-band";
 import { ReviewSection } from "@/components/reviews/review-section";
 import { StorySection } from "@/components/home/story-section";
 import { TrustStrip } from "@/components/home/trust-strip";
@@ -110,6 +111,7 @@ export default async function HomePage() {
       <CategoryTiles categories={categories} />
       <CollectionShowcase groups={groups} />
       <StorySection />
+      <ParallaxBand />
       <ReviewSection
         storeName={settings.store_name}
         whatsappNumber={settings.whatsapp_number}

@@ -68,6 +68,8 @@ export async function POST(request: Request) {
       unitPrice: line.unitPrice ?? 0,
       variantLabel: line.variantLabel,
       sku: line.sku,
+      size: line.size,
+      colour: line.colour,
       url: line.slug ? `${SITE_URL}/#product-${line.slug}` : null,
     })),
   });
@@ -77,6 +79,35 @@ export async function POST(request: Request) {
       { error: "WhatsApp ordering is not configured yet. Please contact us another way." },
       { status: 503 },
     );
+  }
+
+  // Best-effort record of the enquiry so the admin panel can follow up. A
+  // storage failure must never stop the customer reaching WhatsApp, so any
+  // error is swallowed after the link is built.
+  try {
+    await getCatalog().createOrder({
+      customerName: null,
+      customerPhone: null,
+      notes: parsed.data.note,
+      currency: settings.currency,
+      subtotal: result.subtotal,
+      items: result.purchasable.map((line) => ({
+        productId: line.productId,
+        productName: line.name,
+        variant:
+          [
+            line.variantLabel,
+            line.size ? `Size: ${line.size}` : null,
+            line.colour ? `Colour: ${line.colour}` : null,
+          ]
+            .filter(Boolean)
+            .join(", ") || null,
+        quantity: line.quantity,
+        unitPrice: line.unitPrice ?? 0,
+      })),
+    });
+  } catch {
+    // Recording is optional; ignore and continue.
   }
 
   return NextResponse.json(

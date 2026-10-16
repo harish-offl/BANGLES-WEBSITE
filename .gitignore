@@ -52,3 +52,6 @@ next-env.d.ts
 /audit/raw-images/
 /audit/legacy-screenshots/
 
+# supabase CLI temp state
+/supabase/.temp/
+

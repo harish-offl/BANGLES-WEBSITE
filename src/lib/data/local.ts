@@ -4,9 +4,17 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { DEFAULT_SETTINGS } from "@/lib/site";
-import type { Category, Paginated, Product, ProductFilters, StoreSettings } from "@/types";
+import type {
+  Category,
+  Order,
+  OrderStatus,
+  Paginated,
+  Product,
+  ProductFilters,
+  StoreSettings,
+} from "@/types";
 
-import type { CatalogDriver } from "./driver";
+import type { CatalogDriver, OrderInput } from "./driver";
 import { decodeHtmlEntities, normalizeDescription } from "./text";
 
 interface CatalogFile {
@@ -18,6 +26,7 @@ const SEED_PATH = path.join(process.cwd(), "src", "lib", "data", "catalog.json")
 const RUNTIME_DIR = path.join(process.cwd(), ".data");
 const RUNTIME_PATH = path.join(RUNTIME_DIR, "catalog.json");
 const SETTINGS_PATH = path.join(RUNTIME_DIR, "settings.json");
+const ORDERS_PATH = path.join(RUNTIME_DIR, "orders.json");
 
 let cache: { mtimeMs: number; data: CatalogFile } | null = null;
 
@@ -69,6 +78,33 @@ function writeCatalog(data: CatalogFile): void {
   fs.mkdirSync(RUNTIME_DIR, { recursive: true });
   fs.writeFileSync(RUNTIME_PATH, JSON.stringify(data, null, 2));
   cache = { mtimeMs: fs.statSync(RUNTIME_PATH).mtimeMs, data };
+}
+
+/** Enquiry records recorded while Supabase is not configured. */
+function readOrders(): Order[] {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(ORDERS_PATH, "utf8")) as Order[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeOrders(orders: Order[]): void {
+  fs.mkdirSync(RUNTIME_DIR, { recursive: true });
+  fs.writeFileSync(ORDERS_PATH, JSON.stringify(orders, null, 2));
+}
+
+/** Mirrors the Supabase sequence: BB-YYMM-##### starting at 1001. */
+function nextOrderNumber(orders: Order[]): string {
+  const now = new Date();
+  const yymm = `${String(now.getUTCFullYear()).slice(-2)}${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
+  const highest = orders.reduce((max, order) => {
+    const match = /-(\d+)$/.exec(order.order_number);
+    const value = match ? Number(match[1]) : 0;
+    return Number.isFinite(value) && value > max ? value : max;
+  }, 1000);
+  return `BB-${yymm}-${String(highest + 1).padStart(5, "0")}`;
 }
 
 function now(): string {
@@ -318,6 +354,53 @@ export const localDriver: CatalogDriver = {
       throw new Error("Category still has products. Reassign or remove them first.");
     }
     writeCatalog({ categories: categories.filter((c) => c.id !== id), products });
+  },
+
+  async listOrders(options = {}): Promise<Order[]> {
+    const orders = readOrders();
+    const filtered = options.status ? orders.filter((o) => o.status === options.status) : orders;
+    return [...filtered].sort((a, b) => b.created_at.localeCompare(a.created_at));
+  },
+
+  async createOrder(input: OrderInput): Promise<Order> {
+    const orders = readOrders();
+    const timestamp = now();
+    const id = `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const order: Order = {
+      id,
+      order_number: nextOrderNumber(orders),
+      customer_name: input.customerName,
+      customer_phone: input.customerPhone,
+      status: "pending",
+      currency: input.currency,
+      subtotal: input.subtotal,
+      total_amount: input.subtotal,
+      notes: input.notes,
+      created_at: timestamp,
+      updated_at: timestamp,
+      items: input.items.map((item, index) => ({
+        id: `${id}-item-${index + 1}`,
+        order_id: id,
+        product_id: item.productId,
+        product_name_snapshot: item.productName,
+        selected_variant_snapshot: item.variant,
+        quantity: item.quantity,
+        unit_price: item.unitPrice,
+        line_total: item.unitPrice * item.quantity,
+      })),
+    };
+    writeOrders([order, ...orders]);
+    return order;
+  },
+
+  async updateOrderStatus(id, status: OrderStatus): Promise<Order> {
+    const orders = readOrders();
+    const idx = orders.findIndex((o) => o.id === id);
+    if (idx < 0) throw new Error("Enquiry not found");
+    const updated: Order = { ...orders[idx], status, updated_at: now() };
+    orders[idx] = updated;
+    writeOrders(orders);
+    return updated;
   },
 
   async updateSettings(input): Promise<StoreSettings> {

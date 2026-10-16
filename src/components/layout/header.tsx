@@ -44,7 +44,7 @@ export function Header({ categories, announcement }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 w-full">
       {announcement ? (
-        <div className="bg-brand-ink px-4 py-2 text-center text-[0.72rem] uppercase tracking-[0.14em] text-[#f4bbb1]">
+        <div className="bg-brand-ink px-4 py-2 text-center text-[0.72rem] uppercase tracking-[0.14em] text-gold">
           <span className="mx-auto block max-w-5xl">{announcement}</span>
         </div>
       ) : null}

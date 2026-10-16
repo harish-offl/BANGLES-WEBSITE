@@ -15,6 +15,16 @@ import {
   settingsUpdateSchema,
 } from "@/lib/validation";
 import type { ActionState } from "@/lib/admin/action-state";
+import type { OrderStatus } from "@/types";
+
+const ORDER_STATUSES: readonly OrderStatus[] = [
+  "pending",
+  "confirmed",
+  "processing",
+  "dispatched",
+  "delivered",
+  "cancelled",
+];
 
 function fieldErrorsFrom(error: {
   issues: { path: PropertyKey[]; message: string }[];
@@ -212,7 +222,12 @@ export async function deleteCategoryAction(formData: FormData): Promise<void> {
   await requireAdminAccess();
   const id = optionalString(formData.get("id"));
   if (!id) return;
-  await getCatalog().deleteCategory(id);
+  try {
+    await getCatalog().deleteCategory(id);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Could not delete the category.";
+    redirect(`/admin/categories?error=${encodeURIComponent(message)}`);
+  }
   revalidateStorefront();
   redirect("/admin/categories?deleted=1");
 }
@@ -264,4 +279,17 @@ export async function saveSettingsAction(
       message: error instanceof Error ? error.message : "Could not save settings.",
     };
   }
+}
+
+export async function updateOrderStatusAction(formData: FormData): Promise<void> {
+  await requireAdminAccess();
+  const id = optionalString(formData.get("id"));
+  const status = optionalString(formData.get("status")) as OrderStatus | null;
+  if (!id || !status || !ORDER_STATUSES.includes(status)) return;
+  try {
+    await getCatalog().updateOrderStatus(id, status);
+  } catch {
+    redirect("/admin/orders?error=1");
+  }
+  redirect("/admin/orders?saved=1");
 }

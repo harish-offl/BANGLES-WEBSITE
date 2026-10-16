@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { PolicyAside } from "@/components/content/policy-aside";
 import { PolicyContent } from "@/components/content/policy-content";
 import { PageShell } from "@/components/shared/page-shell";
 import { POLICY_PAGES } from "@/lib/content/legal";
@@ -22,6 +23,7 @@ export default function ShippingPolicyPage() {
       title={page.title}
       description={page.description}
       breadcrumbs={[{ label: "Home", href: "/" }, { label: page.title }]}
+      aside={<PolicyAside topic="shipping" />}
     >
       <PolicyContent page={page} />
     </PageShell>

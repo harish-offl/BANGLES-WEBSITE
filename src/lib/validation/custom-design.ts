@@ -35,7 +35,6 @@ export const customDesignSchema = z.object({
   mobile: mobileSchema,
   address: z.string().trim().min(1, "Address is required.").max(500),
   email: emailSchema,
-  imageName: z.string().trim().max(200).nullable().default(null),
 });
 
 export type CustomDesignValues = z.infer<typeof customDesignSchema>;

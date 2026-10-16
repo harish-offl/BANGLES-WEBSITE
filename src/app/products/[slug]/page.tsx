@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { RefreshCw, ShieldCheck, Truck } from "lucide-react";
 
-import { ProductGallery } from "@/components/products/product-gallery";
+import { ProductDetail } from "@/components/products/product-detail";
 import { ProductGrid } from "@/components/products/product-grid";
-import { ProductPurchasePanel } from "@/components/products/product-purchase-panel";
 import { Prose } from "@/components/shared/page-shell";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { JsonLd } from "@/components/shared/json-ld";
@@ -71,67 +68,12 @@ export default async function ProductPage(props: PageProps<"/products/[slug]">) 
       <JsonLd data={productJsonLd(product)} />
       <JsonLd data={breadcrumbJsonLd(breadcrumbs)} />
 
-      <div className="mt-6 grid gap-8 lg:grid-cols-2 lg:gap-12">
-        <ProductGallery images={product.images ?? []} name={product.name} />
-
-        <div className="flex flex-col gap-6">
-          <div>
-            {product.category ? (
-              <Link
-                href={`/collections/${product.category.slug}`}
-                className="text-xs uppercase tracking-[0.16em] text-gold-strong hover:underline"
-              >
-                {product.category.name}
-              </Link>
-            ) : null}
-            <h1 className="mt-2 font-display text-2xl leading-tight text-foreground sm:text-3xl">
-              {product.name}
-            </h1>
-          </div>
-
-          <ProductPurchasePanel
-            product={product}
-            whatsappNumber={settings.whatsapp_number}
-            siteUrl={SITE_URL}
-          />
-
-          <dl className="grid grid-cols-1 gap-2 border-t border-border pt-5 text-sm sm:grid-cols-2">
-            <div className="flex gap-2">
-              <dt className="text-muted-foreground">Product code</dt>
-              <dd className="text-foreground">{product.sku ?? "—"}</dd>
-            </div>
-            <div className="flex gap-2">
-              <dt className="text-muted-foreground">Category</dt>
-              <dd className="text-foreground">{product.category_name ?? "—"}</dd>
-            </div>
-            {product.colours.length > 0 ? (
-              <div className="flex gap-2 sm:col-span-2">
-                <dt className="text-muted-foreground">Colours</dt>
-                <dd className="capitalize text-foreground">{product.colours.join(", ")}</dd>
-              </div>
-            ) : null}
-          </dl>
-
-          <ul className="grid gap-3 sm:grid-cols-3">
-            <li className="flex items-start gap-2 rounded-xl border border-border bg-card p-3 text-xs text-muted-foreground">
-              <Truck className="mt-0.5 size-4 shrink-0 text-gold-strong" aria-hidden="true" />
-              <span>
-                {settings.free_shipping_threshold
-                  ? `Free delivery above ₹${settings.free_shipping_threshold.toLocaleString("en-IN")}`
-                  : "Delivery confirmed on enquiry"}
-              </span>
-            </li>
-            <li className="flex items-start gap-2 rounded-xl border border-border bg-card p-3 text-xs text-muted-foreground">
-              <RefreshCw className="mt-0.5 size-4 shrink-0 text-gold-strong" aria-hidden="true" />
-              <span>Handmade to order in 5–7 days</span>
-            </li>
-            <li className="flex items-start gap-2 rounded-xl border border-border bg-card p-3 text-xs text-muted-foreground">
-              <ShieldCheck className="mt-0.5 size-4 shrink-0 text-gold-strong" aria-hidden="true" />
-              <span>Confirm details with us on WhatsApp</span>
-            </li>
-          </ul>
-        </div>
-      </div>
+      <ProductDetail
+        product={product}
+        whatsappNumber={settings.whatsapp_number}
+        siteUrl={SITE_URL}
+        freeShippingThreshold={settings.free_shipping_threshold}
+      />
 
       {product.description ? (
         <section className="mt-12 max-w-3xl border-t border-border pt-8">

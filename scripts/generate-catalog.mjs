@@ -187,22 +187,48 @@ const catIdByName = Object.fromEntries(categories.map((c) => [c.name, c.id]));
 const FEATURED_SKUS = ["BNG-177", "BNG-175", "BNG-158", "BNG-173", "BNG-170", "BNG-152", "BNG-159"];
 const NEW_ARRIVAL_SKUS = ["BNG-177", "BNG-173", "BNG-172", "BNG-171", "BNG-170", "BNG-169", "BNG-168"];
 
+/**
+ * Glass bangles are sold in eight colourways, each with its own photograph.
+ * The originals were downloaded to `public/images/products/colors` from the
+ * source site's per-colour media. "Orange" and "Pista" have no separate
+ * photography, so they reuse the closest available image.
+ */
+const GLASS_COLOUR_IMAGES = {
+  "BNG-159": [
+    { colour: "Forest Green", image_url: "/images/products/colors/bng-159-forest-green.jpg" },
+    { colour: "Pista Green", image_url: "/images/products/colors/bng-159-pista-green.jpg" },
+    { colour: "Pink", image_url: "/images/products/colors/bng-159-pink.jpg" },
+    { colour: "Maroon", image_url: "/images/products/colors/bng-159-maroon.jpg" },
+    { colour: "Red", image_url: "/images/products/colors/bng-159-red.jpg" },
+    { colour: "Rust Orange", image_url: "/images/products/colors/bng-159-rust-orange.jpg" },
+    { colour: "Orange", image_url: "/images/products/colors/bng-159-rust-orange.jpg" },
+    { colour: "Pista", image_url: "/images/products/colors/bng-159-pista-green.jpg" },
+  ],
+};
+
+const DESCRIPTION_OVERRIDES = {
+  "BNG-159":
+    "Handcrafted with love from Pattukottai \u2014 a beautiful piece perfect for every occasion, from festive celebrations to everyday elegance.",
+};
+
 const out = products.map((p, i) => {
   const slug = uniqueSlug(slugify(p.name));
   const image = resolveImage(p.image);
-  const colours = extractColours(`${p.name} ${p.description}`);
+  const glassColours = GLASS_COLOUR_IMAGES[p.sku];
+  const colours = glassColours ? glassColours.map((c) => c.colour) : extractColours(`${p.name} ${p.description}`);
   return {
     id: stableUuid(`product:${p.sku}`),
     category_id: catIdByName[p.category] ?? null,
     name: p.name.trim().replace(/\s+/g, " "),
     slug,
-    description: normalizeLegacyPriceText((p.description || "").trim()),
+    description: DESCRIPTION_OVERRIDES[p.sku] ?? normalizeLegacyPriceText((p.description || "").trim()),
     sku: p.sku,
     price: Number(p.price),
     compare_at_price: null,
     stock_quantity: null,
     primary_image_url: image,
     colours,
+    ...(glassColours ? { colour_images: glassColours } : {}),
     is_active: true,
     is_featured: FEATURED_SKUS.includes(p.sku),
     is_new_arrival: NEW_ARRIVAL_SKUS.includes(p.sku),

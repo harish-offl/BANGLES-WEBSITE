@@ -4,6 +4,8 @@ import type {
   Category,
   DataMode,
   DataModeInfo,
+  Order,
+  OrderStatus,
   Paginated,
   Product,
   ProductFilters,
@@ -37,6 +39,23 @@ export interface CategoryInput {
   is_active: boolean;
 }
 
+export interface OrderItemInput {
+  productId: string | null;
+  productName: string;
+  variant: string | null;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface OrderInput {
+  customerName: string | null;
+  customerPhone: string | null;
+  notes: string | null;
+  currency: string;
+  subtotal: number;
+  items: OrderItemInput[];
+}
+
 export interface CatalogDriver {
   readonly mode: DataMode;
 
@@ -59,6 +78,10 @@ export interface CatalogDriver {
   updateCategory(id: string, input: Partial<CategoryInput>): Promise<Category>;
   deleteCategory(id: string): Promise<void>;
 
+  listOrders(options?: { status?: OrderStatus }): Promise<Order[]>;
+  createOrder(input: OrderInput): Promise<Order>;
+  updateOrderStatus(id: string, status: OrderStatus): Promise<Order>;
+
   updateSettings(input: Partial<StoreSettings>): Promise<StoreSettings>;
 }
 
@@ -66,7 +89,7 @@ export function getDataModeInfo(): DataModeInfo {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (url && key) {
-    return { mode: "supabase", reason: "Supabase project configured via environment." };
+    return { mode: "supabase", reason: "beautybybangles database configured via environment." };
   }
   return {
     mode: "local",

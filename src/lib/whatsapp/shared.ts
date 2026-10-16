@@ -12,6 +12,10 @@ export interface WhatsAppCartItem {
   unitPrice: number;
   variantLabel?: string | null;
   sku?: string | null;
+  /** Selected bangle size, e.g. "2.10". */
+  size?: string | null;
+  /** Selected colour option. */
+  colour?: string | null;
   slug?: string;
   url?: string | null;
 }
@@ -69,6 +73,8 @@ export function buildWhatsAppMessage(input: WhatsAppMessageInput): string {
     lines.push(`${index}. ${item.name}`);
     if (item.variantLabel) lines.push(`   Variant: ${item.variantLabel}`);
     if (item.sku) lines.push(`   Code: ${item.sku}`);
+    if (item.size) lines.push(`   Size: ${item.size}`);
+    if (item.colour) lines.push(`   Colour: ${item.colour}`);
     lines.push(`   Quantity: ${item.quantity}`);
     lines.push(`   Unit price: ${formatPrice(item.unitPrice)}`);
     lines.push(`   Subtotal: ${formatPrice(subtotal)}`);
@@ -110,13 +116,16 @@ export interface WhatsAppCustomDesignInput {
   mobile: string;
   address: string;
   email: string;
+  /** Public link to the uploaded reference photo, when one was stored. */
+  imageUrl?: string | null;
+  /** Fallback note when the photo could not be uploaded and must be attached by hand. */
   imageName?: string | null;
 }
 
 /**
- * Builds the custom-design brief as a WhatsApp message. Images cannot travel
- * through a click-to-chat link, so the message asks the customer to attach the
- * reference photo in the chat itself.
+ * Builds the custom-design brief as a WhatsApp message. A click-to-chat link
+ * can only carry text, so the reference photo travels as a hosted link that
+ * the store can open straight from the chat.
  */
 export function buildCustomDesignMessage(input: WhatsAppCustomDesignInput): string {
   const {
@@ -129,6 +138,7 @@ export function buildCustomDesignMessage(input: WhatsAppCustomDesignInput): stri
     mobile,
     address,
     email,
+    imageUrl,
     imageName,
   } = input;
 
@@ -149,7 +159,10 @@ export function buildCustomDesignMessage(input: WhatsAppCustomDesignInput): stri
   lines.push(`Email: ${email}`);
   lines.push(`Address: ${address}`);
   lines.push("");
-  if (imageName) {
+  if (imageUrl) {
+    lines.push("My design reference image:");
+    lines.push(imageUrl);
+  } else if (imageName) {
     lines.push(`I have a design reference image (${imageName}) to attach in this chat.`);
   } else {
     lines.push("I can share a design reference image in this chat if needed.");

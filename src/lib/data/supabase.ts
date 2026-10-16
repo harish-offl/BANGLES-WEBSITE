@@ -2,7 +2,15 @@
 
 import { DEFAULT_SETTINGS } from "@/lib/site";
 import { getAnonServerClient } from "@/lib/supabase/anon-server";
-import type { Category, Paginated, Product, ProductFilters, StoreSettings } from "@/types";
+import type {
+  Category,
+  Order,
+  OrderStatus,
+  Paginated,
+  Product,
+  ProductFilters,
+  StoreSettings,
+} from "@/types";
 
 import type { CatalogDriver } from "./driver";
 import { decodeHtmlEntities, normalizeDescription } from "./text";
@@ -322,10 +330,80 @@ export const supabaseDriver: CatalogDriver = {
     if (error) throw new Error(error.message);
   },
 
+  /**
+   * Orders are private to admins under RLS, so reads and writes both go through
+   * the service-role client after the caller has passed an admin check.
+   */
+  async listOrders(options = {}): Promise<Order[]> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    let query = supabase
+      .from("orders")
+      .select("*, items:order_items(*)")
+      .order("created_at", { ascending: false });
+    if (options.status) query = query.eq("status", options.status);
+
+    const { data, error } = await query;
+    if (error) throw new Error(`Failed to list enquiries: ${error.message}`);
+    return (data ?? []) as Order[];
+  },
+
+  async createOrder(input): Promise<Order> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+
+    const { data, error } = await supabase
+      .from("orders")
+      .insert({
+        customer_name: input.customerName,
+        customer_phone: input.customerPhone,
+        status: "pending",
+        currency: input.currency,
+        subtotal: input.subtotal,
+        total_amount: input.subtotal,
+        notes: input.notes,
+      })
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+
+    const order = data as Order;
+    if (input.items.length) {
+      const rows = input.items.map((item) => ({
+        order_id: order.id,
+        product_id: item.productId,
+        product_name_snapshot: item.productName,
+        selected_variant_snapshot: item.variant,
+        quantity: item.quantity,
+        unit_price: item.unitPrice,
+        line_total: item.unitPrice * item.quantity,
+      }));
+      const { error: itemsError } = await supabase.from("order_items").insert(rows);
+      if (itemsError) throw new Error(itemsError.message);
+    }
+
+    return order;
+  },
+
+  async updateOrderStatus(id, status: OrderStatus): Promise<Order> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const { data, error } = await supabase
+      .from("orders")
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    return data as Order;
+  },
+
   async updateSettings(input): Promise<StoreSettings> {
     const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
     const supabase = getServiceRoleClient();
-    const rows = Object.entries(input).map(([key, value]) => ({ key, value }));
+    const rows = Object.entries(input)
+      .filter(([, value]) => value !== undefined)
+      .map(([key, value]) => ({ key, value }));
     if (rows.length) {
       const { error } = await supabase.from("store_settings").upsert(rows, { onConflict: "key" });
       if (error) throw new Error(error.message);
