@@ -58,7 +58,6 @@ export async function POST(request: Request) {
   const paymentEntity = event.payload.payment?.entity;
   const razorpayOrderId = orderEntity?.id;
   const razorpayPaymentId = paymentEntity?.id;
-  const paymentStatus = paymentEntity?.status ?? orderEntity?.status;
 
   let internalOrderId: string | null = null;
   if (razorpayOrderId) {

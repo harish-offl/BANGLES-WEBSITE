@@ -15,8 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function OrderSuccessPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const orders = await getCatalog().listOrders();
-  const order = orders.find((o) => o.id === id);
+  const order = await getCatalog().getOrderById(id);
   if (!order) notFound();
 
   return (

@@ -362,6 +362,11 @@ export const localDriver: CatalogDriver = {
     return [...filtered].sort((a, b) => b.created_at.localeCompare(a.created_at));
   },
 
+  async getOrderById(id: string): Promise<Order | null> {
+    const orders = readOrders();
+    return orders.find((o) => o.id === id) ?? null;
+  },
+
   async createOrder(input: OrderInput): Promise<Order> {
     const orders = readOrders();
     const timestamp = now();

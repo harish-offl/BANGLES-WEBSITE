@@ -3,14 +3,12 @@ import { NextResponse } from "next/server";
 import { clientKey, rateLimit } from "@/lib/api/rate-limit";
 import { validateCartItems } from "@/lib/cart/validate";
 import { getCatalog } from "@/lib/data";
-import { SITE_URL } from "@/lib/site";
 import { createRazorpayOrder, isRazorpayConfigured } from "@/lib/razorpay/client";
+import { getShippingFee } from "@/lib/site";
 import { enquirySchema } from "@/lib/validation/enquiry";
 import { getServiceRoleClient } from "@/lib/supabase/service-role";
 
 export const dynamic = "force-dynamic";
-
-const SHIPPING_FREE_THRESHOLD_PAISE = 2499 * 100; // ₹2499
 
 interface OrderCustomer {
   name: string | null;
@@ -90,7 +88,8 @@ export async function POST(request: Request) {
   // Subtotal from authoritative server-side prices (never trust client totals).
   const subtotal = result.subtotal; // rupees, 2 dp
   const subtotalPaise = Math.round(subtotal * 100);
-  const shippingFeePaise = subtotalPaise >= SHIPPING_FREE_THRESHOLD_PAISE ? 0 : 0;
+  const shippingFeeRupees = getShippingFee(subtotal, settings.free_shipping_threshold);
+  const shippingFeePaise = Math.round(shippingFeeRupees * 100);
   const discountPaise = 0;
   const totalPaise = subtotalPaise - discountPaise + shippingFeePaise;
   if (totalPaise <= 0) {
@@ -115,7 +114,7 @@ export async function POST(request: Request) {
       })),
     });
     order = { id: created.id, order_number: created.order_number };
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Could not create your order. Please try again." },
       { status: 500 },
@@ -135,7 +134,7 @@ export async function POST(request: Request) {
         customer_phone: customerPhone ?? "",
       },
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Could not initialise payment. Please try again." },
       { status: 500 },
@@ -170,7 +169,7 @@ export async function POST(request: Request) {
       razorpayOrderId: razorpayOrder.id,
       amount: razorpayOrder.amount,
       currency: razorpayOrder.currency,
-      keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? null,
+      keyId: process.env.RAZORPAY_KEY_ID ?? null,
       orderNumber: order.order_number,
       internalOrderId: order.id,
     },

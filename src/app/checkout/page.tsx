@@ -1,25 +1,16 @@
-"use client";
+﻿"use client";
 
 export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatPrice } from "@/lib/site";
+import { formatPrice, FREE_SHIPPING_THRESHOLD, getShippingFee } from "@/lib/site";
 import { useCartLines } from "@/hooks/use-cart";
-
-interface CheckoutLine {
-  productId: string;
-  variantId: string | null;
-  quantity: number;
-  size: string | null;
-  colour: string | null;
-  unitPrice: number;
-  name: string;
-}
 
 interface CreateOrderResponse {
   razorpayOrderId: string;
@@ -30,8 +21,21 @@ interface CreateOrderResponse {
   internalOrderId: string;
 }
 
+interface RazorpayHandlerResponse {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
+
+interface RazorpayInstance {
+  open: () => void;
+}
+
+type RazorpayConstructor = new (options: Record<string, unknown>) => RazorpayInstance;
+
 export default function CheckoutPage() {
   const lines = useCartLines();
+  const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [razorpayReady, setRazorpayReady] = useState(false);
@@ -45,26 +49,31 @@ export default function CheckoutPage() {
   });
 
   const subtotal = lines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
-  const shippingFee = subtotal >= 2499 ? 0 : 40;
+  const shippingFee = getShippingFee(subtotal, FREE_SHIPPING_THRESHOLD);
   const total = subtotal + shippingFee;
 
   useEffect(() => {
     if (lines.length === 0 && typeof window !== "undefined") {
-      window.location.href = "/cart";
+      router.push("/cart");
     }
-  }, [lines]);
+  }, [lines, router]);
 
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
-    script.onload = () => setRazorpayReady(Boolean((window as any).Razorpay));
+    script.onload = () =>
+      setRazorpayReady(
+        Boolean((window as unknown as Window & { Razorpay?: unknown }).Razorpay),
+      );
     script.onerror = () => setError("Payment provider could not load.");
     document.head.appendChild(script);
     return () => {
       try {
         document.head.removeChild(script);
-      } catch {}
+      } catch {
+        /* ignore */
+      }
     };
   }, []);
 
@@ -105,7 +114,7 @@ export default function CheckoutPage() {
 
   function openCheckout() {
     if (!order || !order.keyId || !razorpayReady) return;
-    const options: any = {
+    const options: Record<string, unknown> = {
       key: order.keyId,
       amount: Math.round(total * 100),
       currency: "INR",
@@ -124,7 +133,7 @@ export default function CheckoutPage() {
           toast.warning("Payment was cancelled. Your order is still pending.");
         },
       },
-      handler: async (response: any) => {
+      handler: async (response: RazorpayHandlerResponse) => {
         await verifyPayment({
           razorpay_order_id: response.razorpay_order_id,
           razorpay_payment_id: response.razorpay_payment_id,
@@ -132,7 +141,9 @@ export default function CheckoutPage() {
         });
       },
     };
-    const rzp = new (window as any).Razorpay(options);
+    const RazorpayCtor = (window as unknown as { Razorpay: RazorpayConstructor })
+      .Razorpay;
+    const rzp = new RazorpayCtor(options);
     rzp.open();
   }
 
@@ -148,10 +159,10 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = await res.json();
+      const data = (await res.json()) as { orderId?: string; error?: string };
       if (!res.ok) throw new Error(data.error || "Verification failed.");
-      if (typeof window !== "undefined") {
-        window.location.href = `/order-success/${data.orderId}`;
+      if (data.orderId) {
+        router.push(`/order-success/${data.orderId}`);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Payment verification failed.");
@@ -174,61 +185,78 @@ export default function CheckoutPage() {
         </div>
       )}
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <section className="space-y-5">
+      <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-10">
+        <section className="min-w-0 space-y-5">
           <h2 className="font-display text-lg">Delivery details</h2>
-          <form onSubmit={(e) => { e.preventDefault(); void createOrder(); }}>
-            <div className="space-y-3">
-              <label htmlFor="name" className="block text-xs font-medium text-muted-foreground">
-                Full name
-              </label>
-              <Input
-                id="name"
-                required
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-              />
-              <label htmlFor="email" className="block text-xs font-medium text-muted-foreground">
-                Email address
-              </label>
-              <Input
-                id="email"
-                type="email"
-                required
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-              />
-              <label htmlFor="phone" className="block text-xs font-medium text-muted-foreground">
-                Phone number
-              </label>
-              <Input
-                id="phone"
-                type="tel"
-                required
-                maxLength={15}
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              />
-              <label htmlFor="address" className="block text-xs font-medium text-muted-foreground">
-                Delivery address
-              </label>
-              <Input
-                id="address"
-                required
-                value={form.address}
-                onChange={(e) => setForm({ ...form, address: e.target.value })}
-                placeholder="House, street, city, pincode"
-              />
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void createOrder();
+            }}
+          >
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 gap-1.5">
+                <label htmlFor="name" className="text-xs font-medium text-brand-ink-mid">
+                  Full name
+                </label>
+                <Input
+                  id="name"
+                  required
+                  className="bg-brand-c100 border-brand-c300/70 text-brand-ink placeholder:text-brand-ink-soft"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                />
+              </div>
+              <div className="grid grid-cols-1 gap-1.5">
+                <label htmlFor="email" className="text-xs font-medium text-brand-ink-mid">
+                  Email address
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  required
+                  className="bg-brand-c100 border-brand-c300/70 text-brand-ink placeholder:text-brand-ink-soft"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                />
+              </div>
+              <div className="grid grid-cols-1 gap-1.5">
+                <label htmlFor="phone" className="text-xs font-medium text-brand-ink-mid">
+                  Phone number
+                </label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  required
+                  maxLength={15}
+                  className="bg-brand-c100 border-brand-c300/70 text-brand-ink placeholder:text-brand-ink-soft"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                />
+              </div>
+              <div className="grid grid-cols-1 gap-1.5">
+                <label htmlFor="address" className="text-xs font-medium text-brand-ink-mid">
+                  Delivery address
+                </label>
+                <Input
+                  id="address"
+                  required
+                  className="bg-brand-c100 border-brand-c300/70 text-brand-ink placeholder:text-brand-ink-soft"
+                  value={form.address}
+                  onChange={(e) => setForm({ ...form, address: e.target.value })}
+                  placeholder="House, street, city, pincode"
+                />
+              </div>
             </div>
             <Button
               type="submit"
               disabled={submitting || !form.name || !form.email || !form.phone || !form.address}
-              className="w-full h-11 text-base"
+              className="mt-8 h-11 w-full text-base"
             >
               {submitting ? (
                 <span className="flex items-center gap-2">
                   <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-                  Creating order…
+                  Creating order...
                 </span>
               ) : (
                 "Create order"
@@ -237,37 +265,39 @@ export default function CheckoutPage() {
           </form>
         </section>
 
-        <section className="space-y-4">
-          <h2 className="font-display text-lg">Order summary</h2>
-          <dl className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">Items</dt>
-              <dd>{lines.reduce((s, l) => s + l.quantity, 0)}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">Subtotal</dt>
-              <dd className="font-medium">{formatPrice(subtotal)}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">Delivery</dt>
-              <dd>{shippingFee === 0 ? "Free" : formatPrice(shippingFee)}</dd>
-            </div>
-            <div className="flex justify-between border-t pt-2">
-              <dt className="font-medium">Total</dt>
-              <dd className="font-medium">{formatPrice(total)}</dd>
-            </div>
-          </dl>
-          {order && razorpayReady && !submitting ? (
-            <Button
-              onClick={openCheckout}
-              className="w-full h-11 text-base bg-gold text-gold-foreground hover:bg-gold/90"
-            >
-              Pay ₹{total.toFixed(2)} Securely
-            </Button>
-          ) : order && !razorpayReady ? (
-            <p className="text-xs text-muted-foreground">Loading payment provider…</p>
-          ) : null}
-        </section>
+        <aside className="lg:sticky lg:top-28 lg:h-fit lg:w-[360px]">
+          <div className="rounded-2xl border border-border bg-brand-paper p-6 lg:w-full">
+            <h2 className="font-display text-lg">Order summary</h2>
+            <dl className="mt-4 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Items</dt>
+                <dd>{lines.reduce((s, l) => s + l.quantity, 0)}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Subtotal</dt>
+                <dd className="font-medium">{formatPrice(subtotal)}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Delivery</dt>
+                <dd>{shippingFee === 0 ? "Free" : formatPrice(shippingFee)}</dd>
+              </div>
+              <div className="flex justify-between border-t pt-2">
+                <dt className="font-medium">Total</dt>
+                <dd className="font-medium">{formatPrice(order ? order.amount / 100 : total)}</dd>
+              </div>
+            </dl>
+            {order && razorpayReady && !submitting ? (
+              <Button
+                onClick={openCheckout}
+                className="mt-5 h-11 w-full bg-gold text-base text-gold-foreground hover:bg-gold/90"
+              >
+                Pay {formatPrice(order ? order.amount / 100 : total)} Securely
+              </Button>
+            ) : order && !razorpayReady ? (
+              <p className="mt-3 text-xs text-muted-foreground">Loading payment provider...</p>
+            ) : null}
+          </div>
+        </aside>
       </div>
     </main>
   );

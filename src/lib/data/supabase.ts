@@ -348,6 +348,18 @@ export const supabaseDriver: CatalogDriver = {
     return (data ?? []) as Order[];
   },
 
+  async getOrderById(id: string): Promise<Order | null> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*, items:order_items(*)")
+      .eq("id", id)
+      .maybeSingle();
+    if (error) throw new Error(`Failed to load order: ${error.message}`);
+    return (data as Order) ?? null;
+  },
+
   async createOrder(input): Promise<Order> {
     const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
     const supabase = getServiceRoleClient();

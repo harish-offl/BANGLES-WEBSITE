@@ -42,10 +42,8 @@ create table if not exists public.payment_events (
 create index if not exists payment_events_event_id_idx on public.payment_events (event_id);
 create index if not exists payment_events_order_idx on public.payment_events (internal_order_id);
 
-drop trigger if exists trg_payment_events_updated_at on public.payment_events;
-create trigger trg_payment_events_updated_at
-  before update on public.payment_events
-  for each row execute function public.set_updated_at();
+-- payment_events is an append-only log, so it deliberately has no updated_at
+-- column and no set_updated_at() trigger.
 
 -- ---------------------------------------------------------------------------
 -- Row Level Security

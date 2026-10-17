@@ -59,6 +59,35 @@ export const SITE_URL = (
 
 export const SITE_NAME = DEFAULT_SETTINGS.store_name;
 
+/**
+ * Standard delivery fee in whole rupees, charged on orders whose subtotal is
+ * below the configured free-delivery threshold. Kept as a single shared
+ * constant so the cart, checkout and server-side order total never disagree.
+ */
+export const STANDARD_SHIPPING_FEE = 40;
+
+/** Subtotal (in rupees) at or above which delivery is free. */
+export const FREE_SHIPPING_THRESHOLD = LEGACY_FACTS.freeDeliveryThreshold;
+
+/**
+ * Authoritative shipping rule used by both the UI and the payment API.
+ * Delivery is free at or above the threshold; otherwise the standard fee
+ * applies. A `null` threshold means no free-delivery promotion is configured.
+ */
+export function getShippingFee(
+  subtotal: number,
+  freeShippingThreshold: number | null,
+): number {
+  if (
+    freeShippingThreshold !== null &&
+    freeShippingThreshold > 0 &&
+    subtotal >= freeShippingThreshold
+  ) {
+    return 0;
+  }
+  return STANDARD_SHIPPING_FEE;
+}
+
 /** Admin routes are excluded from indexing. */
 export const PROTECTED_ROUTES = ["/admin"];
 

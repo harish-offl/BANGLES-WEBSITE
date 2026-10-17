@@ -10,7 +10,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useCartActions, useCartLines } from "@/hooks/use-cart";
-import { formatPrice } from "@/lib/site";
+import { formatPrice, getShippingFee } from "@/lib/site";
 import { cartKey, MAX_LINE_QUANTITY } from "@/stores/cart-store";
 import { cn } from "@/lib/utils";
 import type { ValidatedLine } from "@/lib/cart/validate";
@@ -173,8 +173,8 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
       : null;
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[1fr_360px]">
-      <div>
+    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-10">
+      <div className="min-w-0">
         <ul className="divide-y divide-border border-y border-border">
           {enriched.map(({ line, server, unitPrice, available, priceChanged }) => {
             const key = cartKey(line.productId, line.variantId, line.size, line.colour);
@@ -184,7 +184,7 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
               line.colour ? `Colour: ${line.colour}` : null,
             ].filter(Boolean);
             return (
-              <li key={key} className="flex gap-4 py-5">
+              <li key={key} className="flex items-start gap-4 py-5 sm:gap-5">
                 <Link
                   href={`/#product-${line.slug}`}
                   className="relative size-24 shrink-0 overflow-hidden rounded-xl border border-border bg-brand-c100 sm:size-28"
@@ -235,7 +235,7 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
                     </p>
                   ) : null}
 
-                  <div className="mt-auto flex flex-wrap items-center justify-between gap-3">
+                  <div className="mt-auto flex flex-wrap items-center justify-between gap-3 sm:items-end">
                     <div className="flex items-center rounded-lg border border-input">
                       <Button
                         type="button"
@@ -332,8 +332,8 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
         </label>
       </div>
 
-      <aside className="lg:sticky lg:top-28 lg:h-fit">
-        <div className="rounded-2xl border border-border bg-brand-paper p-6">
+      <aside className="lg:sticky lg:top-28 lg:h-fit lg:w-[360px]">
+        <div className="rounded-2xl border border-border bg-brand-paper p-6 lg:w-full">
           <h2 className="font-display text-xl">Order summary</h2>
           <div className="gold-rule mt-3 h-px w-full" aria-hidden="true" />
 
@@ -348,11 +348,7 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
             </div>
             <div className="flex items-center justify-between">
               <dt className="text-muted-foreground">Delivery</dt>
-              <dd>
-                {freeShippingThreshold && liveSubtotal >= freeShippingThreshold
-                  ? "Free"
-                  : "₹40"}
-              </dd>
+              <dd>{getShippingFee(liveSubtotal, freeShippingThreshold) === 0 ? "Free" : formatPrice(getShippingFee(liveSubtotal, freeShippingThreshold))}</dd>
             </div>
           </dl>
 
@@ -376,18 +372,32 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
               disabled={submitting || (!validating && enriched.every((item) => !item.available))}
               className="mt-5 h-12 w-full gap-2 text-base"
             >
-            {submitting ? (
-              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-            ) : null}
-            Pay Securely
-          </Button>
+              {submitting ? (
+                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+              ) : null}
+              Pay Securely
+            </Button>
           </Link>
 
-          {!whatsappConfigured ? (
+          {whatsappConfigured ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              onClick={() => void sendEnquiry()}
+              disabled={submitting || (!validating && enriched.every((item) => !item.available))}
+              className="mt-3 h-11 w-full gap-2 text-sm"
+            >
+              {submitting ? (
+                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+              ) : null}
+              Send enquiry on WhatsApp
+            </Button>
+          ) : (
             <p className="mt-3 text-xs text-destructive">
               WhatsApp ordering is not configured yet. Please contact us another way.
             </p>
-          ) : null}
+          )}
 
           <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
             Pay securely online with UPI, cards, net banking and more. Your order is confirmed

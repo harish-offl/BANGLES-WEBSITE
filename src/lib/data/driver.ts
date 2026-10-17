@@ -79,6 +79,7 @@ export interface CatalogDriver {
   deleteCategory(id: string): Promise<void>;
 
   listOrders(options?: { status?: OrderStatus }): Promise<Order[]>;
+  getOrderById(id: string): Promise<Order | null>;
   createOrder(input: OrderInput): Promise<Order>;
   updateOrderStatus(id: string, status: OrderStatus): Promise<Order>;
 

@@ -62,7 +62,7 @@ export async function createRazorpayOrder(input: RazorpayOrderInput): Promise<Cr
     currency: order.currency,
     status: order.status,
     receipt: order.receipt ?? null,
-    keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? null,
+    keyId: process.env.RAZORPAY_KEY_ID ?? null,
   };
 }
 

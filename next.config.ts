@@ -10,12 +10,12 @@ const scriptSrc = process.env.NODE_ENV === "production" ? "'self'" : "'self' 'un
 
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src ${scriptSrc} 'unsafe-inline'`,
+  `script-src ${scriptSrc} 'unsafe-inline' https://checkout.razorpay.com`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
   "img-src 'self' data: blob: https:",
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://res.cloudinary.com",
-  "frame-src 'self' https://www.google.com https://maps.google.com",
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://res.cloudinary.com https://api.razorpay.com https://lumberjack.razorpay.com",
+  "frame-src 'self' https://www.google.com https://maps.google.com https://api.razorpay.com https://checkout.razorpay.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
