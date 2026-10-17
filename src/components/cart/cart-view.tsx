@@ -351,7 +351,7 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
               <dd>
                 {freeShippingThreshold && liveSubtotal >= freeShippingThreshold
                   ? "Free"
-                  : "Confirmed on WhatsApp"}
+                  : "₹40"}
               </dd>
             </div>
           </dl>
@@ -369,18 +369,19 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
             </p>
           ) : null}
 
-          <Button
-            type="button"
-            size="lg"
-            onClick={sendEnquiry}
-            disabled={submitting || (!validating && enriched.every((item) => !item.available))}
-            className="mt-5 h-12 w-full gap-2 text-base"
-          >
+          <Link href="/checkout" passHref legacyBehavior>
+            <Button
+              type="button"
+              size="lg"
+              disabled={submitting || (!validating && enriched.every((item) => !item.available))}
+              className="mt-5 h-12 w-full gap-2 text-base"
+            >
             {submitting ? (
               <Loader2 className="size-4 animate-spin" aria-hidden="true" />
             ) : null}
-            Send enquiry on WhatsApp
+            Pay Securely
           </Button>
+          </Link>
 
           {!whatsappConfigured ? (
             <p className="mt-3 text-xs text-destructive">
@@ -389,8 +390,8 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
           ) : null}
 
           <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-            This sends your selection to us on WhatsApp so we can confirm availability, delivery
-            and payment. No payment is taken on this website.
+            Pay securely online with UPI, cards, net banking and more. Your order is confirmed
+            once payment succeeds.
           </p>
         </div>
       </aside>
