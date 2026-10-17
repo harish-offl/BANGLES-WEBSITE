@@ -206,10 +206,11 @@ const GLASS_COLOUR_IMAGES = {
   ],
 };
 
-const DESCRIPTION_OVERRIDES = {
-  "BNG-159":
-    "Handcrafted with love from Pattukottai \u2014 a beautiful piece perfect for every occasion, from festive celebrations to everyday elegance.",
-};
+// Unique, hand-written copy for every SKU lives in scripts/product-descriptions.json
+// so regenerating the catalogue never falls back to the duplicated legacy text.
+const DESCRIPTION_OVERRIDES = JSON.parse(
+  fs.readFileSync(path.join(ROOT, "scripts", "product-descriptions.json"), "utf8"),
+);
 
 const out = products.map((p, i) => {
   const slug = uniqueSlug(slugify(p.name));
