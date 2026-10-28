@@ -48,6 +48,9 @@ const nextConfig: NextConfig = {
   // Product image uploads are handled by the admin Server Action. Keep this
   // just above the form's 5 MB file limit to include multipart overhead.
   experimental: {
+    // Remind future `next dev`/`next build` runs when a security advisory
+    // affects the installed stable version (the default policy).
+    agentUpgrade: "security",
     serverActions: {
       bodySizeLimit: "6mb",
     },
