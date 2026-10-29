@@ -181,9 +181,14 @@ export function Footer({ settings }: FooterProps) {
               © {year} {settings.store_name}. All rights reserved.
             </p>
             <p>
-              <Link href="/developers" className="underline-offset-2 hover:underline">
+              <a
+                href="https://annamalaiportfolio.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline-offset-2 hover:underline"
+              >
                 Meet the developer
-              </Link>
+              </a>
             </p>
           </div>
         </div>
