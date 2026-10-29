@@ -134,9 +134,10 @@ export async function POST(request: Request) {
         customer_phone: customerPhone ?? "",
       },
     });
-  } catch {
+  } catch (err: any) {
+    console.error("Razorpay order creation error:", err?.message || err);
     return NextResponse.json(
-      { error: "Could not initialise payment. Please try again." },
+      { error: "Could not initialise payment.", details: err?.message },
       { status: 500 },
     );
   }
