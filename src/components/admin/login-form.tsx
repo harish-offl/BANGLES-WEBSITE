@@ -44,6 +44,7 @@ export function AdminLoginForm({ mode }: AdminLoginFormProps) {
               autoComplete="email"
               required
               placeholder="admin@banglesbybeauty.com"
+              className="h-11 sm:h-11"
             />
           </div>
           <div className="space-y-2">
@@ -54,6 +55,7 @@ export function AdminLoginForm({ mode }: AdminLoginFormProps) {
               type="password"
               autoComplete="current-password"
               required
+              className="h-11 sm:h-11"
             />
           </div>
         </>
@@ -67,6 +69,7 @@ export function AdminLoginForm({ mode }: AdminLoginFormProps) {
             autoComplete="current-password"
             required
             placeholder="Set via ADMIN_LOCAL_PASSPHRASE"
+            className="h-11 sm:h-11"
           />
         </div>
       )}

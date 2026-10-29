@@ -16,6 +16,17 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+For local development without the configured Supabase backend, select the
+built-in catalogue driver in PowerShell before starting the server:
+
+```powershell
+$env:CATALOG_MODE = "local"
+npm run dev
+```
+
+This override is honored only by the development server. Without it, configured
+Supabase credentials continue to select the Supabase driver.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

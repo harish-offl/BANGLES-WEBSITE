@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 
 import { ProductDetail } from "@/components/products/product-detail";
 import { ProductGrid } from "@/components/products/product-grid";
-import { Prose } from "@/components/shared/page-shell";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { JsonLd } from "@/components/shared/json-ld";
 import { SectionHeading } from "@/components/shared/section-heading";
@@ -74,15 +73,6 @@ export default async function ProductPage(props: PageProps<"/products/[slug]">) 
         siteUrl={SITE_URL}
         freeShippingThreshold={settings.free_shipping_threshold}
       />
-
-      {product.description ? (
-        <section className="mt-12 max-w-3xl border-t border-border pt-8">
-          <h2 className="font-display text-xl text-foreground sm:text-2xl">About this piece</h2>
-          <Prose className="mt-4">
-            <p>{product.description}</p>
-          </Prose>
-        </section>
-      ) : null}
 
       {related.length > 0 ? (
         <section className="mt-14 border-t border-border pt-10">

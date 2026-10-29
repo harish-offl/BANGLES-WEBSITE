@@ -87,6 +87,10 @@ export interface CatalogDriver {
 }
 
 export function getDataModeInfo(): DataModeInfo {
+  if (isLocalCatalogMode()) {
+    return { mode: "local", reason: "CATALOG_MODE=local is set for local development." };
+  }
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (url && key) {
@@ -101,3 +105,6 @@ export function getDataModeInfo(): DataModeInfo {
 
 export const isSupabaseConfigured = (): boolean =>
   Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
+export const isLocalCatalogMode = (): boolean =>
+  process.env.NODE_ENV === "development" && process.env.CATALOG_MODE === "local";

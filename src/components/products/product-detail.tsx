@@ -41,23 +41,40 @@ export function ProductDetail({
   );
 
   const galleryImages = useMemo<ProductImage[]>(() => {
-    const base = (product.images ?? []).filter((image) => Boolean(image.image_url));
-    const seen = new Set(base.map((image) => image.image_url));
-    const extras = (product.colour_images ?? [])
-      .filter((ci) => ci.image_url && !seen.has(ci.image_url))
-      .map((ci, index) => {
-        seen.add(ci.image_url);
-        return {
-          id: `${product.id}-colour-${index}`,
-          product_id: product.id,
-          image_url: ci.image_url,
-          storage_path: null,
-          alt_text: `${product.name} — ${ci.colour}`,
-          sort_order: base.length + index,
-        };
+    const result: ProductImage[] = [];
+    const seen = new Set<string>();
+
+    function add(imageUrl: string | null, altText: string) {
+      if (!imageUrl || seen.has(imageUrl)) return;
+      seen.add(imageUrl);
+      result.push({
+        id: `${product.id}-image-${result.length}`,
+        product_id: product.id,
+        image_url: imageUrl,
+        storage_path: null,
+        alt_text: altText || product.name,
+        sort_order: result.length,
       });
-    return [...base, ...extras];
-  }, [product.id, product.name, product.images, product.colour_images]);
+    }
+
+    // The catalogue stores one headlining photo per product (`primary_image_url`)
+    // while the legacy `product_images` table is often empty. Always seed the
+    // gallery with the primary shot so the detail page never falls back to the
+    // neutral placeholder when a real photo exists.
+    add(product.primary_image_url, product.name);
+    for (const image of product.images ?? []) add(image.image_url, image.alt_text);
+    for (const ci of product.colour_images ?? []) {
+      add(ci.image_url, `${product.name} — ${ci.colour}`);
+    }
+
+    return result;
+  }, [
+    product.id,
+    product.name,
+    product.primary_image_url,
+    product.images,
+    product.colour_images,
+  ]);
 
   function handleColourChange(next: string) {
     setColour(next);

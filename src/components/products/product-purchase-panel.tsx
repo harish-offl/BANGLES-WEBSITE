@@ -120,6 +120,12 @@ export function ProductPurchasePanel({
         ) : null}
       </div>
 
+      {product.description ? (
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          {product.description}
+        </p>
+      ) : null}
+
       {showSizes ? (
         <div>
           <div className="mb-2 flex items-center justify-between gap-2">

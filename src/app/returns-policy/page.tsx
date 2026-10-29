@@ -7,9 +7,9 @@ import { PageShell } from "@/components/shared/page-shell";
 import { POLICY_PAGES } from "@/lib/content/legal";
 
 export const metadata: Metadata = {
-  title: "Returns & refunds",
+  title: "Return, Exchange & Refund Policy",
   description:
-    "What to do if your handmade Bangles by Beauty order arrives damaged or is not as discussed.",
+    "How returns, exchanges, cancellations and refunds work for our handmade, made-to-order Bangles by Beauty products.",
   alternates: { canonical: "/returns-policy" },
 };
 

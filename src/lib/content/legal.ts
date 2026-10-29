@@ -110,27 +110,48 @@ export const POLICY_PAGES: Record<string, PolicyPage> = {
   "returns-policy": {
     slug: "returns-policy",
     eyebrow: "Legal",
-    title: "Returns & refunds",
+    title: "Return, Exchange & Refund Policy",
     description:
-      "What to do if something is not right with your order.",
-    pendingApproval: true,
+      "How returns, exchanges, cancellations and refunds work for our handmade, made-to-order products.",
+    pendingApproval: false,
     summary: [
-      "Handmade pieces can vary slightly — that is part of their charm.",
-      "If something arrives damaged, contact us on WhatsApp right away.",
-      "We will always work with you to put things right.",
+      "Products are handmade and made to order, so please confirm size, colour and design before ordering.",
+      "Report damaged, defective or incorrect products within 48 hours of delivery.",
+      "Cancellations may not be accepted once production has started.",
     ],
     sections: [
       {
-        heading: "Handmade variations",
-        body: "Every piece is crafted by hand, so small differences in colour, finish and bead placement are expected and are not defects.",
+        heading: "Returns & Exchanges",
+        body: "At Bangles by Beauty, every product is handcrafted and customised with love and care, especially for you. As our products are made to order, we request that you carefully review your order details, including size, colour, design, and customisation, before placing your order.",
+        list: [
+          "We do not accept returns or exchanges for customised, made-to-order, or personalised products if the customer changes their mind or selects the wrong size, colour, or design.",
+          "Please confirm your bangle size and customisation details before placing your order.",
+          "Minor variations in colour, design, and finishing may occur because our products are handmade. These natural variations are not considered defects.",
+        ],
       },
       {
-        heading: "Damaged or incorrect items",
-        body: "If your order arrives damaged or is not what you discussed, message us on WhatsApp as soon as you receive it. Share a photo and we will arrange a replacement or another solution.",
+        heading: "Damaged or Incorrect Products",
+        body: "If you receive a damaged, defective, or incorrect product, please contact us within 48 hours of delivery. To help us resolve the issue, please provide your order number, clear photos or an unboxing video showing the issue, and photos of the product and its packaging.",
+        list: [
+          "After reviewing the issue, we will inform you of the available resolution, which may include a replacement, exchange, or refund, as applicable.",
+          "Please retain the original packaging until your request has been resolved.",
+        ],
       },
       {
-        heading: "Made-to-order items",
-        body: "Because each piece is made specifically for you, please confirm your design, colour and size on WhatsApp before we begin. This helps us get it right the first time.",
+        heading: "Order Cancellation",
+        body: "Since our products are handmade and customised, cancellations may not be accepted once production has started. If you wish to cancel an order, please contact us as soon as possible. Cancellation requests will be reviewed based on the stage of production.",
+      },
+      {
+        heading: "Refund Policy",
+        body: "Refunds will be considered for eligible cases, such as confirmed damaged, defective, or incorrect products, in accordance with applicable consumer laws. Once a refund is approved, it will be processed through the original payment method wherever possible. The time taken for the amount to appear in your account may depend on your bank or payment provider.",
+      },
+      {
+        heading: "Shipping Charges",
+        body: "Shipping charges for approved returns or replacements will be communicated by our team based on the reason for the issue and the applicable policy.",
+      },
+      {
+        heading: "Contact Us",
+        body: "For any return, exchange, or refund-related queries, please contact us through our official Instagram page @bangles_by_beauty or WhatsApp at 6381137076. We appreciate your trust in Bangles by Beauty and thank you for supporting handmade products.",
       },
     ],
   },

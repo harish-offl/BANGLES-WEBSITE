@@ -39,7 +39,7 @@ export function ProductCard({
       )}
     >
       <div className="relative aspect-square overflow-hidden bg-brand-c100">
-        <Link href={href} aria-label={product.name} className="block h-full w-full">
+        <Link href={href} aria-label={product.name} className="relative block h-full w-full">
           <SmartImage
             src={product.primary_image_url}
             alt={product.name}

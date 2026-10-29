@@ -181,9 +181,9 @@ export function Footer({ settings }: FooterProps) {
               © {year} {settings.store_name}. All rights reserved.
             </p>
             <p>
-              <a href="/developers" className="underline-offset-2 hover:underline">
+              <Link href="/developers" className="underline-offset-2 hover:underline">
                 Meet the developer
-              </a>
+              </Link>
             </p>
           </div>
         </div>

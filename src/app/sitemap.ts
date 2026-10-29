@@ -17,6 +17,7 @@ const STATIC_ROUTES: {
   { path: "/about", priority: 0.5, changeFrequency: "monthly" },
   { path: "/contact", priority: 0.5, changeFrequency: "monthly" },
   { path: "/customize", priority: 0.6, changeFrequency: "monthly" },
+  { path: "/developers", priority: 0.4, changeFrequency: "monthly" },
   { path: "/privacy-policy", priority: 0.2, changeFrequency: "yearly" },
   { path: "/terms", priority: 0.2, changeFrequency: "yearly" },
   { path: "/shipping-policy", priority: 0.2, changeFrequency: "yearly" },

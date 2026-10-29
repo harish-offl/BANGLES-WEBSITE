@@ -46,19 +46,19 @@ export default async function AdminLoginPage() {
   const isProduction = process.env.NODE_ENV === "production";
 
   return (
-    <div className="flex min-h-dvh items-center justify-center px-4 py-12">
+    <div className="flex min-h-dvh items-center justify-center px-3 py-6 sm:px-4 sm:py-12">
       <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <p className="font-display text-2xl tracking-[0.06em] text-foreground">
+        <div className="mb-6 sm:mb-8 text-center">
+          <p className="font-display text-xl sm:text-2xl tracking-[0.06em] text-foreground">
             Bangles <span className="text-gold-strong">by Beauty</span>
           </p>
-          <div className="gold-rule mx-auto mt-3 h-px w-24" aria-hidden="true" />
-          <p className="mt-3 text-xs tracking-[0.2em] text-muted-foreground uppercase">
+          <div className="gold-rule mx-auto mt-2 sm:mt-3 h-px w-20 sm:w-24" aria-hidden="true" />
+          <p className="mt-2 sm:mt-3 text-xs tracking-[0.2em] text-muted-foreground uppercase">
             Admin panel
           </p>
         </div>
 
-        <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+        <div className="rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-sm">
           {supabaseConfigured ? (
             <>
               <h1 className="font-display text-xl">Sign in</h1>

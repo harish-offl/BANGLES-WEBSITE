@@ -39,7 +39,7 @@ const TOPICS: Record<PolicyTopic, TopicConfig> = {
     image: "/images/lifestyle/51.jpg",
     alt: "Handmade bangles inspected before dispatch",
     title: "Made by hand, checked by hand",
-    body: "Every piece is inspected before dispatch. If anything arrives damaged or differs from what was discussed, message us and we will make it right.",
+    body: "Every piece is inspected before dispatch. If anything arrives damaged, defective or incorrect, contact us within 48 hours and we will make it right.",
   },
 };
 

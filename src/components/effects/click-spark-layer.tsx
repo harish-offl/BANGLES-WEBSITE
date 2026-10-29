@@ -16,7 +16,9 @@ const SPARK_COLORS = ["#c9a24a", "#e2c878", "#e08d80", "#f0ada2"];
 export function ClickSparkLayer({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
-  if (pathname?.startsWith("/admin")) return <>{children}</>;
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/developers")) {
+    return <>{children}</>;
+  }
 
   return (
     <ClickSpark

@@ -3,6 +3,7 @@ import { Inter, Playfair_Display, Poppins } from "next/font/google";
 
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { SiteChrome } from "@/components/layout/site-chrome";
 import { WhatsAppFab } from "@/components/layout/whatsapp-fab";
 import { CartProvider } from "@/components/cart/cart-provider";
 import { ClickSparkLayer } from "@/components/effects/click-spark-layer";
@@ -102,18 +103,23 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </a>
 
         <CartProvider>
-          <Header
-            categories={categories}
-            announcement={settings.announcement ?? null}
-          />
-          <main id="main-content" className="flex-1">
+          <SiteChrome
+            header={
+              <Header
+                categories={categories}
+                announcement={settings.announcement ?? null}
+              />
+            }
+            footer={<Footer settings={settings} />}
+            floatingAction={
+              <WhatsAppFab
+                phone={settings.whatsapp_number}
+                storeName={settings.store_name}
+              />
+            }
+          >
             <ClickSparkLayer>{children}</ClickSparkLayer>
-          </main>
-          <Footer settings={settings} />
-          <WhatsAppFab
-            phone={settings.whatsapp_number}
-            storeName={settings.store_name}
-          />
+          </SiteChrome>
           <Toaster position="top-right" richColors closeButton />
         </CartProvider>
       </body>
