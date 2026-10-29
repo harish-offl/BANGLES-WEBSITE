@@ -365,7 +365,7 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
             </p>
           ) : null}
 
-          <Link href="/checkout" passHref legacyBehavior>
+          <Link href="/checkout" passHref>
             <Button
               type="button"
               size="lg"
