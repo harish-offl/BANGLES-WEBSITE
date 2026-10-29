@@ -61,12 +61,19 @@ export default function CheckoutPage() {
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-    script.onload = () =>
-      setRazorpayReady(
-        Boolean((window as unknown as Window & { Razorpay?: unknown }).Razorpay),
-      );
-    script.onerror = () => setError("Payment provider could not load.");
+    script.async = false;
+    script.crossOrigin = "anonymous";
+    script.onload = () => {
+      const razorpay = (window as unknown as Window & { Razorpay?: unknown }).Razorpay;
+      setRazorpayReady(Boolean(razorpay));
+      if (!razorpay) {
+        setError("Payment provider not available on this browser. Try WhatsApp checkout instead.");
+      }
+    };
+    script.onerror = () => {
+      setError("Payment provider could not load. Try WhatsApp checkout instead.");
+      setRazorpayReady(false);
+    };
     document.head.appendChild(script);
     return () => {
       try {
@@ -114,6 +121,7 @@ export default function CheckoutPage() {
 
   function openCheckout() {
     if (!order || !order.keyId || !razorpayReady) return;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.platform) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     const options: Record<string, unknown> = {
       key: order.keyId,
       amount: Math.round(total * 100),
@@ -128,10 +136,11 @@ export default function CheckoutPage() {
         contact: form.phone || "",
       },
       theme: { color: "#F0ADA2" },
-      modal: {
-        ondismiss: () => {
-          toast.warning("Payment was cancelled. Your order is still pending.");
-        },
+      timeout: 300,
+      notes: {
+        order_number: order.orderNumber,
+        internal_order_id: order.internalOrderId,
+        device: isIOS ? "iOS" : "other",
       },
       handler: async (response: RazorpayHandlerResponse) => {
         await verifyPayment({
@@ -139,6 +148,12 @@ export default function CheckoutPage() {
           razorpay_payment_id: response.razorpay_payment_id,
           razorpay_signature: response.razorpay_signature,
         });
+      },
+      modal: {
+        ondismiss: () => {
+          toast.warning("Payment was cancelled. Your order is still pending.");
+        },
+        escape: false,
       },
     };
     const RazorpayCtor = (window as unknown as { Razorpay: RazorpayConstructor })
