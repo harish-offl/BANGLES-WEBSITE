@@ -30,6 +30,18 @@ function buildVariantLabel(line: { variantLabel: string | null; size: string | n
 }
 
 export async function POST(request: Request) {
+  try {
+    return await handleCreateOrder(request);
+  } catch (err) {
+    console.error("Unexpected checkout error:", err instanceof Error ? err.message : err);
+    return NextResponse.json(
+      { error: "Could not process your order. Please try again." },
+      { status: 500 },
+    );
+  }
+}
+
+async function handleCreateOrder(request: Request) {
   if (!isRazorpayConfigured()) {
     return NextResponse.json(
       { error: "Online payments are not configured yet. Please contact us." },
@@ -71,7 +83,8 @@ export async function POST(request: Request) {
 
   const catalog = await getCatalog();
   const settings = await catalog.getSettings();
-  const customer = (body as CreateOrderBody).customer ?? {};
+  const bodyTyped = body as CreateOrderBody;
+  const customer = bodyTyped.customer ?? {};
 
   const customerName = typeof customer.name === "string" ? customer.name.trim() || null : null;
   const customerEmail = typeof customer.email === "string" ? customer.email.trim() || null : null;
@@ -98,6 +111,7 @@ export async function POST(request: Request) {
     settings,
     customerState === "Tamil Nadu",
   );
+
   const shippingFeePaise = Math.round(shippingFeeRupees * 100);
   const discountPaise = 0;
   const totalPaise = subtotalPaise - discountPaise + shippingFeePaise;
