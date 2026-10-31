@@ -137,9 +137,10 @@ async function handleCreateOrder(request: Request) {
       })),
     });
     order = { id: created.id, order_number: created.order_number };
-  } catch {
+  } catch (err) {
+    console.error("Order creation error:", err instanceof Error ? err.message : err);
     return NextResponse.json(
-      { error: "Could not create your order. Please try again." },
+      { error: "Could not create your order.", details: err instanceof Error ? err.message : String(err) },
       { status: 500 },
     );
   }
