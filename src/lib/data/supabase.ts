@@ -176,7 +176,7 @@ export const supabaseDriver: CatalogDriver = {
     if (options.activeOnly) query = query.eq("is_active", true);
 
     const { data, error } = await query;
-    if (error) throw new Error(`Failed to list categories: ${error.message}`);
+    if (error) return [];
 
     return (data ?? []).map((row) => {
       const rest = row as unknown as Record<string, unknown>;
