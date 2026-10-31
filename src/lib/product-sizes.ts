@@ -52,6 +52,11 @@ export function isBangleCategory(categoryName?: string | null): boolean {
   return Boolean(categoryName && /bangle/i.test(categoryName));
 }
 
+/** Only "Glass Bangles" products get the colour selector on the storefront. */
+export function isGlassBanglesCategory(categoryName?: string | null): boolean {
+  return Boolean(categoryName && /glass/i.test(categoryName) && /bangle/i.test(categoryName));
+}
+
 /** Surcharge in rupees for a size label; unknown or missing sizes cost nothing. */
 export function getSizeSurcharge(size?: string | null): number {
   if (!size) return 0;

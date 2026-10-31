@@ -17,10 +17,17 @@ import type { ValidatedLine } from "@/lib/cart/validate";
 
 interface CartViewProps {
   freeShippingThreshold: number | null;
+  deliveryFeeTn: number | null;
+  deliveryFeeOutsideTn: number | null;
   whatsappConfigured: boolean;
 }
 
-export function CartView({ freeShippingThreshold, whatsappConfigured }: CartViewProps) {
+export function CartView({
+  freeShippingThreshold,
+  deliveryFeeTn,
+  deliveryFeeOutsideTn,
+  whatsappConfigured,
+}: CartViewProps) {
   const lines = useCartLines();
   const { setQuantity, remove, clear, setIssues } = useCartActions();
 
@@ -348,7 +355,29 @@ export function CartView({ freeShippingThreshold, whatsappConfigured }: CartView
             </div>
             <div className="flex items-center justify-between">
               <dt className="text-muted-foreground">Delivery</dt>
-              <dd>{getShippingFee(liveSubtotal, freeShippingThreshold) === 0 ? "Free" : formatPrice(getShippingFee(liveSubtotal, freeShippingThreshold))}</dd>
+              <dd>
+                {getShippingFee(
+                  liveSubtotal,
+                  freeShippingThreshold,
+                  {
+                    delivery_fee_tn: deliveryFeeTn,
+                    delivery_fee_outside_tn: deliveryFeeOutsideTn,
+                  },
+                  true,
+                ) === 0
+                  ? "Free"
+                  : formatPrice(
+                      getShippingFee(
+                        liveSubtotal,
+                        freeShippingThreshold,
+                        {
+                          delivery_fee_tn: deliveryFeeTn,
+                          delivery_fee_outside_tn: deliveryFeeOutsideTn,
+                        },
+                        true,
+                      ),
+                    )}
+              </dd>
             </div>
           </dl>
 

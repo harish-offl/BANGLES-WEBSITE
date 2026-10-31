@@ -9,8 +9,48 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatPrice, FREE_SHIPPING_THRESHOLD, getShippingFee } from "@/lib/site";
 import { useCartLines } from "@/hooks/use-cart";
+
+const INDIAN_STATES = [
+  "Andaman and Nicobar Islands",
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chandigarh",
+  "Chhattisgarh",
+  "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jammu and Kashmir",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Ladakh",
+  "Lakshadweep",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Puducherry",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+] as const;
 
 interface CreateOrderResponse {
   razorpayOrderId: string;
@@ -46,12 +86,15 @@ export default function CheckoutPage() {
     email: "",
     phone: "",
     address: "",
+    state: "Tamil Nadu",
   });
 
   const subtotal = lines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
-  const shippingFee = getShippingFee(subtotal, FREE_SHIPPING_THRESHOLD);
+  const shippingFee = getShippingFee(subtotal, FREE_SHIPPING_THRESHOLD, {
+    delivery_fee_tn: 40,
+    delivery_fee_outside_tn: 100,
+  }, form.state === "Tamil Nadu");
   const total = subtotal + shippingFee;
-
   useEffect(() => {
     if (lines.length === 0 && typeof window !== "undefined") {
       router.push("/cart");
@@ -104,6 +147,7 @@ export default function CheckoutPage() {
             email: form.email,
             phone: form.phone,
             address: form.address,
+            state: form.state,
           },
         }),
       });
@@ -261,6 +305,28 @@ export default function CheckoutPage() {
                   onChange={(e) => setForm({ ...form, address: e.target.value })}
                   placeholder="House, street, city, pincode"
                 />
+              </div>
+              <div className="grid grid-cols-1 gap-1.5">
+                <label htmlFor="state" className="text-xs font-medium text-brand-ink-mid">
+                  State
+                </label>
+                <Select
+                  id="state"
+                  required
+                  value={form.state}
+                  onValueChange={(value) => setForm({ ...form, state: value ?? "Tamil Nadu" })}
+                >
+                  <SelectTrigger className="bg-brand-c100 border-brand-c300/70 text-brand-ink">
+                    <SelectValue placeholder="Select state" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {INDIAN_STATES.map((state) => (
+                      <SelectItem key={state} value={state}>
+                        {state}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <Button

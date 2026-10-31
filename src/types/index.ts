@@ -188,6 +188,10 @@ export type StoreSettings = {
   seo_title_template: string | null;
   seo_default_description: string | null;
   free_shipping_threshold: number | null;
+  /** Delivery fee (in rupees) for addresses inside Tamil Nadu. */
+  delivery_fee_tn: number | null;
+  /** Delivery fee (in rupees) for addresses outside Tamil Nadu. */
+  delivery_fee_outside_tn: number | null;
 };
 
 export interface AdminUser {

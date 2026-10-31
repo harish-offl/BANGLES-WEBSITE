@@ -63,6 +63,36 @@ export function SettingsForm({ settings }: SettingsFormProps) {
               defaultValue={settings.free_shipping_threshold ?? ""}
             />
           </Field>
+          <Field
+            label="Delivery fee inside Tamil Nadu (₹)"
+            htmlFor="delivery_fee_tn"
+            error={errors.delivery_fee_tn}
+            hint="Charged when the address is inside Tamil Nadu."
+          >
+            <Input
+              id="delivery_fee_tn"
+              name="delivery_fee_tn"
+              type="number"
+              min="0"
+              step="1"
+              defaultValue={settings.delivery_fee_tn ?? ""}
+            />
+          </Field>
+          <Field
+            label="Delivery fee outside Tamil Nadu (₹)"
+            htmlFor="delivery_fee_outside_tn"
+            error={errors.delivery_fee_outside_tn}
+            hint="Charged when the address is outside Tamil Nadu."
+          >
+            <Input
+              id="delivery_fee_outside_tn"
+              name="delivery_fee_outside_tn"
+              type="number"
+              min="0"
+              step="1"
+              defaultValue={settings.delivery_fee_outside_tn ?? ""}
+            />
+          </Field>
         </div>
       </section>
 

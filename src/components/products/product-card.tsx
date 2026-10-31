@@ -7,6 +7,7 @@ import { WishlistButton } from "@/components/products/wishlist-button";
 import { SmartImage } from "@/components/shared/smart-image";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { isGlassBanglesCategory } from "@/lib/product-sizes";
 import type { Product } from "@/types";
 
 interface ProductCardProps {
@@ -67,7 +68,7 @@ export function ProductCard({
           ) : null}
         </div>
 
-        {product.colours.length > 0 ? (
+        {isGlassBanglesCategory(product.category_name) && product.colours.length > 0 ? (
           <ul className="flex flex-wrap gap-1.5" aria-label="Available colours">
             {product.colours.slice(0, 4).map((colour) => (
               <li key={colour}>

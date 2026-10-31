@@ -15,6 +15,7 @@ interface OrderCustomer {
   email: string | null;
   phone: string | null;
   address: string | null;
+  state: string | null;
 }
 
 interface CreateOrderBody {
@@ -68,7 +69,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const settings = await getCatalog().getSettings();
+  const catalog = await getCatalog();
+  const settings = await catalog.getSettings();
   const customer = (body as CreateOrderBody).customer ?? {};
 
   const customerName = typeof customer.name === "string" ? customer.name.trim() || null : null;
@@ -77,6 +79,8 @@ export async function POST(request: Request) {
     typeof customer.phone === "string" ? customer.phone.trim() || null : null;
   const shippingAddress =
     typeof customer.address === "string" ? customer.address.trim() || null : null;
+  const customerState =
+    typeof customer.state === "string" ? customer.state.trim() || null : null;
 
   if (!customerName || !customerPhone || !shippingAddress) {
     return NextResponse.json(
@@ -88,7 +92,12 @@ export async function POST(request: Request) {
   // Subtotal from authoritative server-side prices (never trust client totals).
   const subtotal = result.subtotal; // rupees, 2 dp
   const subtotalPaise = Math.round(subtotal * 100);
-  const shippingFeeRupees = getShippingFee(subtotal, settings.free_shipping_threshold);
+  const shippingFeeRupees = getShippingFee(
+    subtotal,
+    settings.free_shipping_threshold,
+    settings,
+    customerState === "Tamil Nadu",
+  );
   const shippingFeePaise = Math.round(shippingFeeRupees * 100);
   const discountPaise = 0;
   const totalPaise = subtotalPaise - discountPaise + shippingFeePaise;
@@ -134,10 +143,10 @@ export async function POST(request: Request) {
         customer_phone: customerPhone ?? "",
       },
     });
-  } catch (err: any) {
-    console.error("Razorpay order creation error:", err?.message || err);
+  } catch (err) {
+    console.error("Razorpay order creation error:", err instanceof Error ? err.message : err);
     return NextResponse.json(
-      { error: "Could not initialise payment.", details: err?.message },
+      { error: "Could not initialise payment.", details: err instanceof Error ? err.message : String(err) },
       { status: 500 },
     );
   }

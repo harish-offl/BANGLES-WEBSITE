@@ -29,6 +29,8 @@ export default async function CartPage() {
       <div className="mt-8">
         <CartView
           freeShippingThreshold={settings.free_shipping_threshold}
+          deliveryFeeTn={settings.delivery_fee_tn}
+          deliveryFeeOutsideTn={settings.delivery_fee_outside_tn}
           whatsappConfigured={Boolean(normaliseWhatsAppNumber(settings.whatsapp_number))}
         />
       </div>

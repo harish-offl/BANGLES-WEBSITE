@@ -7,6 +7,7 @@ import { RefreshCw, ShieldCheck, Truck } from "lucide-react";
 import { ProductGallery } from "@/components/products/product-gallery";
 import { ProductPurchasePanel } from "@/components/products/product-purchase-panel";
 import { formatPrice } from "@/lib/site";
+import { isGlassBanglesCategory } from "@/lib/product-sizes";
 import type { Product, ProductImage } from "@/types";
 
 interface ProductDetailProps {
@@ -128,7 +129,7 @@ export function ProductDetail({
             <dt className="text-muted-foreground">Category</dt>
             <dd className="text-foreground">{product.category_name ?? "—"}</dd>
           </div>
-          {product.colours.length > 0 ? (
+          {isGlassBanglesCategory(product.category_name) && product.colours.length > 0 ? (
             <div className="flex gap-2 sm:col-span-2">
               <dt className="text-muted-foreground">Colours</dt>
               <dd className="capitalize text-foreground">{product.colours.join(", ")}</dd>

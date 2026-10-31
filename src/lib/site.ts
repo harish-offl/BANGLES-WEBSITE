@@ -51,6 +51,8 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   seo_default_description:
     "Handcrafted bangles, bridal sets and traditional jewellery from Pattukottai. Shop border bangles, bridal bangles, kundan hair bands and more.",
   free_shipping_threshold: LEGACY_FACTS.freeDeliveryThreshold,
+  delivery_fee_tn: 40,
+  delivery_fee_outside_tn: 100,
 };
 
 export const SITE_URL = (
@@ -73,10 +75,17 @@ export const FREE_SHIPPING_THRESHOLD = LEGACY_FACTS.freeDeliveryThreshold;
  * Authoritative shipping rule used by both the UI and the payment API.
  * Delivery is free at or above the threshold; otherwise the standard fee
  * applies. A `null` threshold means no free-delivery promotion is configured.
+ *
+ * @param subtotal - Cart subtotal in rupees.
+ * @param freeShippingThreshold - Threshold for free delivery (null = disabled).
+ * @param settings - Store settings containing delivery_fee_tn and delivery_fee_outside_tn.
+ * @param isInsideTamilNadu - Whether the delivery address is inside Tamil Nadu.
  */
 export function getShippingFee(
   subtotal: number,
   freeShippingThreshold: number | null,
+  settings: Pick<StoreSettings, "delivery_fee_tn" | "delivery_fee_outside_tn">,
+  isInsideTamilNadu: boolean = true,
 ): number {
   if (
     freeShippingThreshold !== null &&
@@ -85,7 +94,10 @@ export function getShippingFee(
   ) {
     return 0;
   }
-  return STANDARD_SHIPPING_FEE;
+  const fee = isInsideTamilNadu
+    ? settings.delivery_fee_tn ?? STANDARD_SHIPPING_FEE
+    : settings.delivery_fee_outside_tn ?? STANDARD_SHIPPING_FEE;
+  return fee ?? STANDARD_SHIPPING_FEE;
 }
 
 /** Admin routes are excluded from indexing. */

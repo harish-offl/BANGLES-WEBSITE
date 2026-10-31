@@ -20,6 +20,7 @@ import { getPurchaseState, getStockLabel } from "@/lib/product-utils";
 import { cn } from "@/lib/utils";
 import { buildWhatsAppMessage, buildWhatsAppUrl } from "@/lib/whatsapp/shared";
 import type { Product } from "@/types";
+import { isGlassBanglesCategory } from "@/lib/product-sizes";
 
 interface ProductPurchasePanelProps {
   product: Product;
@@ -171,7 +172,7 @@ export function ProductPurchasePanel({
         </div>
       ) : null}
 
-      {product.colours.length > 0 ? (
+      {isGlassBanglesCategory(product.category_name) && product.colours.length > 0 ? (
         <div>
           <p className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
             Colour

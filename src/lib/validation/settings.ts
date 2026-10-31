@@ -20,6 +20,8 @@ export const settingsUpdateSchema = z.object({
   seo_title_template: z.string().trim().max(120).nullable().optional(),
   seo_default_description: z.string().trim().max(300).nullable().optional(),
   free_shipping_threshold: z.coerce.number().min(0).max(1_000_000).nullable().optional(),
+  delivery_fee_tn: z.coerce.number().min(0).max(10_000).nullable().optional(),
+  delivery_fee_outside_tn: z.coerce.number().min(0).max(10_000).nullable().optional(),
 });
 
 export type SettingsUpdateValues = z.infer<typeof settingsUpdateSchema>;
