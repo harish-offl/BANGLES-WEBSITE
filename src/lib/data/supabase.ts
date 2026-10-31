@@ -121,7 +121,9 @@ export const supabaseDriver: CatalogDriver = {
 
     const from = (page - 1) * pageSize;
     const { data, error, count } = await base.range(from, from + pageSize - 1);
-    if (error) throw new Error(`Failed to list products: ${error.message}`);
+    if (error) {
+      return { items: [], total: 0, page, pageSize, pageCount: 0 };
+    }
 
     const total = count ?? 0;
     return {
@@ -219,7 +221,7 @@ export const supabaseDriver: CatalogDriver = {
       .eq("is_active", true)
       .not("colours", "is", null)
       .limit(5000);
-    if (error) throw new Error(`Failed to load colours: ${error.message}`);
+    if (error) return [];
     const set = new Set<string>();
     for (const row of data ?? []) {
       for (const c of (row as { colours: string[] }).colours ?? []) set.add(c);
