@@ -1,7 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
-import { Loader2, Save } from "lucide-react";
+import { useActionState, useState } from "react";
+import { Loader2, Save, Upload } from "lucide-react";
 
 import { saveSettingsAction } from "@/app/admin/actions";
 import { initialActionState, type ActionState } from "@/lib/admin/action-state";
@@ -21,6 +21,33 @@ export function SettingsForm({ settings }: SettingsFormProps) {
     initialActionState,
   );
   const errors = state.status === "error" ? state.fieldErrors ?? {} : {};
+  const [importState, setImportState] = useState<{
+    status: "idle" | "loading" | "success" | "error";
+    message?: string;
+    imported?: number;
+  }>({ status: "idle" });
+
+  async function handleImport() {
+    setImportState({ status: "loading" });
+    try {
+      const res = await fetch("/api/admin/import-products", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        setImportState({ status: "error", message: data.error || "Import failed" });
+      } else {
+        setImportState({
+          status: "success",
+          message: data.message || "Import complete",
+          imported: data.imported,
+        });
+      }
+    } catch (err) {
+      setImportState({
+        status: "error",
+        message: err instanceof Error ? err.message : "Import failed",
+      });
+    }
+  }
 
   return (
     <form action={formAction} className="max-w-3xl space-y-6">
@@ -94,6 +121,40 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             />
           </Field>
         </div>
+      </section>
+
+      <section className="space-y-4 rounded-xl border border-border bg-card p-5">
+        <h2 className="font-display text-lg">Product import</h2>
+        <p className="text-sm text-muted-foreground">
+          Import 162 products with prices from the bundled catalogue into Supabase.
+          Existing records are updated (upsert by ID).
+        </p>
+        <Button
+          type="button"
+          onClick={handleImport}
+          disabled={importState.status === "loading"}
+          size="lg"
+          className="h-11 gap-2 text-base"
+        >
+          {importState.status === "loading" ? (
+            <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+          ) : (
+            <Upload className="size-4" aria-hidden="true" />
+          )}
+          {importState.status === "loading"
+            ? "Importing products..."
+            : importState.status === "success"
+              ? `Imported ${importState.imported} products`
+              : "Import products"}
+        </Button>
+        {importState.status === "success" && (
+          <p className="text-sm text-green-600 mt-2">
+            {importState.message}
+          </p>
+        )}
+        {importState.status === "error" && (
+          <p className="text-sm text-red-600 mt-2">{importState.message}</p>
+        )}
       </section>
 
       <section className="space-y-4 rounded-xl border border-border bg-card p-5">
