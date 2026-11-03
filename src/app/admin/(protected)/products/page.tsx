@@ -4,6 +4,7 @@ import { Pencil, Plus, Search } from "lucide-react";
 
 import { deleteProductAction } from "@/app/admin/actions";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { PaginationControls } from "@/components/admin/pagination-controls";
 import { AdminPageHeader } from "@/components/admin/ui";
 import { SmartImage } from "@/components/shared/smart-image";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -14,27 +15,32 @@ import { getAllProducts, getAdminCategories } from "@/lib/admin/queries";
 import { formatPrice } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
+const PAGE_SIZE = 10;
+
 export const metadata: Metadata = { title: "Products" };
 
 interface ProductsPageProps {
-  searchParams: Promise<{ q?: string; saved?: string; deleted?: string }>;
+  searchParams: Promise<{ q?: string; page?: string; saved?: string; deleted?: string }>;
 }
 
 export default async function AdminProductsPage({ searchParams }: ProductsPageProps) {
   const params = await searchParams;
   const q = params.q?.trim() || undefined;
+  const page = Math.max(Number(params.page) || 1, 1);
 
-  const [products, categories] = await Promise.all([
-    getAllProducts({ q }),
+  const [productsResult, categories] = await Promise.all([
+    getAllProducts({ q, page, pageSize: PAGE_SIZE }),
     getAdminCategories(),
   ]);
+  const products = productsResult.items;
   const categoryById = new Map(categories.map((c) => [c.id, c]));
+  const pageCount = productsResult.pageCount;
 
   return (
     <>
       <AdminPageHeader
         title="Products"
-        description={`${products.length} product${products.length === 1 ? "" : "s"}${q ? ` matching “${q}”` : ""}.`}
+        description={`${productsResult.total} product${productsResult.total === 1 ? "" : "s"}${q ? ` matching “${q}”` : ""}.`}
         action={
           <Link href="/admin/products/new" className={cn(buttonVariants({ size: "lg" }), "h-10 gap-2")}>
             <Plus className="size-4" aria-hidden="true" />
@@ -77,87 +83,96 @@ export default async function AdminProductsPage({ searchParams }: ProductsPagePr
           }
         />
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-border bg-card">
-          <table className="w-full min-w-[720px] text-sm">
-            <thead>
-              <tr className="border-b border-border text-left text-xs tracking-[0.12em] text-muted-foreground uppercase">
-                <th className="px-4 py-3 font-medium">Product</th>
-                <th className="px-4 py-3 font-medium">Category</th>
-                <th className="px-4 py-3 font-medium">Price</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 text-right font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => {
-                const category = product.category_id ? categoryById.get(product.category_id) : null;
-                return (
-                  <tr key={product.id} className="border-b border-border last:border-0">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <span className="relative size-11 shrink-0 overflow-hidden rounded-lg border border-border bg-brand-c100">
-                          <SmartImage
-                            src={product.primary_image_url}
-                            alt=""
-                            fill
-                            sizes="44px"
-                            className="object-cover"
-                          />
-                        </span>
-                        <span className="min-w-0">
+        <>
+          <div className="overflow-x-auto rounded-xl border border-border bg-card">
+            <table className="w-full min-w-[720px] text-sm">
+              <thead>
+                <tr className="border-b border-border text-left text-xs tracking-[0.12em] text-muted-foreground uppercase">
+                  <th className="px-4 py-3 font-medium">S.No</th>
+                  <th className="px-4 py-3 font-medium">Product</th>
+                  <th className="px-4 py-3 font-medium">Category</th>
+                  <th className="px-4 py-3 font-medium">Price</th>
+                  <th className="px-4 py-3 font-medium">Status</th>
+                  <th className="px-4 py-3 text-right font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map((product, index) => {
+                  const category = product.category_id ? categoryById.get(product.category_id) : null;
+                  const serialNumber = (page - 1) * PAGE_SIZE + index + 1;
+                  return (
+                    <tr key={product.id} className="border-b border-border last:border-0">
+                      <td className="px-4 py-3 tabular-nums text-muted-foreground">{serialNumber}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <span className="relative size-11 shrink-0 overflow-hidden rounded-lg border border-border bg-brand-c100">
+                            <SmartImage
+                              src={product.primary_image_url}
+                              alt=""
+                              fill
+                              sizes="44px"
+                              className="object-cover"
+                            />
+                          </span>
+                          <span className="min-w-0">
+                            <Link
+                              href={`/admin/products/${product.id}`}
+                              className="block truncate font-medium text-foreground hover:text-gold-strong"
+                            >
+                              {product.name}
+                            </Link>
+                            {product.sku ? (
+                              <span className="block text-xs text-muted-foreground">
+                                {product.sku}
+                              </span>
+                            ) : null}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground">
+                        {category?.name ?? "—"}
+                      </td>
+                      <td className="px-4 py-3 tabular-nums">{formatPrice(product.price)}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-wrap gap-1.5">
+                          <Badge variant={product.is_active ? "default" : "outline"}>
+                            {product.is_active ? "Active" : "Hidden"}
+                          </Badge>
+                          {product.is_featured ? <Badge variant="secondary">Featured</Badge> : null}
+                          {product.is_new_arrival ? <Badge variant="secondary">New</Badge> : null}
+                          {product.stock_quantity !== null && product.stock_quantity <= 0 ? (
+                            <Badge variant="destructive">Out of stock</Badge>
+                          ) : null}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-end gap-1">
                           <Link
                             href={`/admin/products/${product.id}`}
-                            className="block truncate font-medium text-foreground hover:text-gold-strong"
+                            className={cn(buttonVariants({ variant: "ghost", size: "icon-sm" }))}
+                            aria-label={`Edit ${product.name}`}
                           >
-                            {product.name}
+                            <Pencil className="size-4" aria-hidden="true" />
                           </Link>
-                          {product.sku ? (
-                            <span className="block text-xs text-muted-foreground">
-                              {product.sku}
-                            </span>
-                          ) : null}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {category?.name ?? "—"}
-                    </td>
-                    <td className="px-4 py-3 tabular-nums">{formatPrice(product.price)}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-1.5">
-                        <Badge variant={product.is_active ? "default" : "outline"}>
-                          {product.is_active ? "Active" : "Hidden"}
-                        </Badge>
-                        {product.is_featured ? <Badge variant="secondary">Featured</Badge> : null}
-                        {product.is_new_arrival ? <Badge variant="secondary">New</Badge> : null}
-                        {product.stock_quantity !== null && product.stock_quantity <= 0 ? (
-                          <Badge variant="destructive">Out of stock</Badge>
-                        ) : null}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center justify-end gap-1">
-                        <Link
-                          href={`/admin/products/${product.id}`}
-                          className={cn(buttonVariants({ variant: "ghost", size: "icon-sm" }))}
-                          aria-label={`Edit ${product.name}`}
-                        >
-                          <Pencil className="size-4" aria-hidden="true" />
-                        </Link>
-                        <DeleteButton
-                          action={deleteProductAction}
-                          id={product.id}
-                          label={`Delete ${product.name}`}
-                          confirmMessage={`Delete “${product.name}”? This cannot be undone.`}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                          <DeleteButton
+                            action={deleteProductAction}
+                            id={product.id}
+                            label={`Delete ${product.name}`}
+                            confirmMessage={`Delete “${product.name}”? This cannot be undone.`}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {pageCount > 1 && (
+            <PaginationControls page={page} pageCount={pageCount} total={productsResult.total} />
+          )}
+        </>
       )}
     </>
   );

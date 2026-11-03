@@ -29,6 +29,15 @@ export interface Category {
   product_count?: number;
 }
 
+export interface CategoryProduct {
+  id: string;
+  category_id: string;
+  product_id: string;
+  sort_order: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface ProductImage {
   id: string;
   product_id: string;
@@ -134,31 +143,95 @@ export type OrderStatus =
   | "pending"
   | "confirmed"
   | "processing"
-  | "dispatched"
+  | "shipped"
+  | "out_for_delivery"
   | "delivered"
-  | "cancelled";
+  | "cancelled"
+  | "delivery_failed"
+  | "return_requested"
+  | "return_approved"
+  | "return_rejected"
+  | "refund_initiated"
+  | "refunded"
+  | "payment_pending"
+  | "payment_failed"
+  | "stock_unavailable"
+  | "returned";
 
 export interface Order {
   id: string;
   order_number: string;
+  customer_id: string | null;
   customer_name: string | null;
   customer_email?: string | null;
   customer_phone: string | null;
-  shipping_address?: string | null;
+  shipping_address: string | null;
+  customer_state: string | null;
   status: OrderStatus;
   payment_status?: "pending" | "authorized" | "paid" | "failed" | "refunded" | "partially_refunded";
   currency: string;
   subtotal: number;
   shipping_fee?: number;
+  shipping_fee_paise?: number;
   discount?: number;
+  discount_paise?: number;
   total_amount: number;
   total_amount_paise?: number;
   notes: string | null;
   razorpay_order_id?: string | null;
   razorpay_payment_id?: string | null;
+  tracking_number?: string | null;
+  courier_name?: string | null;
+  courier_tracking_url?: string | null;
+  estimated_delivery?: string | null;
+  shipped_at?: string | null;
+  delivered_at?: string | null;
+  confirmed_at?: string | null;
+  processing_at?: string | null;
+  cancelled_at?: string | null;
   created_at: string;
   updated_at: string;
   items?: OrderItem[];
+}
+
+export interface OrderStatusHistory {
+  id: string;
+  order_id: string;
+  previous_status: string | null;
+  new_status: string;
+  customer_message: string | null;
+  internal_note: string | null;
+  courier_name: string | null;
+  tracking_number: string | null;
+  tracking_url: string | null;
+  estimated_delivery: string | null;
+  updated_by: string | null;
+  created_at: string;
+}
+
+export interface CustomerNotification {
+  id: string;
+  customer_id: string;
+  order_id: string | null;
+  title: string;
+  message: string;
+  notification_type: string;
+  is_read: boolean;
+  read_at: string | null;
+  created_at: string;
+}
+
+export interface UpdateOrderLifecycleInput {
+  orderId: string;
+  previousStatus: OrderStatus;
+  newStatus: OrderStatus;
+  customerMessage?: string | null;
+  internalNote?: string | null;
+  courierName?: string | null;
+  trackingNumber?: string | null;
+  trackingUrl?: string | null;
+  estimatedDelivery?: string | null;
+  updatedBy: string;
 }
 
 export interface OrderItem {

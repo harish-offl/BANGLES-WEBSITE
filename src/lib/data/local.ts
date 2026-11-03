@@ -4,14 +4,21 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { DEFAULT_SETTINGS } from "@/lib/site";
+import {
+  DEFAULT_STATUS_MESSAGES,
+  assertValidTransition,
+  type OrderStatus,
+} from "@/lib/orders/lifecycle";
 import type {
   Category,
+  CustomerNotification,
   Order,
-  OrderStatus,
+  OrderStatusHistory,
   Paginated,
   Product,
   ProductFilters,
   StoreSettings,
+  UpdateOrderLifecycleInput,
 } from "@/types";
 
 import type { CatalogDriver, OrderInput } from "./driver";
@@ -27,6 +34,8 @@ const RUNTIME_DIR = path.join(process.cwd(), ".data");
 const RUNTIME_PATH = path.join(RUNTIME_DIR, "catalog.json");
 const SETTINGS_PATH = path.join(RUNTIME_DIR, "settings.json");
 const ORDERS_PATH = path.join(RUNTIME_DIR, "orders.json");
+const ORDER_HISTORY_PATH = path.join(RUNTIME_DIR, "order_history.json");
+const NOTIFICATIONS_PATH = path.join(RUNTIME_DIR, "notifications.json");
 
 let cache: { mtimeMs: number; data: CatalogFile } | null = null;
 
@@ -93,6 +102,34 @@ function readOrders(): Order[] {
 function writeOrders(orders: Order[]): void {
   fs.mkdirSync(RUNTIME_DIR, { recursive: true });
   fs.writeFileSync(ORDERS_PATH, JSON.stringify(orders, null, 2));
+}
+
+function readOrderHistory(): OrderStatusHistory[] {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(ORDER_HISTORY_PATH, "utf8")) as OrderStatusHistory[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeOrderHistory(history: OrderStatusHistory[]): void {
+  fs.mkdirSync(RUNTIME_DIR, { recursive: true });
+  fs.writeFileSync(ORDER_HISTORY_PATH, JSON.stringify(history, null, 2));
+}
+
+function readNotifications(): CustomerNotification[] {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(NOTIFICATIONS_PATH, "utf8")) as CustomerNotification[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeNotifications(notifications: CustomerNotification[]): void {
+  fs.mkdirSync(RUNTIME_DIR, { recursive: true });
+  fs.writeFileSync(NOTIFICATIONS_PATH, JSON.stringify(notifications, null, 2));
 }
 
 /** Mirrors the Supabase sequence: BB-YYMM-##### starting at 1001. */
@@ -260,6 +297,53 @@ export const localDriver: CatalogDriver = {
     return list.find((c) => c.slug === slug) ?? null;
   },
 
+  async getCategoryProductIds(categoryId: string): Promise<string[]> {
+    const { products } = readCatalog();
+    return products
+      .filter((p) => p.category_id === categoryId)
+      .map((p) => p.id);
+  },
+
+  async replaceCategoryProducts(categoryId: string, productIds: string[]): Promise<void> {
+    const { categories, products } = readCatalog();
+    // In local mode, products have a single category_id. Clear previous assignments
+    // to this category, then assign the selected ones.
+    for (const p of products) {
+      if (p.category_id === categoryId) {
+        p.category_id = null;
+      }
+    }
+    for (const id of productIds) {
+      const idx = products.findIndex((p) => p.id === id);
+      if (idx >= 0) products[idx].category_id = categoryId;
+    }
+    writeCatalog({ categories, products });
+  },
+
+  async listProductsByCategory(
+    categoryId: string,
+    filters: ProductFilters = {},
+  ): Promise<Paginated<Product>> {
+    const { categories, products } = readCatalog();
+    const assigned = products.filter((p) => p.category_id === categoryId && p.is_active);
+    const slugById = new Map(categories.map((c) => [c.id, c.slug]));
+    const pageSize = Math.min(Math.max(filters.pageSize ?? 24, 1), 100);
+    const page = Math.max(filters.page ?? 1, 1);
+
+    let filtered = assigned.filter((p) => matches(p, filters, slugById));
+    filtered = sortProducts(filtered, filters.sort ?? "newest");
+    const start = (page - 1) * pageSize;
+    const items = filtered.slice(start, start + pageSize).map((p) => withCategory(p, categories));
+
+    return {
+      items,
+      total: filtered.length,
+      page,
+      pageSize,
+      pageCount: Math.max(1, Math.ceil(filtered.length / pageSize)),
+    };
+  },
+
   async getColours(): Promise<string[]> {
     const { products } = readCatalog();
     const set = new Set<string>();
@@ -374,8 +458,11 @@ export const localDriver: CatalogDriver = {
     const order: Order = {
       id,
       order_number: nextOrderNumber(orders),
+      customer_id: input.customerId,
       customer_name: input.customerName,
       customer_phone: input.customerPhone,
+      shipping_address: input.customerAddress,
+      customer_state: input.customerState,
       status: "pending",
       currency: input.currency,
       subtotal: input.subtotal,
@@ -406,6 +493,102 @@ export const localDriver: CatalogDriver = {
     orders[idx] = updated;
     writeOrders(orders);
     return updated;
+  },
+
+  async updateOrderLifecycle(input: UpdateOrderLifecycleInput): Promise<Order> {
+    assertValidTransition(input.previousStatus, input.newStatus);
+
+    const orders = readOrders();
+    const idx = orders.findIndex((o) => o.id === input.orderId);
+    if (idx < 0) throw new Error("Order not found");
+
+    const timestamp = now();
+    const current = orders[idx];
+    const updated: Order = {
+      ...current,
+      status: input.newStatus,
+      updated_at: timestamp,
+    };
+    if (input.courierName !== undefined) updated.courier_name = input.courierName;
+    if (input.trackingNumber !== undefined) updated.tracking_number = input.trackingNumber;
+    if (input.trackingUrl !== undefined) updated.courier_tracking_url = input.trackingUrl;
+    if (input.estimatedDelivery !== undefined) updated.estimated_delivery = input.estimatedDelivery;
+
+    if (input.newStatus === "confirmed") updated.confirmed_at = timestamp;
+    else if (input.newStatus === "processing") updated.processing_at = timestamp;
+    else if (input.newStatus === "shipped") updated.shipped_at = timestamp;
+    else if (input.newStatus === "delivered") updated.delivered_at = timestamp;
+    else if (input.newStatus === "cancelled") updated.cancelled_at = timestamp;
+
+    orders[idx] = updated;
+    writeOrders(orders);
+
+    const history = readOrderHistory();
+    history.unshift({
+      id: `local-hist-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      order_id: input.orderId,
+      previous_status: input.previousStatus,
+      new_status: input.newStatus,
+      customer_message: input.customerMessage ?? null,
+      internal_note: input.internalNote ?? null,
+      courier_name: input.courierName ?? null,
+      tracking_number: input.trackingNumber ?? null,
+      tracking_url: input.trackingUrl ?? null,
+      estimated_delivery: input.estimatedDelivery ?? null,
+      updated_by: input.updatedBy,
+      created_at: timestamp,
+    });
+    writeOrderHistory(history);
+
+    if (updated.customer_id) {
+      const notifications = readNotifications();
+      notifications.unshift({
+        id: `local-notif-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        customer_id: updated.customer_id,
+        order_id: updated.id,
+        title: `Order ${updated.order_number} updated`,
+        message: input.customerMessage ?? DEFAULT_STATUS_MESSAGES[input.newStatus],
+        notification_type: input.newStatus,
+        is_read: false,
+        read_at: null,
+        created_at: timestamp,
+      });
+      writeNotifications(notifications);
+    }
+
+    return updated;
+  },
+
+  async listOrderStatusHistory(orderId: string): Promise<OrderStatusHistory[]> {
+    return readOrderHistory()
+      .filter((h) => h.order_id === orderId)
+      .sort((a, b) => a.created_at.localeCompare(b.created_at));
+  },
+
+  async listCustomerOrders(customerId: string): Promise<Order[]> {
+    return readOrders()
+      .filter((o) => o.customer_id === customerId)
+      .sort((a, b) => b.created_at.localeCompare(a.created_at));
+  },
+
+  async getCustomerOrderById(customerId: string, id: string): Promise<Order | null> {
+    const order = readOrders().find((o) => o.id === id && o.customer_id === customerId) ?? null;
+    return order;
+  },
+
+  async listCustomerNotifications(customerId: string): Promise<CustomerNotification[]> {
+    return readNotifications()
+      .filter((n) => n.customer_id === customerId)
+      .sort((a, b) => b.created_at.localeCompare(a.created_at));
+  },
+
+  async markCustomerNotificationRead(id: string, customerId: string): Promise<boolean> {
+    const notifications = readNotifications();
+    const idx = notifications.findIndex((n) => n.id === id && n.customer_id === customerId);
+    if (idx < 0) return false;
+    notifications[idx] = { ...notifications[idx], is_read: true, read_at: now() };
+    writeNotifications(notifications);
+    return true;
   },
 
   async updateSettings(input): Promise<StoreSettings> {

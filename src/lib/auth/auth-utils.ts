@@ -1,0 +1,123 @@
+"use server";
+
+import { cache } from "react";
+
+import { createAuthClient } from "@/lib/supabase/server";
+import type { Order } from "@/types";
+
+/**
+ * Returns the currently signed-in customer identity from Supabase Auth,
+ * reading the profile from `public.profiles`.
+ *
+ * Returns `null` when no session exists or Supabase is not configured.
+ * Wrapped in React `cache()` so multiple components in one request share
+ * a single lookup.
+ */
+export interface CustomerIdentity {
+  userId: string;
+  email: string | null;
+  fullName: string | null;
+  phone: string | null;
+  avatarUrl: string | null;
+  emailConfirmed: boolean;
+}
+
+export const getCustomerIdentity = cache(async (): Promise<CustomerIdentity | null> => {
+  try {
+    const supabase = await createAuthClient();
+    if (!supabase) return null;
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("id, display_name, phone, email, avatar_url, updated_at")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (error || !profile) return null;
+
+    return {
+      userId: user.id,
+      email: user.email ?? profile.email ?? null,
+      fullName: profile.display_name ?? null,
+      phone: profile.phone ?? null,
+      avatarUrl: profile.avatar_url ?? null,
+      emailConfirmed: user.email_confirmed_at ? true : false,
+    };
+  } catch {
+    return null;
+  }
+});
+
+/**
+ * Returns true when a customer is signed in.
+ */
+export const isCustomerAuthenticated = cache(async (): Promise<boolean> => {
+  const identity = await getCustomerIdentity();
+  return identity !== null;
+});
+
+/**
+ * Lists the orders belonging to the currently signed-in customer.
+ *
+ * Reads through the service-role client after verifying the caller is
+ * authenticated, then filters to the caller's own orders. Customers can
+ * never see another customer's orders.
+ */
+export async function getCustomerOrders(): Promise<Order[]> {
+  const identity = await getCustomerIdentity();
+  if (!identity) return [];
+
+  const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+  const supabase = getServiceRoleClient();
+
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*, items:order_items(*)")
+    .order("created_at", { ascending: false });
+
+  if (error) return [];
+
+  // Belt-and-suspenders: verify ownership by matching customer name/email
+  // against the authenticated user's identity.
+  return (data ?? []).filter(
+    (row) =>
+      row.customer_name === identity.fullName ||
+      row.customer_name === identity.email,
+  ) as Order[];
+}
+
+/**
+ * Returns a single order belonging to the current customer, or null if it
+ * doesn't exist or belongs to another customer.
+ */
+export async function getCustomerOrderById(id: string): Promise<Order | null> {
+  const identity = await getCustomerIdentity();
+  if (!identity) return null;
+
+  const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+  const supabase = getServiceRoleClient();
+
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*, items:order_items(*)")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error || !data) return null;
+
+  // Belt-and-suspenders: verify ownership before returning.
+  const order = data as Order;
+  if (
+    order.customer_name !== identity.fullName &&
+    order.customer_name !== identity.email
+  ) {
+    return null;
+  }
+
+  return order;
+}

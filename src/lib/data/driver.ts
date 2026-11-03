@@ -1,13 +1,16 @@
 import type {
   Category,
+  CustomerNotification,
   DataMode,
   DataModeInfo,
   Order,
   OrderStatus,
+  OrderStatusHistory,
   Paginated,
   Product,
   ProductFilters,
   StoreSettings,
+  UpdateOrderLifecycleInput,
 } from "@/types";
 
 export interface ProductInput {
@@ -46,8 +49,11 @@ export interface OrderItemInput {
 }
 
 export interface OrderInput {
+  customerId: string | null;
   customerName: string | null;
   customerPhone: string | null;
+  customerAddress: string | null;
+  customerState: string | null;
   notes: string | null;
   currency: string;
   subtotal: number;
@@ -76,10 +82,42 @@ export interface CatalogDriver {
   updateCategory(id: string, input: Partial<CategoryInput>): Promise<Category>;
   deleteCategory(id: string): Promise<void>;
 
+  /** Returns product ids assigned to a category (junction table source of truth). */
+  getCategoryProductIds(categoryId: string): Promise<string[]>;
+
+  /** Replaces all product assignments for a category in one operation. */
+  replaceCategoryProducts(categoryId: string, productIds: string[]): Promise<void>;
+
+  /** Lists products assigned to a category with filtering/pagination (storefront). */
+  listProductsByCategory(
+    categoryId: string,
+    filters?: ProductFilters,
+  ): Promise<Paginated<Product>>;
+
   listOrders(options?: { status?: OrderStatus }): Promise<Order[]>;
   getOrderById(id: string): Promise<Order | null>;
   createOrder(input: OrderInput): Promise<Order>;
   updateOrderStatus(id: string, status: OrderStatus): Promise<Order>;
+
+  /**
+   * Admin-driven order lifecycle update. Validates the transition, persists
+   * tracking/courier metadata, writes an audit record and creates a customer
+   * notification. Returns the updated order. Throws on an invalid transition.
+   */
+  updateOrderLifecycle(input: UpdateOrderLifecycleInput): Promise<Order>;
+
+  /** Append-only audit trail for a single order, oldest first. */
+  listOrderStatusHistory(orderId: string): Promise<OrderStatusHistory[]>;
+
+  /** Orders belonging to a customer, newest first. */
+  listCustomerOrders(customerId: string): Promise<Order[]>;
+
+  /** Single order owned by a customer, or null when absent/forbidden. */
+  getCustomerOrderById(customerId: string, id: string): Promise<Order | null>;
+
+  listCustomerNotifications(customerId: string): Promise<CustomerNotification[]>;
+
+  markCustomerNotificationRead(id: string, customerId: string): Promise<boolean>;
 
   updateSettings(input: Partial<StoreSettings>): Promise<StoreSettings>;
 }

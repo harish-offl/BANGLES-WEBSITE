@@ -51,7 +51,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   seo_default_description:
     "Handcrafted bangles, bridal sets and traditional jewellery from Pattukottai. Shop border bangles, bridal bangles, kundan hair bands and more.",
   free_shipping_threshold: LEGACY_FACTS.freeDeliveryThreshold,
-  delivery_fee_tn: 40,
+  delivery_fee_tn: 60,
   delivery_fee_outside_tn: 100,
 };
 
@@ -66,7 +66,7 @@ export const SITE_NAME = DEFAULT_SETTINGS.store_name;
  * below the configured free-delivery threshold. Kept as a single shared
  * constant so the cart, checkout and server-side order total never disagree.
  */
-export const STANDARD_SHIPPING_FEE = 40;
+export const STANDARD_SHIPPING_FEE = 60;
 
 /** Subtotal (in rupees) at or above which delivery is free. */
 export const FREE_SHIPPING_THRESHOLD = LEGACY_FACTS.freeDeliveryThreshold;

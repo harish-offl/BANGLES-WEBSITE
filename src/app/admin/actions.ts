@@ -15,15 +15,26 @@ import {
   settingsUpdateSchema,
 } from "@/lib/validation";
 import type { ActionState } from "@/lib/admin/action-state";
-import type { OrderStatus } from "@/types";
+import type { OrderStatus, Product, Paginated, ProductFilters } from "@/types";
 
 const ORDER_STATUSES: readonly OrderStatus[] = [
   "pending",
   "confirmed",
   "processing",
-  "dispatched",
+  "shipped",
+  "out_for_delivery",
   "delivered",
   "cancelled",
+  "delivery_failed",
+  "return_requested",
+  "return_approved",
+  "return_rejected",
+  "refund_initiated",
+  "refunded",
+  "payment_pending",
+  "payment_failed",
+  "stock_unavailable",
+  "returned",
 ];
 
 function fieldErrorsFrom(error: {
@@ -198,10 +209,22 @@ export async function saveCategoryAction(
     }
 
     const catalog = getCatalog();
+    let savedCategory: { id: string } | null = null;
     if (id) {
       await catalog.updateCategory(id, parsed.data);
+      savedCategory = { id };
     } else {
-      await catalog.createCategory(parsed.data);
+      const created = await catalog.createCategory(parsed.data);
+      savedCategory = { id: created.id };
+    }
+
+    // Save product assignments for this category (new or existing)
+    if (savedCategory) {
+      const productIdsParam = optionalString(formData.get("category_product_ids"));
+      const productIds = productIdsParam
+        ? productIdsParam.split(",").map((s) => s.trim()).filter(Boolean)
+        : [];
+      await catalog.replaceCategoryProducts(savedCategory.id, productIds);
     }
 
     revalidateStorefront();
@@ -281,6 +304,36 @@ export async function saveSettingsAction(
   }
 }
 
+export async function getCategoryAssignmentProducts(categoryId: string): Promise<Product[]> {
+  await requireAdminAccess();
+  const catalog = getCatalog();
+  const productIds = await catalog.getCategoryProductIds(categoryId);
+  if (!productIds.length) return [];
+  return catalog.getProductsByIds(productIds);
+}
+
+export async function searchAssignableProducts({
+  q,
+  page,
+  pageSize,
+  sort,
+}: {
+  q?: string;
+  page?: number;
+  pageSize?: number;
+  sort?: ProductFilters["sort"];
+}): Promise<Paginated<Product>> {
+  await requireAdminAccess();
+  const catalog = getCatalog();
+  return catalog.listProducts({
+    q,
+    page: page ?? 1,
+    pageSize: pageSize ?? 24,
+    sort: sort ?? "newest",
+    include_inactive: true,
+  });
+}
+
 export async function updateOrderStatusAction(formData: FormData): Promise<void> {
   await requireAdminAccess();
   const id = optionalString(formData.get("id"));
@@ -292,4 +345,72 @@ export async function updateOrderStatusAction(formData: FormData): Promise<void>
     redirect("/admin/orders?error=1");
   }
   redirect("/admin/orders?saved=1");
+}
+
+/**
+ * Full lifecycle status update with transition validation, audit trail and
+ * customer notification. Used by the enhanced admin order management UI.
+ *
+ * On success the caller is redirected back to the admin orders page with a
+ * `saved=1` query param. On an invalid transition or server error the caller
+ * is redirected back with an `error` message instead.
+ */
+export async function updateOrderLifecycleAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  let orderId: string | null = null;
+  try {
+    const access = await requireAdminAccess();
+    const catalog = getCatalog();
+
+    orderId = optionalString(formData.get("orderId"));
+    if (!orderId) {
+      return { status: "error", message: "Missing order ID." };
+    }
+
+    const order = await catalog.getOrderById(orderId);
+    if (!order) {
+      return { status: "error", message: "Order not found." };
+    }
+
+    const newStatus = optionalString(formData.get("newStatus")) as OrderStatus | null;
+    if (!newStatus) {
+      return { status: "error", message: "A new status is required." };
+    }
+
+    const customerMessage = optionalString(formData.get("customerMessage"));
+    const internalNote = optionalString(formData.get("internalNote"));
+    const courierName = optionalString(formData.get("courierName"));
+    const trackingNumber = optionalString(formData.get("trackingNumber"));
+    const trackingUrl = optionalString(formData.get("trackingUrl"));
+    const estimatedDelivery = optionalString(formData.get("estimatedDelivery"));
+
+    await catalog.updateOrderLifecycle({
+      orderId: order.id,
+      previousStatus: order.status,
+      newStatus,
+      customerMessage,
+      internalNote,
+      courierName,
+      trackingNumber,
+      trackingUrl,
+      estimatedDelivery,
+      updatedBy: access.identity?.userId ?? "local-admin",
+    });
+
+    revalidatePath("/admin/orders");
+    revalidatePath("/account/orders");
+    revalidatePath("/order/[id]");
+
+    return { status: "success", message: `Order updated to ${newStatus}.` };
+  } catch (error) {
+    if (error instanceof AdminAccessError) {
+      return { status: "error", message: error.message };
+    }
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Could not update the order status.",
+    };
+  }
 }

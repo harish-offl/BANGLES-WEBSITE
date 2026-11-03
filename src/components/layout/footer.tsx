@@ -16,6 +16,7 @@ interface FooterProps {
 
 const SHOP_LINKS: { href: string; label: string }[] = [
   { href: "/shop", label: "All products" },
+  { href: "/track-order", label: "Track Order" },
   { href: "/collections", label: "Collections" },
   { href: "/gallery", label: "Gallery" },
   { href: "/cart", label: "Your bag" },

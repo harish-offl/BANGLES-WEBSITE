@@ -23,26 +23,36 @@ export interface AuthIdentity {
  * Returns `null` when there is no session or when Supabase is not configured.
  */
 export const getIdentity = cache(async (): Promise<AuthIdentity | null> => {
-  const supabase = await createAuthClient();
-  if (!supabase) return null;
+  try {
+    const supabase = await createAuthClient();
+    if (!supabase) return null;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return null;
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role, display_name")
-    .eq("id", user.id)
-    .single();
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("role, display_name")
+      .eq("id", user.id)
+      .maybeSingle();
 
-  return {
-    userId: user.id,
-    email: user.email ?? "",
-    role: (profile?.role as ProfileRole | undefined) ?? "customer",
-    displayName: profile?.display_name ?? null,
-  };
+    // MaybeSingle returns null if no row exists instead of throwing.
+    // If the user is logged in but has no profile row, treat as customer.
+    if (error || !profile) return null;
+
+    return {
+      userId: user.id,
+      email: user.email ?? "",
+      role: (profile.role as ProfileRole | undefined) ?? "customer",
+      displayName: profile.display_name ?? null,
+    };
+  } catch {
+    // If Supabase is misconfigured or unreachable, treat as unauthenticated
+    // rather than crashing the admin layout.
+    return null;
+  }
 });
 
 export const isAdmin = cache(async (): Promise<boolean> => {

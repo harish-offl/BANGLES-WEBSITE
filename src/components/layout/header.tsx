@@ -21,6 +21,7 @@ import type { Category } from "@/types";
 const PRIMARY_NAV = [
   { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
+  { href: "/track-order", label: "Track Order" },
   { href: "/collections", label: "Collections" },
   { href: "/gallery", label: "Gallery" },
   { href: "/about", label: "About" },
@@ -245,9 +246,9 @@ export function Header({ categories, announcement }: HeaderProps) {
             </Link>
 
             <Link
-              href="/admin/login"
+              href="/login"
               className="hidden rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground sm:block"
-              aria-label="Admin sign in"
+              aria-label="Sign in to your account or admin panel"
             >
               <User className="size-5" aria-hidden="true" />
             </Link>

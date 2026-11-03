@@ -16,9 +16,17 @@ interface SmartImageProps extends Omit<ImageProps, "src" | "alt"> {
 /**
  * `next/image` wrapper that swaps in the neutral catalogue placeholder when a
  * product has no photograph, so no layout ever renders a broken image.
+ *
+ * Local file paths (e.g. C:\Users\...\image.png) are rejected because
+ * next/image requires a configured URL hostname. They fall back to the
+ * placeholder instead of crashing.
  */
 export function SmartImage({ src, alt, className, contain = false, ...props }: SmartImageProps) {
-  const resolved: ImageSource = src ?? PLACEHOLDER_IMAGE;
+  const isLocalPath =
+    typeof src === "string" &&
+    (src.startsWith("\\\\") || /^[a-zA-Z]:[\\/]/.test(src));
+
+  const resolved: ImageSource = src && !isLocalPath ? src : PLACEHOLDER_IMAGE;
   return (
     <Image
       src={resolved}

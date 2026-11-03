@@ -4,12 +4,15 @@ import { DEFAULT_SETTINGS } from "@/lib/site";
 import { getAnonServerClient } from "@/lib/supabase/anon-server";
 import type {
   Category,
+  CustomerNotification,
   Order,
   OrderStatus,
+  OrderStatusHistory,
   Paginated,
   Product,
   ProductFilters,
   StoreSettings,
+  UpdateOrderLifecycleInput,
 } from "@/types";
 
 import type { CatalogDriver } from "./driver";
@@ -35,13 +38,13 @@ interface FilterBuilder {
   contains: (column: string, value: unknown) => FilterBuilder;
   in: (column: string, values: unknown[]) => FilterBuilder;
   order: (column: string, options?: { ascending?: boolean }) => FilterBuilder;
+  range: (from: number, to: number) => Promise<{ data: unknown[] | null; error: unknown; count: number | null }>;
 }
 
-function applyFilters<T>(query: T, filters: ProductFilters, categoryId?: string | null): T {
+function applyFilters<T>(query: T, filters: ProductFilters): T {
   let q = query as unknown as FilterBuilder;
 
   if (!filters.include_inactive) q = q.eq("is_active", true);
-  if (categoryId) q = q.eq("category_id", categoryId);
   if (filters.featured) q = q.eq("is_featured", true);
   if (filters.new_arrivals) q = q.eq("is_new_arrival", true);
   if (typeof filters.minPrice === "number") q = q.gte("price", filters.minPrice);
@@ -106,18 +109,41 @@ export const supabaseDriver: CatalogDriver = {
     const pageSize = Math.min(Math.max(filters.pageSize ?? 24, 1), 100);
     const page = Math.max(filters.page ?? 1, 1);
 
-    let categoryId: string | null = null;
+    let productIds: string[] | null = null;
     if (filters.category) {
       const { data } = await supabase
         .from("categories")
         .select("id")
         .eq("slug", filters.category)
         .maybeSingle();
-      categoryId = data?.id ?? "00000000-0000-0000-0000-000000000000";
+      const categoryId = data?.id;
+      if (categoryId) {
+        const { data: assigned } = await supabase
+          .from("category_products")
+          .select("product_id")
+          .eq("category_id", categoryId);
+        productIds = (assigned ?? []).map((row) => row.product_id);
+
+        // Fallback: legacy products.category_id if junction table is empty.
+        if (!productIds.length) {
+          const { data: legacy } = await supabase
+            .from("products")
+            .select("id")
+            .eq("category_id", categoryId);
+          productIds = (legacy ?? []).map((row) => row.id);
+        }
+
+        if (!productIds.length) {
+          return { items: [], total: 0, page, pageSize, pageCount: 0 };
+        }
+      } else {
+        return { items: [], total: 0, page, pageSize, pageCount: 0 };
+      }
     }
 
     let base = supabase.from("products").select(PRODUCT_SELECT, { count: "exact" });
-    base = applyFilters(base, filters, categoryId) as typeof base;
+    if (productIds) base = base.in("id", productIds) as typeof base;
+    base = applyFilters(base, filters) as typeof base;
 
     const from = (page - 1) * pageSize;
     const { data, error, count } = await base.range(from, from + pageSize - 1);
@@ -172,7 +198,7 @@ export const supabaseDriver: CatalogDriver = {
     const supabase = getAnonServerClient();
     let query = supabase
       .from("categories")
-      .select("*, products(count)")
+      .select("*")
       .order("sort_order", { ascending: true })
       .order("name", { ascending: true });
     if (options.activeOnly) query = query.eq("is_active", true);
@@ -180,37 +206,168 @@ export const supabaseDriver: CatalogDriver = {
     const { data, error } = await query;
     if (error) return [];
 
-    return (data ?? []).map((row) => {
-      const rest = row as unknown as Record<string, unknown>;
-      const products = rest.products as { count?: number }[] | undefined;
-      const category = Object.fromEntries(
-        Object.entries(rest).filter(([key]) => key !== "products"),
-      );
-      return hydrateCategory({
-        ...(category as unknown as Category),
-        product_count: products?.[0]?.count ?? 0,
-      });
-    });
+    // Fetch product counts per category from the junction table.
+    const { data: assignments } = await supabase
+      .from("category_products")
+      .select("category_id")
+      .not("category_id", "is", null);
+
+    const counts = new Map<string, number>();
+    for (const row of assignments ?? []) {
+      const cid = (row as { category_id: string }).category_id;
+      counts.set(cid, (counts.get(cid) ?? 0) + 1);
+    }
+
+    // Fallback: count from legacy products.category_id if junction table is empty.
+    if (counts.size === 0) {
+      const { data: products } = await supabase
+        .from("products")
+        .select("category_id")
+        .eq("is_active", true)
+        .not("category_id", "is", null);
+      for (const row of products ?? []) {
+        const cid = (row as { category_id: string }).category_id;
+        counts.set(cid, (counts.get(cid) ?? 0) + 1);
+      }
+    }
+
+    return (data ?? []).map((row) => hydrateCategory({
+      ...(row as unknown as Category),
+      product_count: counts.get(row.id) ?? 0,
+    }));
   },
 
   async getCategoryBySlug(slug): Promise<Category | null> {
     const supabase = getAnonServerClient();
     const { data, error } = await supabase
       .from("categories")
-      .select("*, products(count)")
+      .select("*")
       .eq("slug", slug)
       .maybeSingle();
     if (error) throw new Error(`Failed to load category: ${error.message}`);
     if (!data) return null;
-    const rest = data as unknown as Record<string, unknown>;
-    const products = rest.products as { count?: number }[] | undefined;
-    const category = Object.fromEntries(
-      Object.entries(rest).filter(([key]) => key !== "products"),
-    );
+
+    const { count } = await supabase
+      .from("category_products")
+      .select("id", { head: true, count: "exact" })
+      .eq("category_id", data.id);
+
+    // Fallback: count from legacy products.category_id if junction table is empty.
+    let productCount = count ?? 0;
+    if (productCount === 0) {
+      const { count: legacyCount } = await supabase
+        .from("products")
+        .select("id", { head: true, count: "exact" })
+        .eq("category_id", data.id);
+      productCount = legacyCount ?? 0;
+    }
+
     return hydrateCategory({
-      ...(category as unknown as Category),
-      product_count: products?.[0]?.count ?? 0,
+      ...(data as unknown as Category),
+      product_count: productCount,
     });
+  },
+
+  async getCategoryProductIds(categoryId: string): Promise<string[]> {
+    const supabase = getAnonServerClient();
+
+    // Prefer the junction table (source of truth after migration).
+    const { data, error } = await supabase
+      .from("category_products")
+      .select("product_id")
+      .eq("category_id", categoryId);
+    if (!error && (data ?? []).length > 0) {
+      return (data as { product_id: string }[]).map((row) => row.product_id);
+    }
+
+    // Fallback: legacy products.category_id column (pre-migration compatibility).
+    const { data: legacy, error: legacyError } = await supabase
+      .from("products")
+      .select("id")
+      .eq("category_id", categoryId);
+    if (legacyError) return [];
+    return (legacy ?? []).map((row) => row.id);
+  },
+
+  async replaceCategoryProducts(categoryId: string, productIds: string[]): Promise<void> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+
+    const { error: deleteError } = await supabase
+      .from("category_products")
+      .delete()
+      .eq("category_id", categoryId);
+    if (deleteError) throw new Error(deleteError.message);
+
+    if (productIds.length) {
+      const rows = productIds.map((productId, index) => ({
+        category_id: categoryId,
+        product_id: productId,
+        sort_order: index,
+      }));
+      const { error: insertError } = await supabase.from("category_products").insert(rows);
+      if (insertError) throw new Error(insertError.message);
+    }
+  },
+
+  async listProductsByCategory(
+    categoryId: string,
+    filters: ProductFilters = {},
+  ): Promise<Paginated<Product>> {
+    const supabase = getAnonServerClient();
+    const pageSize = Math.min(Math.max(filters.pageSize ?? 24, 1), 100);
+    const page = Math.max(filters.page ?? 1, 1);
+
+    // Get product ids assigned to this category
+    const assignedIds = await this.getCategoryProductIds(categoryId);
+    if (!assignedIds.length) {
+      return { items: [], total: 0, page, pageSize, pageCount: 0 };
+    }
+
+    const base = supabase
+      .from("products")
+      .select(PRODUCT_SELECT, { count: "exact" })
+      .in("id", assignedIds)
+      .eq("is_active", true);
+
+    // Apply search/sort/price filters
+    let q = base as unknown as FilterBuilder;
+    if (filters.q) {
+      const term = sanitizeSearch(filters.q);
+      if (term) {
+        q = q.or(
+          `name.ilike.%${term}%,description.ilike.%${term}%,sku.ilike.%${term}%`,
+        );
+      }
+    }
+    if (typeof filters.minPrice === "number") q = q.gte("price", filters.minPrice);
+    if (typeof filters.maxPrice === "number") q = q.lte("price", filters.maxPrice);
+    if (filters.colour?.length) q = q.contains("colours", filters.colour);
+
+    const sortMap: Record<string, [string, "asc" | "desc"]> = {
+      newest: ["created_at", "desc"],
+      "price-asc": ["price", "asc"],
+      "price-desc": ["price", "desc"],
+      "name-asc": ["name", "asc"],
+      "name-desc": ["name", "desc"],
+    };
+    const [column, dir] = sortMap[filters.sort ?? "newest"] ?? sortMap.newest;
+    q = q.order(column, { ascending: dir === "asc" });
+
+    const from = (page - 1) * pageSize;
+    const { data, error, count } = await q.range(from, from + pageSize - 1);
+    if (error) {
+      return { items: [], total: 0, page, pageSize, pageCount: 0 };
+    }
+
+    const total = count ?? 0;
+    return {
+      items: (data as Record<string, unknown>[] ?? []).map((row: Record<string, unknown>) => hydrate(row)).filter(Boolean) as Product[],
+      total,
+      page,
+      pageSize,
+      pageCount: Math.max(1, Math.ceil(total / pageSize)),
+    };
   },
 
   async getColours(): Promise<string[]> {
@@ -320,11 +477,18 @@ export const supabaseDriver: CatalogDriver = {
     const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
     const supabase = getServiceRoleClient();
 
-    const { count } = await supabase
-      .from("products")
-      .select("id", { count: "exact", head: true })
-      .eq("category_id", id);
-    if ((count ?? 0) > 0) {
+    // Check both the legacy products.category_id and the junction table.
+    const [productCheck, assignmentCheck] = await Promise.all([
+      supabase
+        .from("products")
+        .select("id", { count: "exact", head: true })
+        .eq("category_id", id),
+      supabase
+        .from("category_products")
+        .select("id", { count: "exact", head: true })
+        .eq("category_id", id),
+    ]);
+    if (((productCheck.count ?? 0) + (assignmentCheck.count ?? 0)) > 0) {
       throw new Error("Category still has products. Reassign or remove them first.");
     }
 
@@ -369,8 +533,11 @@ export const supabaseDriver: CatalogDriver = {
     const { data, error } = await supabase
       .from("orders")
       .insert({
+        customer_id: input.customerId,
         customer_name: input.customerName,
         customer_phone: input.customerPhone,
+        shipping_address: input.customerAddress,
+        customer_state: input.customerState,
         status: "pending",
         currency: input.currency,
         subtotal: input.subtotal,
@@ -410,6 +577,141 @@ export const supabaseDriver: CatalogDriver = {
       .single();
     if (error) throw new Error(error.message);
     return data as Order;
+  },
+
+  async updateOrderLifecycle(input: UpdateOrderLifecycleInput): Promise<Order> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const { assertValidTransition } = await import("@/lib/orders/lifecycle");
+    const supabase = getServiceRoleClient();
+
+    assertValidTransition(input.previousStatus, input.newStatus);
+
+    const now = new Date().toISOString();
+    const update: Record<string, unknown> = {
+      status: input.newStatus,
+      updated_at: now,
+    };
+    if (input.courierName !== undefined) update.courier_name = input.courierName;
+    if (input.trackingNumber !== undefined) update.tracking_number = input.trackingNumber;
+    if (input.trackingUrl !== undefined) update.courier_tracking_url = input.trackingUrl;
+    if (input.estimatedDelivery !== undefined) update.estimated_delivery = input.estimatedDelivery;
+
+    // Set lifecycle timestamps based on the new status.
+    if (input.newStatus === "confirmed") update.confirmed_at = now;
+    else if (input.newStatus === "processing") update.processing_at = now;
+    else if (input.newStatus === "shipped") update.shipped_at = now;
+    else if (input.newStatus === "out_for_delivery") update.shipped_at = update.shipped_at ?? now;
+    else if (input.newStatus === "delivered") update.delivered_at = now;
+    else if (input.newStatus === "cancelled") update.cancelled_at = now;
+
+    const { data, error } = await supabase
+      .from("orders")
+      .update(update)
+      .eq("id", input.orderId)
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+
+    const order = data as Order;
+
+    // Append-only audit trail.
+    const { error: historyError } = await supabase
+      .from("order_status_history")
+      .insert({
+        order_id: input.orderId,
+        previous_status: input.previousStatus,
+        new_status: input.newStatus,
+        customer_message: input.customerMessage ?? null,
+        internal_note: input.internalNote ?? null,
+        courier_name: input.courierName ?? null,
+        tracking_number: input.trackingNumber ?? null,
+        tracking_url: input.trackingUrl ?? null,
+        estimated_delivery: input.estimatedDelivery ?? null,
+        updated_by: input.updatedBy,
+      });
+    if (historyError) throw new Error(historyError.message);
+
+    // Customer-facing in-app notification (best-effort; never rolls back the
+    // successful status update if notification creation fails).
+    if (order.customer_id) {
+      const { DEFAULT_STATUS_MESSAGES } = await import("@/lib/orders/lifecycle");
+      const { error: notifError } = await supabase
+        .from("customer_notifications")
+        .insert({
+          customer_id: order.customer_id,
+          order_id: order.id,
+          title: `Order ${order.order_number} updated`,
+          message: input.customerMessage ?? DEFAULT_STATUS_MESSAGES[input.newStatus],
+          notification_type: input.newStatus,
+        });
+      if (notifError) {
+        // Log but do not fail — the order status itself is already persisted.
+        console.error("[order-lifecycle] notification insert failed:", notifError);
+      }
+    }
+
+    return order;
+  },
+
+  async listOrderStatusHistory(orderId: string): Promise<OrderStatusHistory[]> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const { data, error } = await supabase
+      .from("order_status_history")
+      .select("*")
+      .eq("order_id", orderId)
+      .order("created_at", { ascending: true });
+    if (error) throw new Error(error.message);
+    return (data ?? []) as OrderStatusHistory[];
+  },
+
+  async listCustomerOrders(customerId: string): Promise<Order[]> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*, items:order_items(*)")
+      .eq("customer_id", customerId)
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return (data ?? []) as Order[];
+  },
+
+  async getCustomerOrderById(customerId: string, id: string): Promise<Order | null> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*, items:order_items(*)")
+      .eq("id", id)
+      .eq("customer_id", customerId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return (data as Order) ?? null;
+  },
+
+  async listCustomerNotifications(customerId: string): Promise<CustomerNotification[]> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const { data, error } = await supabase
+      .from("customer_notifications")
+      .select("*")
+      .eq("customer_id", customerId)
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return (data ?? []) as CustomerNotification[];
+  },
+
+  async markCustomerNotificationRead(id: string, customerId: string): Promise<boolean> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const { error } = await supabase
+      .from("customer_notifications")
+      .update({ is_read: true, read_at: new Date().toISOString() })
+      .eq("id", id)
+      .eq("customer_id", customerId);
+    if (error) throw new Error(error.message);
+    return true;
   },
 
   async updateSettings(input): Promise<StoreSettings> {

@@ -1,32 +1,32 @@
 import "server-only";
 
 import { getCatalog } from "@/lib/data";
-import type { Category, Order, Product } from "@/types";
+import type { Category, Order, Paginated, Product } from "@/types";
 
 const MAX_PAGE_SIZE = 100;
 
-/** Fetches every product, including inactive rows, following pagination. */
+/** Fetches products with pagination support. */
 export async function getAllProducts(
-  filters: { q?: string; categoryId?: string } = {},
-): Promise<Product[]> {
+  filters: { q?: string; categoryId?: string; page?: number; pageSize?: number } = {},
+): Promise<Paginated<Product>> {
   const catalog = getCatalog();
-  const first = await catalog.listProducts({
+  const pageSize = Math.min(Math.max(filters.pageSize ?? 10, 1), 100);
+  const page = Math.max(filters.page ?? 1, 1);
+
+  return catalog.listProducts({
     include_inactive: true,
-    pageSize: MAX_PAGE_SIZE,
-    page: 1,
+    pageSize,
+    page,
     q: filters.q,
   });
-  const products = [...first.items];
-  for (let page = 2; page <= first.pageCount; page += 1) {
-    const next = await catalog.listProducts({
-      include_inactive: true,
-      pageSize: MAX_PAGE_SIZE,
-      page,
-      q: filters.q,
-    });
-    products.push(...next.items);
-  }
-  return products;
+}
+
+export interface PaginatedProductResult {
+  items: Product[];
+  total: number;
+  page: number;
+  pageSize: number;
+  pageCount: number;
 }
 
 export interface AdminOverview {
@@ -42,13 +42,18 @@ export interface AdminOverview {
 
 export async function getAdminOverview(): Promise<AdminOverview> {
   const catalog = getCatalog();
-  const [products, categories] = await Promise.all([
-    getAllProducts(),
+  const [productsResult, categories] = await Promise.all([
+    catalog.listProducts({
+      include_inactive: true,
+      pageSize: MAX_PAGE_SIZE,
+      page: 1,
+    }),
     catalog.listCategories(),
   ]);
+  const products = productsResult.items;
 
   return {
-    totalProducts: products.length,
+    totalProducts: productsResult.total,
     activeProducts: products.filter((p) => p.is_active).length,
     featuredProducts: products.filter((p) => p.is_featured).length,
     newArrivals: products.filter((p) => p.is_new_arrival).length,
@@ -76,4 +81,35 @@ export async function getAdminProduct(id: string): Promise<Product | null> {
 
 export async function getAllOrders(): Promise<Order[]> {
   return getCatalog().listOrders();
+}
+
+export interface AdminOrderOverview {
+  total: number;
+  pending: number;
+  confirmed: number;
+  processing: number;
+  shipped: number;
+  outForDelivery: number;
+  delivered: number;
+  cancelled: number;
+}
+
+/**
+ * Counts orders by status for the admin dashboard overview cards.
+ */
+export async function getAdminOrderOverview(): Promise<AdminOrderOverview> {
+  const catalog = getCatalog();
+  const orders = await catalog.listOrders();
+  const count = (status: string) =>
+    orders.filter((o) => o.status === status).length;
+  return {
+    total: orders.length,
+    pending: count("pending"),
+    confirmed: count("confirmed"),
+    processing: count("processing"),
+    shipped: count("shipped"),
+    outForDelivery: count("out_for_delivery"),
+    delivered: count("delivered"),
+    cancelled: count("cancelled"),
+  };
 }

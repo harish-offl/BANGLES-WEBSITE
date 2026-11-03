@@ -91,7 +91,7 @@ export default function CheckoutPage() {
 
   const subtotal = lines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
   const shippingFee = getShippingFee(subtotal, FREE_SHIPPING_THRESHOLD, {
-    delivery_fee_tn: 40,
+    delivery_fee_tn: 60,
     delivery_fee_outside_tn: 100,
   }, form.state === "Tamil Nadu");
   const total = subtotal + shippingFee;

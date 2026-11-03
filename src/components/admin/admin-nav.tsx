@@ -17,7 +17,7 @@ const LINKS = [
   { href: "/admin", label: "Dashboard", Icon: LayoutDashboard, exact: true },
   { href: "/admin/products", label: "Products", Icon: Package, exact: false },
   { href: "/admin/categories", label: "Categories", Icon: FolderTree, exact: false },
-  { href: "/admin/orders", label: "Enquiries", Icon: ShoppingBag, exact: false },
+  { href: "/admin/orders", label: "Orders", Icon: ShoppingBag, exact: false },
   { href: "/admin/settings", label: "Settings", Icon: Settings, exact: false },
 ] as const;
 

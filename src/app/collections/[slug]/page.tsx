@@ -41,8 +41,7 @@ export default async function CollectionPage(props: PageProps<"/collections/[slu
   const category = await catalog.getCategoryBySlug(slug);
   if (!category) notFound();
 
-  const result = await catalog.listProducts({
-    category: slug,
+  const result = await catalog.listProductsByCategory(category.id, {
     sort,
     page,
     pageSize: 24,

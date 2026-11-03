@@ -5,6 +5,7 @@ import { validateCartItems } from "@/lib/cart/validate";
 import { getCatalog } from "@/lib/data";
 import { createRazorpayOrder, isRazorpayConfigured } from "@/lib/razorpay/client";
 import { getShippingFee } from "@/lib/site";
+import { getCustomerIdentity } from "@/lib/auth/auth-utils";
 import { enquirySchema } from "@/lib/validation/enquiry";
 import { getServiceRoleClient } from "@/lib/supabase/service-role";
 
@@ -56,6 +57,8 @@ async function handleCreateOrder(request: Request) {
       { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } },
     );
   }
+
+  const customerIdentity = await getCustomerIdentity();
 
   let body: unknown;
   try {
@@ -122,20 +125,23 @@ async function handleCreateOrder(request: Request) {
   // 1. Internal order record (pending payment).
   let order: { id: string; order_number: string };
   try {
-    const created = await getCatalog().createOrder({
-      customerName,
-      customerPhone,
-      notes: parsed.data.note ?? null,
-      currency: settings.currency,
-      subtotal,
-      items: purchasable.map((line) => ({
-        productId: line.productId,
-        productName: line.name,
-        variant: buildVariantLabel(line),
-        quantity: line.quantity,
-        unitPrice: line.unitPrice ?? 0,
-      })),
-    });
+  const created = await getCatalog().createOrder({
+    customerId: customerIdentity?.userId ?? null,
+    customerName,
+    customerPhone,
+    customerAddress: shippingAddress,
+    customerState,
+    notes: parsed.data.note ?? null,
+    currency: settings.currency,
+    subtotal,
+    items: purchasable.map((line) => ({
+      productId: line.productId,
+      productName: line.name,
+      variant: buildVariantLabel(line),
+      quantity: line.quantity,
+      unitPrice: line.unitPrice ?? 0,
+    })),
+  });
     order = { id: created.id, order_number: created.order_number };
   } catch (err) {
     console.error("Order creation error:", err instanceof Error ? err.message : err);

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Pencil, Plus } from "lucide-react";
+import { Pencil, Plus, Package } from "lucide-react";
 
 import { deleteCategoryAction } from "@/app/admin/actions";
 import { DeleteButton } from "@/components/admin/delete-button";
@@ -135,6 +135,14 @@ export default async function AdminCategoriesPage({ searchParams }: CategoriesPa
                         aria-label={`Edit ${category.name}`}
                       >
                         <Pencil className="size-4" aria-hidden="true" />
+                      </Link>
+                      <Link
+                        href={`/admin/categories/${category.id}`}
+                        className={cn(buttonVariants({ variant: "ghost", size: "icon-sm" }))}
+                        aria-label={`Manage products for ${category.name}`}
+                        title="Manage products"
+                      >
+                        <Package className="size-4" aria-hidden="true" />
                       </Link>
                       <DeleteButton
                         action={deleteCategoryAction}

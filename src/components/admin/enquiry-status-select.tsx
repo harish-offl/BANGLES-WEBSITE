@@ -14,12 +14,23 @@ import {
 import type { OrderStatus } from "@/types";
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
-  pending: "Pending",
-  confirmed: "Confirmed",
+  pending: "Order Placed",
+  confirmed: "Order Confirmed",
   processing: "Processing",
-  dispatched: "Dispatched",
+  shipped: "Shipped",
+  out_for_delivery: "Out for Delivery",
   delivered: "Delivered",
   cancelled: "Cancelled",
+  delivery_failed: "Delivery Failed",
+  return_requested: "Return Requested",
+  return_approved: "Return Approved",
+  return_rejected: "Return Rejected",
+  refund_initiated: "Refund Initiated",
+  refunded: "Refunded",
+  payment_pending: "Payment Pending",
+  payment_failed: "Payment Failed",
+  stock_unavailable: "Stock Unavailable",
+  returned: "Returned",
 };
 
 const STATUSES = Object.keys(STATUS_LABELS) as OrderStatus[];

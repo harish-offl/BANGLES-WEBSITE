@@ -73,27 +73,33 @@ async function hasLocalAdminSession(): Promise<boolean> {
  * cookie is required, on top of the explicit env flags above.
  */
 export async function getAdminAccess(): Promise<AdminAccess> {
-  if (isSupabaseConfigured()) {
-    const identity = await getIdentity();
-    if (!identity) {
-      return { ok: false, reason: "unauthenticated" };
+  try {
+    if (isSupabaseConfigured()) {
+      const identity = await getIdentity();
+      if (!identity) {
+        return { ok: false, reason: "unauthenticated" };
+      }
+      if (identity.role !== "admin") {
+        return { ok: false, reason: "forbidden" };
+      }
+      return {
+        ok: true,
+        mode: "supabase",
+        identity,
+        displayName: identity.displayName ?? identity.email,
+      };
     }
-    if (identity.role !== "admin") {
-      return { ok: false, reason: "forbidden" };
+
+    if (isLocalAdminAvailable() && (await hasLocalAdminSession())) {
+      return { ok: true, mode: "local", identity: null, displayName: "Local admin" };
     }
-    return {
-      ok: true,
-      mode: "supabase",
-      identity,
-      displayName: identity.displayName ?? identity.email,
-    };
-  }
 
-  if (isLocalAdminAvailable() && (await hasLocalAdminSession())) {
-    return { ok: true, mode: "local", identity: null, displayName: "Local admin" };
+    return { ok: false, reason: "not_configured" };
+  } catch {
+    // If anything goes wrong resolving admin access, treat as unauthenticated
+    // rather than crashing the admin layout.
+    return { ok: false, reason: "unauthenticated" };
   }
-
-  return { ok: false, reason: "not_configured" };
 }
 
 export class AdminAccessError extends Error {

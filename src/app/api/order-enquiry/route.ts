@@ -86,8 +86,11 @@ export async function POST(request: Request) {
   // error is swallowed after the link is built.
   try {
     await getCatalog().createOrder({
+      customerId: null,
       customerName: null,
       customerPhone: null,
+      customerAddress: null,
+      customerState: null,
       notes: parsed.data.note,
       currency: settings.currency,
       subtotal: result.subtotal,
