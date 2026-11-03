@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SmartImage } from "@/components/shared/smart-image";
 import { cn } from "@/lib/utils";
 import type { Category, Product } from "@/types";
 import { LocalImagePreview } from "@/components/admin/local-image-preview";
@@ -313,13 +314,15 @@ export function CategoryForm({ category }: CategoryFormProps) {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <span className="relative size-8 shrink-0 overflow-hidden rounded-lg border border-border bg-brand-c100">
-                            <img
-                              src={product.primary_image_url || "/images/brand/placeholder.png"}
-                              alt=""
-                              className="object-cover h-full w-full"
-                            />
-                          </span>
+                      <span className="relative size-8 shrink-0 overflow-hidden rounded-lg border border-border bg-brand-c100">
+                        <SmartImage
+                          src={product.primary_image_url}
+                          alt=""
+                          fill
+                          sizes="32px"
+                          className="object-cover"
+                        />
+                      </span>
                           <div className="min-w-0">
                             <p className="font-medium text-foreground truncate">{product.name}</p>
                             <p className="text-xs text-muted-foreground truncate">{product.slug}</p>
@@ -419,10 +422,12 @@ export function CategoryForm({ category }: CategoryFormProps) {
                     className="flex items-center gap-3 rounded-lg border border-brand-c200 bg-brand-c50/50 p-2"
                   >
                     <span className="relative size-8 shrink-0 overflow-hidden rounded-lg border border-border bg-white">
-                      <img
-                        src={product.primary_image_url || "/images/brand/placeholder.png"}
+                      <SmartImage
+                        src={product.primary_image_url}
                         alt=""
-                        className="object-cover h-full w-full"
+                        fill
+                        sizes="32px"
+                        className="object-cover"
                       />
                     </span>
                     <div className="min-w-0 flex-1">

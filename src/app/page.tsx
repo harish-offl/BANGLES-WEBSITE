@@ -88,7 +88,11 @@ export default async function HomePage() {
             position: index + 1,
             name: product.name,
             ...(product.primary_image_url
-              ? { image: `${SITE_URL}${product.primary_image_url}` }
+              ? {
+                  image: product.primary_image_url.startsWith("http")
+                    ? product.primary_image_url
+                    : `${SITE_URL}${product.primary_image_url}`,
+                }
               : {}),
           })),
         }}
