@@ -57,14 +57,14 @@ export function AdminShell({ displayName, mode, children }: AdminShellProps) {
         </div>
       </aside>
 
-      {/* Mobile drawer overlay */}
-      <div
-        className="fixed inset-0 z-40 bg-black/40 hidden md:hidden"
-        onClick={() => setDrawerOpen(false)}
-        aria-hidden={drawerOpen ? "false" : "true"}
-      >
-        {drawerOpen && <div className="absolute inset-y-0 left-0 w-[280px] h-full bg-card z-50 shadow-2xl" />}
-      </div>
+      {/* Mobile drawer overlay (backdrop) */}
+      {drawerOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40 md:hidden"
+          onClick={() => setDrawerOpen(false)}
+          aria-hidden="false"
+        />
+      )}
 
       <main className="min-w-0 flex-1 relative">
         {/* Mobile header bar */}

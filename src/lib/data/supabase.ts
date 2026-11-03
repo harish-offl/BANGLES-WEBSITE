@@ -1,5 +1,7 @@
 ﻿import "server-only";
 
+import { unstable_cache } from "next/cache";
+
 import { DEFAULT_SETTINGS } from "@/lib/site";
 import { getAnonServerClient } from "@/lib/supabase/anon-server";
 import type {
@@ -22,6 +24,71 @@ import { decodeHtmlEntities, normalizeDescription } from "./text";
 function sanitizeSearch(value: string): string {
   return value.replace(/[%,()'"]/g, " ").replace(/\s+/g, " ").trim().slice(0, 120);
 }
+
+/**
+ * Cached public data that changes rarely and is read on many pages.
+ * `unstable_cache` scopes by tags so admin updates can purge it later.
+ */
+
+const getSettingsCached = unstable_cache(
+  async (): Promise<StoreSettings> => {
+    const supabase = getAnonServerClient();
+    const { data, error } = await supabase.from("store_settings").select("key, value");
+    if (error || !data) return { ...DEFAULT_SETTINGS };
+    const merged: Record<string, unknown> = { ...DEFAULT_SETTINGS };
+    for (const row of data as { key: string; value: unknown }[]) {
+      if (row.key in merged) merged[row.key] = row.value;
+    }
+    return merged as unknown as StoreSettings;
+  },
+  ["store-settings"],
+  { revalidate: 3600 },
+);
+
+const listCategoriesCached = unstable_cache(
+  async (activeOnly: boolean): Promise<Category[]> => {
+    const supabase = getAnonServerClient();
+    let query = supabase
+      .from("categories")
+      .select("*")
+      .order("sort_order", { ascending: true })
+      .order("name", { ascending: true });
+    if (activeOnly) query = query.eq("is_active", true);
+
+    const { data, error } = await query;
+    if (error) return [];
+
+    const { data: assignments } = await supabase
+      .from("category_products")
+      .select("category_id")
+      .not("category_id", "is", null);
+
+    const counts = new Map<string, number>();
+    for (const row of assignments ?? []) {
+      const cid = (row as { category_id: string }).category_id;
+      counts.set(cid, (counts.get(cid) ?? 0) + 1);
+    }
+
+    if (counts.size === 0) {
+      const { data: products } = await supabase
+        .from("products")
+        .select("category_id")
+        .eq("is_active", true)
+        .not("category_id", "is", null);
+      for (const row of products ?? []) {
+        const cid = (row as { category_id: string }).category_id;
+        counts.set(cid, (counts.get(cid) ?? 0) + 1);
+      }
+    }
+
+    return (data ?? []).map((row) => hydrateCategory({
+      ...(row as unknown as Category),
+      product_count: counts.get(row.id) ?? 0,
+    }));
+  },
+  ["categories"],
+  { revalidate: 3600 },
+);
 
 const PRODUCT_SELECT = "*, category:categories(*)";
 
@@ -195,46 +262,7 @@ export const supabaseDriver: CatalogDriver = {
   },
 
   async listCategories(options = {}): Promise<Category[]> {
-    const supabase = getAnonServerClient();
-    let query = supabase
-      .from("categories")
-      .select("*")
-      .order("sort_order", { ascending: true })
-      .order("name", { ascending: true });
-    if (options.activeOnly) query = query.eq("is_active", true);
-
-    const { data, error } = await query;
-    if (error) return [];
-
-    // Fetch product counts per category from the junction table.
-    const { data: assignments } = await supabase
-      .from("category_products")
-      .select("category_id")
-      .not("category_id", "is", null);
-
-    const counts = new Map<string, number>();
-    for (const row of assignments ?? []) {
-      const cid = (row as { category_id: string }).category_id;
-      counts.set(cid, (counts.get(cid) ?? 0) + 1);
-    }
-
-    // Fallback: count from legacy products.category_id if junction table is empty.
-    if (counts.size === 0) {
-      const { data: products } = await supabase
-        .from("products")
-        .select("category_id")
-        .eq("is_active", true)
-        .not("category_id", "is", null);
-      for (const row of products ?? []) {
-        const cid = (row as { category_id: string }).category_id;
-        counts.set(cid, (counts.get(cid) ?? 0) + 1);
-      }
-    }
-
-    return (data ?? []).map((row) => hydrateCategory({
-      ...(row as unknown as Category),
-      product_count: counts.get(row.id) ?? 0,
-    }));
+    return listCategoriesCached(options.activeOnly ?? false);
   },
 
   async getCategoryBySlug(slug): Promise<Category | null> {
@@ -387,14 +415,7 @@ export const supabaseDriver: CatalogDriver = {
   },
 
   async getSettings(): Promise<StoreSettings> {
-    const supabase = getAnonServerClient();
-    const { data, error } = await supabase.from("store_settings").select("key, value");
-    if (error || !data) return { ...DEFAULT_SETTINGS };
-    const merged: Record<string, unknown> = { ...DEFAULT_SETTINGS };
-    for (const row of data as { key: string; value: unknown }[]) {
-      if (row.key in merged) merged[row.key] = row.value;
-    }
-    return merged as unknown as StoreSettings;
+    return getSettingsCached();
   },
 
   /**

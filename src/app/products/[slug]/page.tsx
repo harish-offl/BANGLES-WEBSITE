@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
 import { ProductDetail } from "@/components/products/product-detail";
@@ -7,9 +8,9 @@ import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { JsonLd } from "@/components/shared/json-ld";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { getCatalog } from "@/lib/data";
-import { getRelatedProducts } from "@/lib/data/query";
 import { breadcrumbJsonLd, productJsonLd } from "@/lib/seo/jsonld";
 import { SITE_URL } from "@/lib/site";
+import type { Product } from "@/types";
 
 export const revalidate = 300;
 
@@ -47,10 +48,7 @@ export default async function ProductPage(props: PageProps<"/products/[slug]">) 
   const product = await catalog.getProductBySlug(slug);
   if (!product) notFound();
 
-  const [settings, related] = await Promise.all([
-    catalog.getSettings(),
-    getRelatedProducts(product, 4),
-  ]);
+  const [settings] = await Promise.all([catalog.getSettings()]);
 
   const breadcrumbs = [
     { label: "Home", href: "/" },
@@ -74,21 +72,32 @@ export default async function ProductPage(props: PageProps<"/products/[slug]">) 
         freeShippingThreshold={settings.free_shipping_threshold}
       />
 
-      {related.length > 0 ? (
-        <section className="mt-14 border-t border-border pt-10">
-          <SectionHeading
-            eyebrow="Keep exploring"
-            title={
-              <>
-                You may also <em>like</em>
-              </>
-            }
-          />
-          <div className="mt-8">
-            <ProductGrid products={related} priorityCount={0} />
-          </div>
-        </section>
-      ) : null}
+      <Suspense fallback={null}>
+        <RelatedProducts product={product} />
+      </Suspense>
     </div>
+  );
+}
+
+async function RelatedProducts({ product }: { product: Product }): Promise<React.ReactNode> {
+  const { getRelatedProducts } = await import("@/lib/data/query");
+  const related = await getRelatedProducts(product, 4);
+
+  if (related.length === 0) return null;
+
+  return (
+    <section className="mt-14 border-t border-border pt-10">
+      <SectionHeading
+        eyebrow="Keep exploring"
+        title={
+          <>
+            You may also <em>like</em>
+          </>
+        }
+      />
+      <div className="mt-8">
+        <ProductGrid products={related} priorityCount={0} />
+      </div>
+    </section>
   );
 }
