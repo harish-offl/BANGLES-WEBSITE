@@ -2,15 +2,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Package, User } from "lucide-react";
+import { LogOut, Package, User, Clock, ShoppingCart, Heart, MapPin, CreditCard, Bell, Settings } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import type { CustomerIdentity } from "@/lib/auth/auth-utils";
 
 const NAV = [
-  { href: "/account", label: "Overview", icon: User, exact: true },
+  { href: "/account", label: "My Dashboard", icon: User, exact: true },
+  { href: "/account/profile", label: "My Profile", icon: User, exact: false },
   { href: "/account/orders", label: "My Orders", icon: Package, exact: false },
-];
+  { href: "/account/cart", label: "My Cart", icon: ShoppingCart, exact: false },
+  { href: "/account/wishlist", label: "My Wishlist", icon: Heart, exact: false },
+  { href: "/account/addresses", label: "Saved Addresses", icon: MapPin, exact: false },
+  { href: "/account/payments", label: "Payment History", icon: CreditCard, exact: false },
+  { href: "/account/notifications", label: "Notifications", icon: Bell, exact: false },
+  { href: "/account/settings", label: "Account Settings", icon: Settings, exact: false },
+] as const;
 
 export function AccountShell({
   identity,
@@ -61,6 +68,16 @@ export function AccountShell({
                 </Link>
               );
             })}
+
+            <div className="mt-6 pt-4 border-t border-border">
+              <Link
+                href="/account/settings"
+                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/5"
+              >
+                <LogOut className="size-4" aria-hidden="true" />
+                Logout
+              </Link>
+            </div>
           </nav>
         </aside>
 
@@ -69,5 +86,3 @@ export function AccountShell({
     </div>
   );
 }
-
-export type { CustomerIdentity };
