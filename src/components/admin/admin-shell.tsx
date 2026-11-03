@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
@@ -15,11 +15,21 @@ interface AdminShellProps {
 
 export function AdminShell({ displayName, mode, children }: AdminShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    // On tablet/desktop, keep drawer closed
+    if (typeof window !== "undefined" && window.innerWidth >= 768) {
+      setDrawerOpen(false);
+    }
+  }, []);
 
   return (
     <div className="mx-auto flex min-h-dvh w-full flex-col lg:flex-row">
       {/* Desktop sidebar */}
-      <aside className={`hidden shrink-0 self-start border-r border-border bg-card transition-[width] duration-200 lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col ${sidebarCollapsed ? "w-[4.5rem]" : "w-64"}`}>
+      <aside
+        className={`hidden shrink-0 self-start border-r border-border bg-card transition-[width] duration-200 lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col ${sidebarCollapsed ? "w-[4.5rem]" : "w-64"}`}
+      >
         <div className={`border-b border-border py-4 ${sidebarCollapsed ? "px-2" : "px-4"}`}>
           <div className={`flex items-center ${sidebarCollapsed ? "justify-center" : "justify-between gap-2"}`}>
             <Link href="/admin" className="font-display text-lg tracking-[0.04em] text-foreground" aria-label="Bangles by Beauty admin">
@@ -47,7 +57,56 @@ export function AdminShell({ displayName, mode, children }: AdminShellProps) {
         </div>
       </aside>
 
-      <main className="min-w-0 flex-1">
+      {/* Mobile drawer overlay */}
+      <div
+        className="fixed inset-0 z-40 bg-black/40 hidden md:hidden"
+        onClick={() => setDrawerOpen(false)}
+        aria-hidden={drawerOpen ? "false" : "true"}
+      >
+        {drawerOpen && <div className="absolute inset-y-0 left-0 w-[280px] h-full bg-card z-50 shadow-2xl" />}
+      </div>
+
+      <main className="min-w-0 flex-1 relative">
+        {/* Mobile header bar */}
+        <header className="border-b border-border bg-card sticky top-0 z-20 hidden md:hidden px-4 py-3 flex items-center justify-between">
+          <button type="button" className="rounded-md p-2 text-foreground hover:bg-accent/50" onClick={() => setDrawerOpen(true)} aria-label="Open navigation">
+            <PanelLeftOpen className="size-5" aria-hidden="true" />
+          </button>
+          <div className="flex items-center gap-2">
+            <Link href="/admin" className="flex items-center gap-2 font-display text-lg tracking-[0.04em] text-foreground" aria-label="Bangles by Beauty admin">
+              <span className="grid size-8 place-items-center rounded bg-brand-c100 text-brand-ink font-semibold">BB</span>
+              <span>Bangles <span className="text-gold-strong">by Beauty</span></span>
+            </Link>
+          </div>
+          <button type="button" className="ml-auto rounded-md p-2 text-muted-foreground hover:bg-accent/50 hover:text-foreground" aria-label="Admin profile">
+            <LogOut className="size-5" aria-hidden="true" />
+          </button>
+        </header>
+
+        {/* Mobile drawer content */}
+        <aside className={`absolute inset-y-0 left-0 z-50 w-[280px] h-full bg-card shadow-2xl transform transition-transform duration-300 ease-in-out hidden md:hidden ${drawerOpen ? "translate-x-0" : "-translate-x-full"}`}>
+          <div className="border-b border-border p-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="grid size-8 place-items-center rounded bg-brand-c100 text-brand-ink font-semibold">BB</span>
+              <span className="font-display text-lg tracking-[0.04em] text-foreground">Admin</span>
+            </div>
+            <button type="button" className="rounded-md p-2 text-muted-foreground hover:bg-accent/50" onClick={() => setDrawerOpen(false)} aria-label="Close navigation">
+              <PanelLeftClose className="size-5" aria-hidden="true" />
+            </button>
+          </div>
+          <nav className="overflow-y-auto flex-1 p-3">
+            <AdminNav collapsed={false} />
+          </nav>
+          <div className="border-t border-border p-4">
+            <p className="px-3 pb-2 text-xs text-muted-foreground">Signed in as <span className="text-foreground font-medium">{displayName}</span></p>
+            <form action={signOutAction}>
+              <button type="submit" className="w-full gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-brand-c100 border border-transparent" aria-label="Sign out">
+                <LogOut className="size-4" aria-hidden="true" /> Sign out
+              </button>
+            </form>
+          </div>
+        </aside>
+
         {mode === "local" ? (
           <div className="border-b border-gold/40 bg-brand-c100 px-4 py-2.5 text-xs text-foreground lg:px-8">
             <strong className="font-medium">Local mode.</strong> Supabase is not configured, so

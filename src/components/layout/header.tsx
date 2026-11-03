@@ -247,7 +247,7 @@ export function Header({ categories, announcement }: HeaderProps) {
 
             <Link
               href="/login"
-              className="hidden rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground sm:block"
+              className="rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground"
               aria-label="Sign in to your account or admin panel"
             >
               <User className="size-5" aria-hidden="true" />

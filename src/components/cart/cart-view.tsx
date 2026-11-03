@@ -429,8 +429,8 @@ export function CartView({
           )}
 
           <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-            Pay securely online with UPI, cards, net banking and more. Your order is confirmed
-            once payment succeeds.
+            Payment collected online via Razorpay — Google Pay, PhonePe, Paytm,
+            UPI, debit cards and credit cards accepted. 100% secure checkout.
           </p>
         </div>
       </aside>

@@ -263,8 +263,8 @@ export function ProductPurchasePanel({
       </Button>
 
       <p className="text-xs leading-relaxed text-muted-foreground">
-        No payment is taken online. Tap “Enquire on WhatsApp” to confirm availability,
-        delivery and payment with our studio.
+        Payment collected online via Razorpay — Google Pay, PhonePe, Paytm,
+        UPI, debit cards and credit cards accepted. 100% secure checkout.
       </p>
     </div>
   );
