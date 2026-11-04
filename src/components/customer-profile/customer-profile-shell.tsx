@@ -10,7 +10,7 @@ import type { CustomerIdentity } from "@/lib/auth/auth-utils";
 const NAV = [
   { href: "/customer/profile", label: "Overview", icon: User, exact: true },
   { href: "/customer/profile/orders", label: "My Orders", icon: Package, exact: false },
-  { href: "/customer/profile/orders/[id]/track", label: "Track Orders", icon: Clock, exact: false },
+  { href: "/customer/profile/orders", label: "Track Orders", icon: Clock, exact: false },
   { href: "/customer/profile/info", label: "Customer Info", icon: User, exact: false },
   { href: "/customer/profile/cart", label: "My Cart", icon: ShoppingCart, exact: false },
   { href: "/customer/profile/wishlist", label: "Favourites", icon: Heart, exact: false },
@@ -47,9 +47,8 @@ export function CustomerProfileShell({
 
           <nav aria-label="Account" className="space-y-1">
             {NAV.map((item) => {
-              const active = item.exact
-                ? pathname === item.href
-                : pathname.startsWith(item.href.replace("[id]/track", ""));
+              const active =
+                pathname === item.href || pathname.startsWith(item.href + "/");
               const Icon = item.icon;
               return (
                 <Link
