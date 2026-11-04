@@ -5,12 +5,13 @@ import { createAuthClient } from "@/lib/supabase/server";
 /**
  * GET /api/orders/track?order_number=BB-2610-00001
  *
- * Returns safe tracking information for a given order number.
+ * Returns tracking information for a given order number.
  *
  * Security:
- * - Does NOT expose customer email, phone, full address or payment details.
- * - Returns only order number, status, items (names/qty/prices), and
- *   tracking-related fields that are safe for public lookup.
+ * - Returns order number, status, delivery details, items, and tracking-related fields.
+ * - Exposes customer name, phone, and shipping address that are stored on the order
+ *   record (provided at checkout), which are needed for the public tracking page.
+ * - Does NOT expose customer email.
  * - No auth required (public lookup by order number).
  */
 export async function GET(request: Request) {
@@ -48,6 +49,12 @@ export async function GET(request: Request) {
         id,
         order_number,
         status,
+        delivery_stage,
+        courier_name,
+        courier_partner,
+        tracking_id,
+        tracking_updated_at,
+        courier_tracking_url,
         payment_status,
         subtotal,
         shipping_fee_paise,
@@ -55,6 +62,8 @@ export async function GET(request: Request) {
         total_amount,
         currency,
         shipping_address,
+        customer_name,
+        customer_phone,
         customer_state,
         tracking_number,
         courier_name,
@@ -97,10 +106,16 @@ export async function GET(request: Request) {
       .eq("order_id", order.id)
       .order("created_at", { ascending: true });
 
-    // Build safe response (no customer email, phone, full address)
+    // Build response with order details for public tracking page
     const trackingData = {
       order_number: order.order_number,
       status: order.status,
+      delivery_stage: order.delivery_stage,
+      courier_name: order.courier_name,
+      courier_partner: order.courier_partner,
+      tracking_id: order.tracking_id,
+      tracking_updated_at: order.tracking_updated_at,
+      courier_tracking_url: order.courier_tracking_url,
       payment_status: order.payment_status,
       currency: order.currency,
       subtotal: order.subtotal,
@@ -112,9 +127,9 @@ export async function GET(request: Request) {
       delivered_at: order.delivered_at,
       created_at: order.created_at,
       tracking_number: order.tracking_number,
-      courier_name: order.courier_name,
-      courier_tracking_url: order.courier_tracking_url,
-      shipping_address: order.shipping_address ? "Available" : null, // Only show presence, not full address
+      shipping_address: order.shipping_address,
+      customer_name: order.customer_name,
+      customer_phone: order.customer_phone,
       items: (order.order_items || []).map((item: Record<string, unknown>) => ({
         id: item.id,
         product_id: item.product_id,
