@@ -11,7 +11,7 @@ import LogoutButton from "./logout-button";
 const NAV = [
   { id: "overview", href: "/customer/profile", label: "Overview", icon: User },
   { id: "orders", href: "/customer/profile/orders", label: "My Orders", icon: Package },
-  { id: "tracking", href: "/customer/profile/orders", label: "Track Orders", icon: Clock },
+  { id: "tracking", href: "/customer/profile/track-orders", label: "Track Orders", icon: Clock },
   { id: "info", href: "/customer/profile/info", label: "Customer Info", icon: User },
   { id: "cart", href: "/customer/profile/cart", label: "My Cart", icon: ShoppingCart },
   { id: "wishlist", href: "/customer/profile/wishlist", label: "Favourites", icon: Heart },
