@@ -29,12 +29,6 @@ export default async function AdminLoginPage() {
               Bangles by Beauty
             </span>
           </Link>
-          <Link
-            href="/login"
-            className="ml-auto text-xs font-medium text-muted-foreground hover:text-foreground"
-          >
-            ← Back to login options
-          </Link>
         </div>
       </header>
 
@@ -53,13 +47,6 @@ export default async function AdminLoginPage() {
           </div>
 
           <AdminLoginCard />
-
-          <p className="mt-6 text-center text-xs text-muted-foreground">
-            Not an admin?{" "}
-            <Link href="/login/customer" className="text-brand-ink font-semibold underline underline-offset-4">
-              Use the customer portal instead
-            </Link>
-          </p>
         </div>
       </main>
     </div>
