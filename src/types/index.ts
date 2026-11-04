@@ -225,12 +225,6 @@ export interface UpdateOrderLifecycleInput {
   orderId: string;
   previousStatus: OrderStatus;
   newStatus: OrderStatus;
-  customerMessage?: string | null;
-  internalNote?: string | null;
-  courierName?: string | null;
-  trackingNumber?: string | null;
-  trackingUrl?: string | null;
-  estimatedDelivery?: string | null;
   updatedBy: string;
 }
 

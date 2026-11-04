@@ -379,23 +379,10 @@ export async function updateOrderLifecycleAction(
       return { status: "error", message: "A new status is required." };
     }
 
-    const customerMessage = optionalString(formData.get("customerMessage"));
-    const internalNote = optionalString(formData.get("internalNote"));
-    const courierName = optionalString(formData.get("courierName"));
-    const trackingNumber = optionalString(formData.get("trackingNumber"));
-    const trackingUrl = optionalString(formData.get("trackingUrl"));
-    const estimatedDelivery = optionalString(formData.get("estimatedDelivery"));
-
     await catalog.updateOrderLifecycle({
       orderId: order.id,
       previousStatus: order.status,
       newStatus,
-      customerMessage,
-      internalNote,
-      courierName,
-      trackingNumber,
-      trackingUrl,
-      estimatedDelivery,
       updatedBy: access.identity?.userId ?? "local-admin",
     });
 

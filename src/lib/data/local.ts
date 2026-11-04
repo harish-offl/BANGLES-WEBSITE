@@ -509,14 +509,11 @@ export const localDriver: CatalogDriver = {
       status: input.newStatus,
       updated_at: timestamp,
     };
-    if (input.courierName !== undefined) updated.courier_name = input.courierName;
-    if (input.trackingNumber !== undefined) updated.tracking_number = input.trackingNumber;
-    if (input.trackingUrl !== undefined) updated.courier_tracking_url = input.trackingUrl;
-    if (input.estimatedDelivery !== undefined) updated.estimated_delivery = input.estimatedDelivery;
 
     if (input.newStatus === "confirmed") updated.confirmed_at = timestamp;
     else if (input.newStatus === "processing") updated.processing_at = timestamp;
     else if (input.newStatus === "shipped") updated.shipped_at = timestamp;
+    else if (input.newStatus === "out_for_delivery") updated.shipped_at = updated.shipped_at ?? timestamp;
     else if (input.newStatus === "delivered") updated.delivered_at = timestamp;
     else if (input.newStatus === "cancelled") updated.cancelled_at = timestamp;
 
@@ -529,12 +526,12 @@ export const localDriver: CatalogDriver = {
       order_id: input.orderId,
       previous_status: input.previousStatus,
       new_status: input.newStatus,
-      customer_message: input.customerMessage ?? null,
-      internal_note: input.internalNote ?? null,
-      courier_name: input.courierName ?? null,
-      tracking_number: input.trackingNumber ?? null,
-      tracking_url: input.trackingUrl ?? null,
-      estimated_delivery: input.estimatedDelivery ?? null,
+      customer_message: null,
+      internal_note: null,
+      courier_name: null,
+      tracking_number: null,
+      tracking_url: null,
+      estimated_delivery: null,
       updated_by: input.updatedBy,
       created_at: timestamp,
     });
@@ -547,7 +544,7 @@ export const localDriver: CatalogDriver = {
         customer_id: updated.customer_id,
         order_id: updated.id,
         title: `Order ${updated.order_number} updated`,
-        message: input.customerMessage ?? DEFAULT_STATUS_MESSAGES[input.newStatus],
+        message: DEFAULT_STATUS_MESSAGES[input.newStatus],
         notification_type: input.newStatus,
         is_read: false,
         read_at: null,

@@ -628,10 +628,6 @@ export const supabaseDriver: CatalogDriver = {
       status: input.newStatus,
       updated_at: now,
     };
-    if (input.courierName !== undefined) update.courier_name = input.courierName;
-    if (input.trackingNumber !== undefined) update.tracking_number = input.trackingNumber;
-    if (input.trackingUrl !== undefined) update.courier_tracking_url = input.trackingUrl;
-    if (input.estimatedDelivery !== undefined) update.estimated_delivery = input.estimatedDelivery;
 
     // Set lifecycle timestamps based on the new status.
     if (input.newStatus === "confirmed") update.confirmed_at = now;
@@ -658,12 +654,12 @@ export const supabaseDriver: CatalogDriver = {
         order_id: input.orderId,
         previous_status: input.previousStatus,
         new_status: input.newStatus,
-        customer_message: input.customerMessage ?? null,
-        internal_note: input.internalNote ?? null,
-        courier_name: input.courierName ?? null,
-        tracking_number: input.trackingNumber ?? null,
-        tracking_url: input.trackingUrl ?? null,
-        estimated_delivery: input.estimatedDelivery ?? null,
+        customer_message: null,
+        internal_note: null,
+        courier_name: null,
+        tracking_number: null,
+        tracking_url: null,
+        estimated_delivery: null,
         updated_by: input.updatedBy,
       });
     if (historyError) throw new Error(historyError.message);
@@ -678,11 +674,10 @@ export const supabaseDriver: CatalogDriver = {
           customer_id: order.customer_id,
           order_id: order.id,
           title: `Order ${order.order_number} updated`,
-          message: input.customerMessage ?? DEFAULT_STATUS_MESSAGES[input.newStatus],
+          message: DEFAULT_STATUS_MESSAGES[input.newStatus],
           notification_type: input.newStatus,
         });
       if (notifError) {
-        // Log but do not fail — the order status itself is already persisted.
         console.error("[order-lifecycle] notification insert failed:", notifError);
       }
     }

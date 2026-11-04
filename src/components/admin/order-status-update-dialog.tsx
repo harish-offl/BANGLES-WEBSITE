@@ -14,8 +14,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -23,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import type { Order, OrderStatus } from "@/types";
 import {
@@ -63,18 +61,28 @@ export function OrderStatusUpdateDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Update order status</DialogTitle>
-          <DialogDescription>
-            Order #{order.order_number} · current status:{" "}
-            {ORDER_STATUS_LABELS[order.status] ?? order.status}
-          </DialogDescription>
+          <div className="flex flex-col gap-1">
+            <p className="text-sm font-medium text-foreground">
+              Order #{order.order_number}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Current Status:{" "}
+              {ORDER_STATUS_LABELS[order.status] ?? order.status}
+            </p>
+          </div>
         </DialogHeader>
 
         <form action={formAction} className="grid gap-4">
           <input type="hidden" name="orderId" value={order.id} />
+          <input type="hidden" name="previousStatus" value={order.status} />
 
           <div className="grid gap-2">
-            <Label htmlFor="newStatus">New status</Label>
-            <Select name="newStatus" defaultValue={order.status} disabled>
+            <Label htmlFor="newStatus">New Order Status</Label>
+            <Select
+              name="newStatus"
+              defaultValue={order.status}
+              disabled={allowed.length === 0}
+            >
               <SelectTrigger id="newStatus">
                 <SelectValue />
               </SelectTrigger>
@@ -84,72 +92,13 @@ export function OrderStatusUpdateDialog({
                     {ORDER_STATUS_LABELS[status] ?? status}
                   </SelectItem>
                 ))}
+                {allowed.length === 0 && (
+                  <SelectItem disabled value={order.status}>
+                    No further transitions
+                  </SelectItem>
+                )}
               </SelectContent>
             </Select>
-            {allowed.length === 0 && (
-              <p className="text-xs text-muted-foreground">
-                No further status transitions are permitted from{" "}
-                {ORDER_STATUS_LABELS[order.status] ?? order.status}.
-              </p>
-            )}
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="customerMessage">Customer-facing message (optional)</Label>
-            <Textarea
-              id="customerMessage"
-              name="customerMessage"
-              placeholder="Leave blank to use the default message for this status."
-              rows={2}
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="internalNote">Internal admin note (optional)</Label>
-            <Textarea
-              id="internalNote"
-              name="internalNote"
-              placeholder="Visible only to the admin team."
-              rows={2}
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="courierName">Courier partner (optional)</Label>
-            <Input id="courierName" name="courierName" defaultValue={order.courier_name ?? ""} />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="trackingNumber">Tracking number (optional)</Label>
-            <Input
-              id="trackingNumber"
-              name="trackingNumber"
-              defaultValue={order.tracking_number ?? ""}
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="trackingUrl">Tracking URL (optional)</Label>
-            <Input
-              id="trackingUrl"
-              name="trackingUrl"
-              type="url"
-              defaultValue={order.courier_tracking_url ?? ""}
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="estimatedDelivery">Estimated delivery (optional)</Label>
-            <Input
-              id="estimatedDelivery"
-              name="estimatedDelivery"
-              type="datetime-local"
-              defaultValue={
-                order.estimated_delivery
-                  ? new Date(order.estimated_delivery).toISOString().slice(0, 16)
-                  : ""
-              }
-            />
           </div>
 
           <DialogFooter>
