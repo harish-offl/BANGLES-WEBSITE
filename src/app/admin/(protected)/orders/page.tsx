@@ -9,10 +9,7 @@ import { AdminPageHeader, StatCard } from "@/components/admin/ui";
 import { EmptyState } from "@/components/shared/empty-state";
 import { getAdminOrderOverview, getAllOrders } from "@/lib/admin/queries";
 import { formatPrice } from "@/lib/site";
-import {
-  ORDER_STATUS_LABELS,
-  type OrderStatus,
-} from "@/lib/orders/lifecycle";
+import { DELIVERY_STAGE_LABELS } from "@/lib/orders/lifecycle";
 
 export const metadata: Metadata = { title: "Order Management" };
 
@@ -28,18 +25,18 @@ function formatDate(value: string): string {
   }).format(date);
 }
 
-function statusBadgeClass(status: OrderStatus): string {
-  switch (status) {
+function deliveryStageBadgeClass(deliveryStage: string): string {
+  switch (deliveryStage) {
     case "delivered":
       return "bg-success/10 text-success border border-success/20";
-    case "cancelled":
-    case "delivery_failed":
-    case "payment_failed":
-      return "bg-destructive/10 text-destructive border border-destructive/20";
-    case "pending":
-      return "bg-warning/10 text-warning-foreground border border-warning/20";
     case "out_for_delivery":
       return "bg-brand-c200 text-brand-ink border border-brand-c300";
+    case "shipped":
+      return "bg-brand-c100 text-brand-ink border border-brand-c300";
+    case "packing":
+      return "bg-warning/10 text-warning-foreground border border-warning/20";
+    case "order_confirmed":
+      return "bg-brand-c100 text-brand-ink border border-brand-c300";
     default:
       return "bg-brand-c100 text-brand-ink border border-brand-c300";
   }
@@ -60,13 +57,11 @@ export default async function AdminOrdersPage() {
 
       <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         <StatCard label="Total orders" value={overview.total} />
-        <StatCard label="Order Placed" value={overview.pending} />
-        <StatCard label="Confirmed" value={overview.confirmed} />
-        <StatCard label="Processing" value={overview.processing} />
+        <StatCard label="Order Confirmed" value={overview.order_confirmed} />
+        <StatCard label="Packing" value={overview.packing} />
         <StatCard label="Shipped" value={overview.shipped} />
         <StatCard label="Out for Delivery" value={overview.outForDelivery} />
         <StatCard label="Delivered" value={overview.delivered} />
-        <StatCard label="Cancelled" value={overview.cancelled} />
       </div>
 
       {orders.length === 0 ? (
@@ -84,7 +79,7 @@ export default async function AdminOrdersPage() {
                 <th className="px-4 py-3 font-medium">Order</th>
                 <th className="px-4 py-3 font-medium">Customer</th>
                 <th className="px-4 py-3 font-medium">Total</th>
-                <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium">Delivery Stage</th>
                 <th className="px-4 py-3 font-medium">Last updated</th>
                 <th className="px-4 py-3 text-right font-medium">Actions</th>
               </tr>
@@ -107,10 +102,10 @@ export default async function AdminOrdersPage() {
                     <span
                       className={cn(
                         "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-                        statusBadgeClass(order.status),
+                        deliveryStageBadgeClass(order.delivery_stage ?? ""),
                       )}
                     >
-                      {ORDER_STATUS_LABELS[order.status] ?? order.status}
+                      {DELIVERY_STAGE_LABELS[order.delivery_stage ?? ""] ?? order.delivery_stage ?? "Not Started"}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">

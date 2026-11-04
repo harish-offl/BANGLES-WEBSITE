@@ -54,6 +54,14 @@ export const ORDER_STATUS_LABELS: Record<string, string> = {
   returned: "Returned",
 };
 
+export const DELIVERY_STAGE_LABELS: Record<string, string> = {
+  order_confirmed: "Order Confirmed",
+  packing: "Packing",
+  shipped: "Shipped",
+  out_for_delivery: "Out for Delivery",
+  delivered: "Delivered",
+};
+
 /** Canonical timeline order for the customer-facing progress display. */
 export const TRACKING_TIMELINE: OrderStatus[] = [
   "pending",

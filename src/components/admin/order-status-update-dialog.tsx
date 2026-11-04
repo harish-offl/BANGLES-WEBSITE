@@ -37,7 +37,8 @@ const DELIVERY_STAGES: Array<{
   label: string;
 }> = [
   { value: "", label: "Not Started" },
-  { value: "packed", label: "Order Packed" },
+  { value: "order_confirmed", label: "Order Confirmed" },
+  { value: "packing", label: "Packing" },
   { value: "shipped", label: "Shipped" },
   { value: "out_for_delivery", label: "Out for Delivery" },
   { value: "delivered", label: "Delivered" },

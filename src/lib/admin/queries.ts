@@ -85,31 +85,27 @@ export async function getAllOrders(): Promise<Order[]> {
 
 export interface AdminOrderOverview {
   total: number;
-  pending: number;
-  confirmed: number;
-  processing: number;
+  order_confirmed: number;
+  packing: number;
   shipped: number;
   outForDelivery: number;
   delivered: number;
-  cancelled: number;
 }
 
 /**
- * Counts orders by status for the admin dashboard overview cards.
+ * Counts orders by delivery stage for the admin dashboard overview cards.
  */
 export async function getAdminOrderOverview(): Promise<AdminOrderOverview> {
   const catalog = getCatalog();
   const orders = await catalog.listOrders();
-  const count = (status: string) =>
-    orders.filter((o) => o.status === status).length;
+  const count = (stage: string) =>
+    orders.filter((o) => o.delivery_stage === stage).length;
   return {
     total: orders.length,
-    pending: count("pending"),
-    confirmed: count("confirmed"),
-    processing: count("processing"),
+    order_confirmed: count("order_confirmed"),
+    packing: count("packing"),
     shipped: count("shipped"),
     outForDelivery: count("out_for_delivery"),
     delivered: count("delivered"),
-    cancelled: count("cancelled"),
   };
 }
