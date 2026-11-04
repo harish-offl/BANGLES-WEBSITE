@@ -227,8 +227,6 @@ export interface CustomerNotification {
 
 export interface UpdateOrderLifecycleInput {
   orderId: string;
-  previousStatus: OrderStatus;
-  newStatus: OrderStatus;
   deliveryStage?: string | null;
   courierPartner?: string | null;
   trackingId?: string | null;

@@ -374,19 +374,12 @@ export async function updateOrderLifecycleAction(
       return { status: "error", message: "Order not found." };
     }
 
-    const newStatus = optionalString(formData.get("newStatus")) as OrderStatus | null;
-    if (!newStatus) {
-      return { status: "error", message: "A new status is required." };
-    }
-
     const deliveryStage = optionalString(formData.get("deliveryStage")) || undefined;
     const courierPartner = optionalString(formData.get("courierPartner")) || undefined;
     const trackingId = optionalString(formData.get("trackingId")) || undefined;
 
     await catalog.updateOrderLifecycle({
       orderId: order.id,
-      previousStatus: order.status,
-      newStatus,
       deliveryStage,
       courierPartner,
       trackingId,
@@ -397,7 +390,7 @@ export async function updateOrderLifecycleAction(
     revalidatePath("/account/orders");
     revalidatePath("/order/[id]");
 
-    return { status: "success", message: `Order updated to ${newStatus}.` };
+    return { status: "success", message: "Order tracking updated." };
   } catch (error) {
     if (error instanceof AdminAccessError) {
       return { status: "error", message: error.message };

@@ -496,8 +496,6 @@ export const localDriver: CatalogDriver = {
   },
 
   async updateOrderLifecycle(input: UpdateOrderLifecycleInput): Promise<Order> {
-    assertValidTransition(input.previousStatus, input.newStatus);
-
     const orders = readOrders();
     const idx = orders.findIndex((o) => o.id === input.orderId);
     if (idx < 0) throw new Error("Order not found");
@@ -506,7 +504,6 @@ export const localDriver: CatalogDriver = {
     const current = orders[idx];
     const updated: Order = {
       ...current,
-      status: input.newStatus,
       updated_at: timestamp,
     };
 
@@ -517,48 +514,8 @@ export const localDriver: CatalogDriver = {
       updated.tracking_updated_at = timestamp;
     }
 
-    if (input.newStatus === "confirmed") updated.confirmed_at = timestamp;
-    else if (input.newStatus === "processing") updated.processing_at = timestamp;
-    else if (input.newStatus === "shipped") updated.shipped_at = timestamp;
-    else if (input.newStatus === "out_for_delivery") updated.shipped_at = updated.shipped_at ?? timestamp;
-    else if (input.newStatus === "delivered") updated.delivered_at = timestamp;
-    else if (input.newStatus === "cancelled") updated.cancelled_at = timestamp;
-
     orders[idx] = updated;
     writeOrders(orders);
-
-    const history = readOrderHistory();
-    history.unshift({
-      id: `local-hist-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      order_id: input.orderId,
-      previous_status: input.previousStatus,
-      new_status: input.newStatus,
-      customer_message: null,
-      internal_note: null,
-      courier_name: null,
-      tracking_number: null,
-      tracking_url: null,
-      estimated_delivery: null,
-      updated_by: input.updatedBy,
-      created_at: timestamp,
-    });
-    writeOrderHistory(history);
-
-    if (updated.customer_id) {
-      const notifications = readNotifications();
-      notifications.unshift({
-        id: `local-notif-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        customer_id: updated.customer_id,
-        order_id: updated.id,
-        title: `Order ${updated.order_number} updated`,
-        message: DEFAULT_STATUS_MESSAGES[input.newStatus],
-        notification_type: input.newStatus,
-        is_read: false,
-        read_at: null,
-        created_at: timestamp,
-      });
-      writeNotifications(notifications);
-    }
 
     return updated;
   },

@@ -25,10 +25,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import type { Order, OrderStatus } from "@/types";
-import {
-  ORDER_STATUS_LABELS,
-  allowedTransitions,
-} from "@/lib/orders/lifecycle";
+import { ORDER_STATUS_LABELS } from "@/lib/orders/lifecycle";
 
 interface OrderStatusUpdateDialogProps {
   order: Order;
@@ -39,6 +36,7 @@ const DELIVERY_STAGES: Array<{
   value: string;
   label: string;
 }> = [
+  { value: "", label: "Not Started" },
   { value: "packed", label: "Order Packed" },
   { value: "shipped", label: "Shipped" },
   { value: "out_for_delivery", label: "Out for Delivery" },
@@ -54,8 +52,6 @@ export function OrderStatusUpdateDialog({
     updateOrderLifecycleAction,
     { status: "idle" },
   );
-
-  const allowed = allowedTransitions(order.status);
 
   useEffect(() => {
     if (state.status === "success") {
@@ -85,36 +81,6 @@ export function OrderStatusUpdateDialog({
 
         <form action={formAction} className="grid gap-4">
           <input type="hidden" name="orderId" value={order.id} />
-          <input
-            type="hidden"
-            name="previousStatus"
-            value={order.status}
-          />
-
-          <div className="grid gap-2">
-            <Label htmlFor="newStatus">New Order Status</Label>
-            <Select
-              name="newStatus"
-              defaultValue={order.status}
-              disabled={allowed.length === 0}
-            >
-              <SelectTrigger id="newStatus">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {allowed.map((status) => (
-                  <SelectItem key={status} value={status}>
-                    {ORDER_STATUS_LABELS[status] ?? status}
-                  </SelectItem>
-                ))}
-                {allowed.length === 0 && (
-                  <SelectItem disabled value={order.status}>
-                    No further transitions
-                  </SelectItem>
-                )}
-              </SelectContent>
-            </Select>
-          </div>
 
           <div className="border-t border-border pt-4">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-tight">
@@ -126,13 +92,12 @@ export function OrderStatusUpdateDialog({
                 <Label htmlFor="deliveryStage">Delivery Stage</Label>
                 <Select
                   name="deliveryStage"
-                  defaultValue={order.delivery_stage ?? undefined}
+                  defaultValue={order.delivery_stage ?? ""}
                 >
                   <SelectTrigger id="deliveryStage">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">None</SelectItem>
                     {DELIVERY_STAGES.map((stage) => (
                       <SelectItem key={stage.value} value={stage.value}>
                         {stage.label}
@@ -173,7 +138,7 @@ export function OrderStatusUpdateDialog({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isPending || allowed.length === 0}>
+            <Button type="submit" disabled={isPending}>
               {isPending ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />

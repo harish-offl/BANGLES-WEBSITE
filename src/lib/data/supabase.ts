@@ -618,14 +618,10 @@ export const supabaseDriver: CatalogDriver = {
 
   async updateOrderLifecycle(input: UpdateOrderLifecycleInput): Promise<Order> {
     const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
-    const { assertValidTransition } = await import("@/lib/orders/lifecycle");
     const supabase = getServiceRoleClient();
-
-    assertValidTransition(input.previousStatus, input.newStatus);
 
     const now = new Date().toISOString();
     const update: Record<string, unknown> = {
-      status: input.newStatus,
       updated_at: now,
     };
 
@@ -636,14 +632,6 @@ export const supabaseDriver: CatalogDriver = {
       update.tracking_updated_at = now;
     }
 
-    // Set lifecycle timestamps based on the new status.
-    if (input.newStatus === "confirmed") update.confirmed_at = now;
-    else if (input.newStatus === "processing") update.processing_at = now;
-    else if (input.newStatus === "shipped") update.shipped_at = now;
-    else if (input.newStatus === "out_for_delivery") update.shipped_at = update.shipped_at ?? now;
-    else if (input.newStatus === "delivered") update.delivered_at = now;
-    else if (input.newStatus === "cancelled") update.cancelled_at = now;
-
     const { data, error } = await supabase
       .from("orders")
       .update(update)
@@ -652,44 +640,7 @@ export const supabaseDriver: CatalogDriver = {
       .single();
     if (error) throw new Error(error.message);
 
-    const order = data as Order;
-
-    // Append-only audit trail.
-    const { error: historyError } = await supabase
-      .from("order_status_history")
-      .insert({
-        order_id: input.orderId,
-        previous_status: input.previousStatus,
-        new_status: input.newStatus,
-        customer_message: null,
-        internal_note: null,
-        courier_name: null,
-        tracking_number: null,
-        tracking_url: null,
-        estimated_delivery: null,
-        updated_by: input.updatedBy,
-      });
-    if (historyError) throw new Error(historyError.message);
-
-    // Customer-facing in-app notification (best-effort; never rolls back the
-    // successful status update if notification creation fails).
-    if (order.customer_id) {
-      const { DEFAULT_STATUS_MESSAGES } = await import("@/lib/orders/lifecycle");
-      const { error: notifError } = await supabase
-        .from("customer_notifications")
-        .insert({
-          customer_id: order.customer_id,
-          order_id: order.id,
-          title: `Order ${order.order_number} updated`,
-          message: DEFAULT_STATUS_MESSAGES[input.newStatus],
-          notification_type: input.newStatus,
-        });
-      if (notifError) {
-        console.error("[order-lifecycle] notification insert failed:", notifError);
-      }
-    }
-
-    return order;
+    return data as Order;
   },
 
   async listOrderStatusHistory(orderId: string): Promise<OrderStatusHistory[]> {
