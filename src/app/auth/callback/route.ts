@@ -2,23 +2,13 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
-import { ensureCustomerProfile } from "@/lib/auth/auth-utils";
-
-const ALLOWED_NEXT = new Set([
-  "/customer/profile",
-  "/customer/profile/orders",
-  "/customer/profile/cart",
-  "/checkout",
-  "/track-order",
-]);
+const ALLOWED_NEXT = new Set(["/login/admin", "/admin", "/admin/dashboard", "/checkout", "/track-order"]);
 
 function safeNext(next: string | undefined): string {
-  if (!next) return "/customer/profile";
-  if (!next.startsWith("/")) return "/customer/profile";
-  if (next.startsWith("//")) return "/customer/profile";
-  return ALLOWED_NEXT.has(next) || next.startsWith("/customer/profile")
-    ? next
-    : "/customer/profile";
+  if (!next) return "/login/admin";
+  if (!next.startsWith("/")) return "/login/admin";
+  if (next.startsWith("//")) return "/login/admin";
+  return ALLOWED_NEXT.has(next) || next.startsWith("/login/admin") ? next : "/login/admin";
 }
 
 export async function GET(request: Request) {
@@ -27,7 +17,7 @@ export async function GET(request: Request) {
   const next = searchParams.get("next") ?? undefined;
 
   if (!code) {
-    return NextResponse.redirect(new URL("/login?error=verification_failed", request.url));
+    return NextResponse.redirect(new URL("/login/admin?error=verification_failed", request.url));
   }
 
   const cookieStore = await cookies();
@@ -57,13 +47,11 @@ export async function GET(request: Request) {
   if (error) {
     return NextResponse.redirect(
       new URL(
-        `/login?error=${encodeURIComponent("Google sign-in couldn't be completed. Please try again.")}`,
+        `/login/admin?error=${encodeURIComponent("Google sign-in couldn't be completed. Please try again.")}`,
         request.url,
       ),
     );
   }
-
-  await ensureCustomerProfile();
 
   return NextResponse.redirect(new URL(safeNext(next), request.url));
 }
