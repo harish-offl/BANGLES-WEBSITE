@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { OrderStatusUpdateDialog } from "@/components/admin/order-status-update-dialog";
 import { EnquiryDetailModal } from "@/components/admin/enquiry-detail-modal";
+import { WhatsAppOrderButton } from "@/components/admin/whatsapp-order-button";
 import { AdminPageHeader, StatCard } from "@/components/admin/ui";
 import { EmptyState } from "@/components/shared/empty-state";
 import { getAdminOrderOverview, getAllOrders } from "@/lib/admin/queries";
@@ -126,6 +127,7 @@ export default async function AdminOrdersPage() {
                         }
                       />
                       <EnquiryDetailModal order={order} />
+                      <WhatsAppOrderButton order={order} />
                     </div>
                   </td>
                 </tr>
