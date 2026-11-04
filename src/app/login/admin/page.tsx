@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 
 import { AdminLoginCard } from "@/components/auth/admin-login-card";
+import { getAdminAccess } from "@/lib/admin/access";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +13,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function AdminLoginPage() {
+export default async function AdminLoginPage() {
+  const access = await getAdminAccess();
+  if (access.ok) redirect("/admin");
+
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="border-b border-border bg-card">

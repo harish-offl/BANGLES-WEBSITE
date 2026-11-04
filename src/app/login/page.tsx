@@ -1,13 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { ShoppingBag, ShieldCheck, User } from "lucide-react";
+
+import { getCustomerIdentity } from "@/lib/auth/auth-utils";
 
 export const metadata: Metadata = {
   title: "Sign in · Bangles by Beauty",
   description: "Choose your account type to continue — customer or admin.",
 };
 
-export default function CommonLoginPage() {
+export default async function CommonLoginPage() {
+  const identity = await getCustomerIdentity();
+  if (identity) redirect("/customer/profile");
+
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="border-b border-border bg-card">

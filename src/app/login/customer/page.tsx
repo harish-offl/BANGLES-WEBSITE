@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { User } from "lucide-react";
 
+import { getCustomerIdentity } from "@/lib/auth/auth-utils";
 import { CustomerLoginCard } from "@/components/auth/customer-login-card";
 
 export const metadata: Metadata = {
@@ -9,7 +11,10 @@ export const metadata: Metadata = {
   description: "Sign in to your Bangles by Beauty customer account.",
 };
 
-export default function CustomerLoginPage() {
+export default async function CustomerLoginPage() {
+  const identity = await getCustomerIdentity();
+  if (identity) redirect("/customer/profile");
+
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="border-b border-border bg-card">
