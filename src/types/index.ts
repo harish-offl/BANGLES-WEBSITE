@@ -184,6 +184,10 @@ export interface Order {
   courier_name?: string | null;
   courier_tracking_url?: string | null;
   estimated_delivery?: string | null;
+  delivery_stage?: string | null;
+  courier_partner?: string | null;
+  tracking_id?: string | null;
+  tracking_updated_at?: string | null;
   shipped_at?: string | null;
   delivered_at?: string | null;
   confirmed_at?: string | null;
@@ -225,6 +229,9 @@ export interface UpdateOrderLifecycleInput {
   orderId: string;
   previousStatus: OrderStatus;
   newStatus: OrderStatus;
+  deliveryStage?: string | null;
+  courierPartner?: string | null;
+  trackingId?: string | null;
   updatedBy: string;
 }
 

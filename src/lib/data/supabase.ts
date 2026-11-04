@@ -629,6 +629,13 @@ export const supabaseDriver: CatalogDriver = {
       updated_at: now,
     };
 
+    if (input.deliveryStage !== undefined) update.delivery_stage = input.deliveryStage;
+    if (input.courierPartner !== undefined) update.courier_partner = input.courierPartner;
+    if (input.trackingId !== undefined) update.tracking_id = input.trackingId;
+    if (input.deliveryStage || input.courierPartner || input.trackingId) {
+      update.tracking_updated_at = now;
+    }
+
     // Set lifecycle timestamps based on the new status.
     if (input.newStatus === "confirmed") update.confirmed_at = now;
     else if (input.newStatus === "processing") update.processing_at = now;

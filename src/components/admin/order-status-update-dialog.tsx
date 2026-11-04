@@ -14,6 +14,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -21,7 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import type { Order, OrderStatus } from "@/types";
 import {
@@ -33,6 +34,16 @@ interface OrderStatusUpdateDialogProps {
   order: Order;
   trigger: React.ReactElement;
 }
+
+const DELIVERY_STAGES: Array<{
+  value: string;
+  label: string;
+}> = [
+  { value: "packed", label: "Order Packed" },
+  { value: "shipped", label: "Shipped" },
+  { value: "out_for_delivery", label: "Out for Delivery" },
+  { value: "delivered", label: "Delivered" },
+];
 
 export function OrderStatusUpdateDialog({
   order,
@@ -74,7 +85,11 @@ export function OrderStatusUpdateDialog({
 
         <form action={formAction} className="grid gap-4">
           <input type="hidden" name="orderId" value={order.id} />
-          <input type="hidden" name="previousStatus" value={order.status} />
+          <input
+            type="hidden"
+            name="previousStatus"
+            value={order.status}
+          />
 
           <div className="grid gap-2">
             <Label htmlFor="newStatus">New Order Status</Label>
@@ -99,6 +114,54 @@ export function OrderStatusUpdateDialog({
                 )}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="border-t border-border pt-4">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-tight">
+              Order Tracking Details
+            </h3>
+
+            <div className="grid gap-4 mt-4">
+              <div className="grid gap-2">
+                <Label htmlFor="deliveryStage">Delivery Stage</Label>
+                <Select
+                  name="deliveryStage"
+                  defaultValue={order.delivery_stage ?? undefined}
+                >
+                  <SelectTrigger id="deliveryStage">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">None</SelectItem>
+                    {DELIVERY_STAGES.map((stage) => (
+                      <SelectItem key={stage.value} value={stage.value}>
+                        {stage.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="courierPartner">Courier Partner</Label>
+                <Input
+                  id="courierPartner"
+                  name="courierPartner"
+                  defaultValue={order.courier_partner ?? ""}
+                  placeholder="e.g. India Post, Delhivery, Blue Dart"
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="trackingId">Tracking ID</Label>
+                <Input
+                  id="trackingId"
+                  name="trackingId"
+                  defaultValue={order.tracking_id ?? order.tracking_number ?? ""}
+                  placeholder="e.g. IN123456789"
+                />
+              </div>
+            </div>
           </div>
 
           <DialogFooter>

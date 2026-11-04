@@ -379,10 +379,17 @@ export async function updateOrderLifecycleAction(
       return { status: "error", message: "A new status is required." };
     }
 
+    const deliveryStage = optionalString(formData.get("deliveryStage")) || undefined;
+    const courierPartner = optionalString(formData.get("courierPartner")) || undefined;
+    const trackingId = optionalString(formData.get("trackingId")) || undefined;
+
     await catalog.updateOrderLifecycle({
       orderId: order.id,
       previousStatus: order.status,
       newStatus,
+      deliveryStage,
+      courierPartner,
+      trackingId,
       updatedBy: access.identity?.userId ?? "local-admin",
     });
 

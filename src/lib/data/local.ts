@@ -510,6 +510,13 @@ export const localDriver: CatalogDriver = {
       updated_at: timestamp,
     };
 
+    if (input.deliveryStage !== undefined) updated.delivery_stage = input.deliveryStage;
+    if (input.courierPartner !== undefined) updated.courier_partner = input.courierPartner;
+    if (input.trackingId !== undefined) updated.tracking_id = input.trackingId;
+    if (input.deliveryStage || input.courierPartner || input.trackingId) {
+      updated.tracking_updated_at = timestamp;
+    }
+
     if (input.newStatus === "confirmed") updated.confirmed_at = timestamp;
     else if (input.newStatus === "processing") updated.processing_at = timestamp;
     else if (input.newStatus === "shipped") updated.shipped_at = timestamp;
