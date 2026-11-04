@@ -2,20 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, Package, User, Clock, ShoppingCart, Heart, MapPin, CreditCard, Bell, Settings } from "lucide-react";
+import { Package, User, Clock, ShoppingCart, Heart, MapPin, CreditCard, Bell, Settings } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import type { CustomerIdentity } from "@/lib/auth/auth-utils";
+import LogoutButton from "./logout-button";
 
 const NAV = [
-  { href: "/customer/profile", label: "Overview", icon: User, exact: true },
-  { href: "/customer/profile/orders", label: "My Orders", icon: Package, exact: false },
-  { href: "/customer/profile/orders", label: "Track Orders", icon: Clock, exact: false },
-  { href: "/customer/profile/info", label: "Customer Info", icon: User, exact: false },
-  { href: "/customer/profile/cart", label: "My Cart", icon: ShoppingCart, exact: false },
-  { href: "/customer/profile/wishlist", label: "Favourites", icon: Heart, exact: false },
-  { href: "/customer/profile/addresses", label: "Addresses", icon: MapPin, exact: false },
-  { href: "/customer/profile/settings", label: "Account Settings", icon: Settings, exact: false },
+  { id: "overview", href: "/customer/profile", label: "Overview", icon: User },
+  { id: "orders", href: "/customer/profile/orders", label: "My Orders", icon: Package },
+  { id: "tracking", href: "/customer/profile/orders", label: "Track Orders", icon: Clock },
+  { id: "info", href: "/customer/profile/info", label: "Customer Info", icon: User },
+  { id: "cart", href: "/customer/profile/cart", label: "My Cart", icon: ShoppingCart },
+  { id: "wishlist", href: "/customer/profile/wishlist", label: "Favourites", icon: Heart },
+  { id: "addresses", href: "/customer/profile/addresses", label: "Addresses", icon: MapPin },
+  { id: "settings", href: "/customer/profile/settings", label: "Account Settings", icon: Settings },
 ] as const;
 
 export function CustomerProfileShell({
@@ -52,7 +53,7 @@ export function CustomerProfileShell({
               const Icon = item.icon;
               return (
                 <Link
-                  key={item.href}
+                  key={item.id}
                   href={item.href}
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
@@ -68,13 +69,7 @@ export function CustomerProfileShell({
             })}
 
             <div className="mt-6 pt-4 border-t border-border">
-              <Link
-                href="/customer/profile/settings"
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/5"
-              >
-                <LogOut className="size-4" aria-hidden="true" />
-                Logout
-              </Link>
+              <LogoutButton />
             </div>
           </nav>
         </aside>
