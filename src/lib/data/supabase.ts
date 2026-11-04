@@ -92,6 +92,36 @@ const listCategoriesCached = unstable_cache(
 
 const PRODUCT_SELECT = "*, category:categories(*)";
 
+const getProductBySlugCached = unstable_cache(
+  async (slug: string): Promise<Product | null> => {
+    const supabase = getAnonServerClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select(`${PRODUCT_SELECT}, images:product_images(*), variants:product_variants(*)`)
+      .eq("slug", slug)
+      .maybeSingle();
+    if (error) throw new Error(`Failed to load product: ${error.message}`);
+    return hydrate(data as Record<string, unknown> | null);
+  },
+  ["product"],
+  { revalidate: 300 },
+);
+
+const getProductByIdCached = unstable_cache(
+  async (id: string): Promise<Product | null> => {
+    const supabase = getAnonServerClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select(`${PRODUCT_SELECT}, images:product_images(*)`)
+      .eq("id", id)
+      .maybeSingle();
+    if (error) throw new Error(`Failed to load product: ${error.message}`);
+    return hydrate(data as Record<string, unknown> | null);
+  },
+  ["product"],
+  { revalidate: 300 },
+);
+
 /**
  * Minimal structural view of a PostgREST filter builder. Supabase's fluent
  * generics are impossible to thread through a helper, so call sites hand the
@@ -228,26 +258,12 @@ export const supabaseDriver: CatalogDriver = {
     };
   },
 
-  async getProductBySlug(slug): Promise<Product | null> {
-    const supabase = getAnonServerClient();
-    const { data, error } = await supabase
-      .from("products")
-      .select(`${PRODUCT_SELECT}, images:product_images(*), variants:product_variants(*)`)
-      .eq("slug", slug)
-      .maybeSingle();
-    if (error) throw new Error(`Failed to load product: ${error.message}`);
-    return hydrate(data as Record<string, unknown> | null);
+  async getProductBySlug(slug: string): Promise<Product | null> {
+    return getProductBySlugCached(slug);
   },
 
-  async getProductById(id): Promise<Product | null> {
-    const supabase = getAnonServerClient();
-    const { data, error } = await supabase
-      .from("products")
-      .select(`${PRODUCT_SELECT}, images:product_images(*)`)
-      .eq("id", id)
-      .maybeSingle();
-    if (error) throw new Error(`Failed to load product: ${error.message}`);
-    return hydrate(data as Record<string, unknown> | null);
+  async getProductById(id: string): Promise<Product | null> {
+    return getProductByIdCached(id);
   },
 
   async getProductsByIds(ids): Promise<Product[]> {

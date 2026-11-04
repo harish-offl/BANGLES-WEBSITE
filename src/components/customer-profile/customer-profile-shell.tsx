@@ -8,14 +8,13 @@ import { cn } from "@/lib/utils";
 import type { CustomerIdentity } from "@/lib/auth/auth-utils";
 
 const NAV = [
-  { href: "/customer/profile", label: "My Dashboard", icon: User, exact: true },
+  { href: "/customer/profile", label: "Overview", icon: User, exact: true },
   { href: "/customer/profile/orders", label: "My Orders", icon: Package, exact: false },
   { href: "/customer/profile/orders/[id]/track", label: "Track Orders", icon: Clock, exact: false },
+  { href: "/customer/profile/info", label: "Customer Info", icon: User, exact: false },
   { href: "/customer/profile/cart", label: "My Cart", icon: ShoppingCart, exact: false },
-  { href: "/customer/profile/wishlist", label: "My Wishlist", icon: Heart, exact: false },
-  { href: "/customer/profile/addresses", label: "Saved Addresses", icon: MapPin, exact: false },
-  { href: "/customer/profile/payments", label: "Payment History", icon: CreditCard, exact: false },
-  { href: "/customer/profile/notifications", label: "Notifications", icon: Bell, exact: false },
+  { href: "/customer/profile/wishlist", label: "Favourites", icon: Heart, exact: false },
+  { href: "/customer/profile/addresses", label: "Addresses", icon: MapPin, exact: false },
   { href: "/customer/profile/settings", label: "Account Settings", icon: Settings, exact: false },
 ] as const;
 

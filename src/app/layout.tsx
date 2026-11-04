@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display, Poppins } from "next/font/google";
 
@@ -102,6 +103,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     // The page still renders with empty categories and default settings.
   }
 
+  const headersList = await headers();
+  const isAdminRoute = headersList.get("x-is-admin-route") === "true";
+
   return (
     <html
       lang="en"
@@ -117,24 +121,30 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </a>
 
         <CartProvider>
-          <SiteChrome
-            header={
-              <Header
-                categories={categories}
-                announcement={settings.announcement ?? null}
-                identity={identity}
-              />
-            }
-            footer={<Footer settings={settings} />}
-            floatingAction={
-              <WhatsAppFab
-                phone={settings.whatsapp_number}
-                storeName={settings.store_name}
-              />
-            }
-          >
-            <ClickSparkLayer>{children}</ClickSparkLayer>
-          </SiteChrome>
+          {!isAdminRoute ? (
+            <SiteChrome
+              header={
+                <Header
+                  categories={categories}
+                  announcement={settings.announcement ?? null}
+                  identity={identity}
+                />
+              }
+              footer={<Footer settings={settings} />}
+              floatingAction={
+                <WhatsAppFab
+                  phone={settings.whatsapp_number}
+                  storeName={settings.store_name}
+                />
+              }
+            >
+              <ClickSparkLayer>{children}</ClickSparkLayer>
+            </SiteChrome>
+          ) : (
+            <div className="min-h-dvh bg-brand-smoke">
+              {children}
+            </div>
+          )}
           <Toaster position="top-right" richColors closeButton />
         </CartProvider>
       </body>

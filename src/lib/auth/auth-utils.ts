@@ -3,6 +3,7 @@
 import { cache } from "react";
 
 import { createAuthClient } from "@/lib/supabase/server";
+import { getCatalog } from "@/lib/data";
 import type { Order } from "@/types";
 
 /**
@@ -129,24 +130,7 @@ export const isCustomerAuthenticated = cache(async (): Promise<boolean> => {
 export async function getCustomerOrders(): Promise<Order[]> {
   const identity = await getCustomerIdentity();
   if (!identity) return [];
-
-  const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
-  const supabase = getServiceRoleClient();
-
-  const { data, error } = await supabase
-    .from("orders")
-    .select("*, items:order_items(*)")
-    .order("created_at", { ascending: false });
-
-  if (error) return [];
-
-  // Belt-and-suspenders: verify ownership by matching customer name/email
-  // against the authenticated user's identity.
-  return (data ?? []).filter(
-    (row) =>
-      row.customer_name === identity.fullName ||
-      row.customer_name === identity.email,
-  ) as Order[];
+  return getCatalog().listCustomerOrders(identity.userId);
 }
 
 /**
@@ -156,26 +140,5 @@ export async function getCustomerOrders(): Promise<Order[]> {
 export async function getCustomerOrderById(id: string): Promise<Order | null> {
   const identity = await getCustomerIdentity();
   if (!identity) return null;
-
-  const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
-  const supabase = getServiceRoleClient();
-
-  const { data, error } = await supabase
-    .from("orders")
-    .select("*, items:order_items(*)")
-    .eq("id", id)
-    .maybeSingle();
-
-  if (error || !data) return null;
-
-  // Belt-and-suspenders: verify ownership before returning.
-  const order = data as Order;
-  if (
-    order.customer_name !== identity.fullName &&
-    order.customer_name !== identity.email
-  ) {
-    return null;
-  }
-
-  return order;
+  return getCatalog().getCustomerOrderById(identity.userId, id);
 }
