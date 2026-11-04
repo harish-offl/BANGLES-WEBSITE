@@ -17,6 +17,7 @@ import { useCartCount } from "@/hooks/use-cart";
 import { useScrolled } from "@/hooks/use-ui";
 import { cn } from "@/lib/utils";
 import type { Category } from "@/types";
+import type { CustomerIdentity } from "@/lib/auth/auth-utils";
 
 const PRIMARY_NAV = [
   { href: "/", label: "Home" },
@@ -32,9 +33,10 @@ const PRIMARY_NAV = [
 interface HeaderProps {
   categories: Category[];
   announcement: string | null;
+  identity?: CustomerIdentity | null;
 }
 
-export function Header({ categories, announcement }: HeaderProps) {
+export function Header({ categories, announcement, identity }: HeaderProps) {
   const cartCount = useCartCount();
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -245,13 +247,23 @@ export function Header({ categories, announcement }: HeaderProps) {
               <Heart className="size-5" aria-hidden="true" />
             </Link>
 
-            <Link
-              href="/login"
-              className="rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground"
-              aria-label="Sign in to your account or admin panel"
-            >
-              <User className="size-5" aria-hidden="true" />
-            </Link>
+            {identity ? (
+              <Link
+                href="/customer/profile"
+                className="rounded-full p-2 text-brand-ink transition-colors hover:bg-brand-c100"
+                aria-label="My account"
+              >
+                <User className="size-5" aria-hidden="true" />
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground"
+                aria-label="Sign in to your account or admin panel"
+              >
+                <User className="size-5" aria-hidden="true" />
+              </Link>
+            )}
 
             <Link
               href="/cart"

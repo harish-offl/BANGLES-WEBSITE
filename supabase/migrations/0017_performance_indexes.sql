@@ -20,16 +20,29 @@ CREATE INDEX IF NOT EXISTS idx_categories_sort_order ON public.categories (sort_
 
 -- ---------------------------------------------------------------------------
 -- 3. Junction table: fast category-product assignment lookups
+--    (Only if migration 0011_category_product_assignments has been applied)
 -- ---------------------------------------------------------------------------
-CREATE INDEX IF NOT EXISTS idx_category_products_category_id ON public.category_products (category_id);
-CREATE INDEX IF NOT EXISTS idx_category_products_product_id ON public.category_products (product_id);
+do $$
+begin
+  if exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'category_products') then
+    create index if not exists idx_category_products_category_id on public.category_products (category_id);
+    create index if not exists idx_category_products_product_id on public.category_products (product_id);
+  end if;
+end $$;
 
 -- ---------------------------------------------------------------------------
 -- 4. Product images & variants: fast product-scoped gallery queries
+--    (Only if migration 0007_product_colour_images has been applied)
 -- ---------------------------------------------------------------------------
+do $$
+begin
+  if exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'product_colour_images') then
+    create index if not exists idx_product_colour_images_product_id on public.product_colour_images (product_id);
+  end if;
+end $$;
+
 CREATE INDEX IF NOT EXISTS idx_product_images_product_id ON public.product_images (product_id);
 CREATE INDEX IF NOT EXISTS idx_product_variants_product_id ON public.product_variants (product_id);
-CREATE INDEX IF NOT EXISTS idx_product_colour_images_product_id ON public.product_colour_images (product_id);
 
 -- ---------------------------------------------------------------------------
 -- 5. Order items: fast bestseller/ranking queries

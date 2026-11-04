@@ -54,6 +54,64 @@ export const getCustomerIdentity = cache(async (): Promise<CustomerIdentity | nu
 });
 
 /**
+ * Ensures a customer profile row exists for the signed-in user.
+ * Used after OAuth sign-in (e.g. Google) to bridge any timing gap between
+ * session creation and the database `handle_new_user` trigger.
+ *
+ * Returns the user id when a profile exists or was created, null otherwise.
+ */
+export async function ensureCustomerProfile(): Promise<string | null> {
+  const supabase = await createAuthClient();
+  if (!supabase) return null;
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  // Check if profile already exists.
+  const { data: existing } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (existing) return user.id;
+
+  // Build profile from auth user metadata, mirroring handle_new_user.
+  const meta = (user as any).user_metadata ?? {};
+  const display_name =
+    meta.full_name ?? meta.name ?? meta.display_name ?? splitEmailLocal(user.email ?? "");
+  const email = meta.email ?? user.email ?? null;
+  const phone = meta.phone ?? meta.phone_number ?? null;
+  const avatar_url = meta.avatar_url ?? meta.picture ?? meta.avatar ?? null;
+
+  const { error } = await supabase.from("profiles").insert({
+    id: user.id,
+    display_name,
+    email,
+    phone,
+    avatar_url,
+  });
+
+  if (error) {
+    // Profile may have been created by the trigger concurrently; try again.
+    const { data: retry } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (retry) return user.id;
+    return null;
+  }
+
+  return user.id;
+}
+
+function splitEmailLocal(email: string): string {
+  return email.split("@")[0] ?? "Customer";
+}
+
+/**
  * Returns true when a customer is signed in.
  */
 export const isCustomerAuthenticated = cache(async (): Promise<boolean> => {

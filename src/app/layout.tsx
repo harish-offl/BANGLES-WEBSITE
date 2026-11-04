@@ -9,6 +9,7 @@ import { CartProvider } from "@/components/cart/cart-provider";
 import { ClickSparkLayer } from "@/components/effects/click-spark-layer";
 import { Toaster } from "@/components/ui/sonner";
 import { getCatalog } from "@/lib/data";
+import { getCustomerIdentity } from "@/lib/auth/auth-utils";
 import { DEFAULT_SETTINGS, SITE_NAME, SITE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import type { Category, StoreSettings } from "@/types";
@@ -86,13 +87,16 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const catalog = getCatalog();
   let settings: StoreSettings = DEFAULT_SETTINGS;
   let categories: Category[] = [];
+  let identity: Awaited<ReturnType<typeof getCustomerIdentity>> | null = null;
   try {
-    const [s, c] = await Promise.all([
+    const [s, c, id] = await Promise.all([
       catalog.getSettings(),
       catalog.listCategories({ activeOnly: true }),
+      getCustomerIdentity(),
     ]);
     settings = s;
     categories = c;
+    identity = id;
   } catch {
     // If Supabase is unreachable or misconfigured, fall back to defaults.
     // The page still renders with empty categories and default settings.
@@ -118,6 +122,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <Header
                 categories={categories}
                 announcement={settings.announcement ?? null}
+                identity={identity}
               />
             }
             footer={<Footer settings={settings} />}

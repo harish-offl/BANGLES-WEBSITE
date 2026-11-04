@@ -1,15 +1,24 @@
 import { redirect } from "next/navigation";
 
 import { createAuthClient } from "@/lib/supabase/server";
+import { ensureCustomerProfile } from "@/lib/auth/auth-utils";
 
-const ALLOWED_NEXT = new Set(["/account", "/account/orders", "/checkout", "/track-order"]);
+const ALLOWED_NEXT = new Set([
+  "/customer/profile",
+  "/customer/profile/orders",
+  "/customer/profile/cart",
+  "/checkout",
+  "/track-order",
+]);
 
 function safeNext(next: string | undefined): string {
-  if (!next) return "/account";
+  if (!next) return "/customer/profile";
   // Only allow same-origin relative paths — never open redirects to external sites.
-  if (!next.startsWith("/")) return "/account";
-  if (next.startsWith("//")) return "/account";
-  return ALLOWED_NEXT.has(next) || next.startsWith("/account") ? next : "/account";
+  if (!next.startsWith("/")) return "/customer/profile";
+  if (next.startsWith("//")) return "/customer/profile";
+  return ALLOWED_NEXT.has(next) || next.startsWith("/customer/profile")
+    ? next
+    : "/customer/profile";
 }
 
 export default async function AuthCallbackPage({
@@ -33,6 +42,9 @@ export default async function AuthCallbackPage({
   if (error) {
     redirect(`/login?error=${encodeURIComponent("Google sign-in couldn't be completed. Please try again.")}`);
   }
+
+  // Ensure the customer profile row exists so the dashboard can read it.
+  await ensureCustomerProfile();
 
   redirect(safeNext(next));
 }

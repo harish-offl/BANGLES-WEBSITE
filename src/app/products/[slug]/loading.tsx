@@ -1,3 +1,4 @@
+import React from "react";
 export default function ProductLoading() {
   return (
     <div className="container-page py-8 sm:py-10 animate-pulse">
@@ -57,10 +58,10 @@ function BreadcrumbsSkeleton() {
   return (
     <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
       {[1, 2, 3, 4].map((i) => (
-        <>
+        <React.Fragment key={i}>
           <span className="h-3 w-12 rounded bg-brand-c100" />
           <span className="h-3 w-1 rounded bg-brand-c100" />
-        </>
+        </React.Fragment>
       ))}
     </div>
   );
