@@ -229,11 +229,17 @@ export default function TrackOrderPage() {
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">{error}</p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <Button onClick={() => setOrderNumber("")} className="w-full sm:w-auto">
+            <Button
+              onClick={() => {
+                setOrderNumber("");
+                setError(null);
+              }}
+              className="w-full sm:w-auto"
+            >
               Try another ID
             </Button>
             <Link
-              href="/"
+              href="/shop"
               className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border border-border bg-background px-4 py-3 text-base font-semibold text-brand-ink transition-colors hover:bg-brand-c100"
             >
               Browse the collection
