@@ -16,12 +16,13 @@ import type {
   OrderStatusHistory,
   Paginated,
   Product,
+  ProductVariant,
   ProductFilters,
   StoreSettings,
   UpdateOrderLifecycleInput,
 } from "@/types";
 
-import type { CatalogDriver, OrderInput } from "./driver";
+import type { CatalogDriver, OrderInput, ProductVariantInput } from "./driver";
 import { decodeHtmlEntities, normalizeDescription } from "./text";
 
 interface CatalogFile {
@@ -518,6 +519,74 @@ export const localDriver: CatalogDriver = {
     writeOrders(orders);
 
     return updated;
+  },
+
+  async updateVariantStock(variantId: string, stockQuantity: number): Promise<void> {
+    const catalog = readCatalog();
+    const productIdx = catalog.products.findIndex((p) =>
+      p.variants?.some((v) => v.id === variantId),
+    );
+    if (productIdx < 0) throw new Error("Product not found for variant");
+    const variants = catalog.products[productIdx].variants;
+    const variantIdx = variants?.findIndex((v) => v.id === variantId) ?? -1;
+    if (variantIdx < 0) throw new Error("Variant not found");
+    variants![variantIdx].stock_quantity = stockQuantity;
+    variants![variantIdx].updated_at = new Date().toISOString();
+    writeCatalog(catalog);
+  },
+
+  async getProductVariants(productId: string): Promise<ProductVariant[]> {
+    const catalog = readCatalog();
+    const product = catalog.products.find((p) => p.id === productId);
+    if (!product) return [];
+    return (product.variants ?? []).filter((v) => v.is_active);
+  },
+
+  async createVariant(
+    productId: string,
+    variant: ProductVariantInput,
+  ): Promise<ProductVariant> {
+    const catalog = readCatalog();
+    const productIdx = catalog.products.findIndex((p) => p.id === productId);
+    if (productIdx < 0) throw new Error("Product not found");
+    const newVariant: ProductVariant = {
+      id: `new-${Date.now()}`,
+      product_id: productId,
+      variant_name: variant.variant_name,
+      variant_value: variant.variant_value,
+      sku: variant.sku ?? null,
+      stock_quantity: variant.stock_quantity ?? 0,
+      price_override: variant.price_override ?? null,
+      is_active: variant.is_active ?? true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    if (!catalog.products[productIdx].variants) {
+      catalog.products[productIdx].variants = [];
+    }
+    catalog.products[productIdx].variants.push(newVariant);
+    writeCatalog(catalog);
+    return newVariant;
+  },
+
+  async deleteVariant(variantId: string): Promise<void> {
+    const catalog = readCatalog();
+    const productIdx = catalog.products.findIndex((p) =>
+      p.variants?.some((v) => v.id === variantId),
+    );
+    if (productIdx < 0) throw new Error("Product not found for variant");
+    catalog.products[productIdx].variants = (
+      catalog.products[productIdx].variants ?? []
+    ).filter((v) => v.id !== variantId);
+    writeCatalog(catalog);
+  },
+
+  async deleteProductVariants(productId: string): Promise<void> {
+    const catalog = readCatalog();
+    const productIdx = catalog.products.findIndex((p) => p.id === productId);
+    if (productIdx < 0) throw new Error("Product not found");
+    catalog.products[productIdx].variants = [];
+    writeCatalog(catalog);
   },
 
   async listOrderStatusHistory(orderId: string): Promise<OrderStatusHistory[]> {

@@ -18,6 +18,23 @@ interface AddressInput {
   is_default?: boolean;
 }
 
+interface CustomerAddress {
+  id: string;
+  customer_id: string;
+  address_name: string | null;
+  full_name: string;
+  phone: string;
+  address_line_1: string;
+  address_line_2: string | null;
+  city: string;
+  state: string;
+  pincode: string;
+  address_type: string | null;
+  is_default: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export async function getCustomerAddresses() {
   const identity = await getCustomerIdentity();
   if (!identity) return null;
@@ -33,7 +50,7 @@ export async function getCustomerAddresses() {
     .order("created_at", { ascending: false });
 
   if (error) return [];
-  return (data as any[]) ?? [];
+  return (data as CustomerAddress[] | null) ?? [];
 }
 
 export async function addCustomerAddress(input: AddressInput): Promise<void> {

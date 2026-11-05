@@ -8,6 +8,7 @@ import type {
   OrderStatusHistory,
   Paginated,
   Product,
+  ProductVariant,
   ProductFilters,
   StoreSettings,
   UpdateOrderLifecycleInput,
@@ -38,6 +39,15 @@ export interface CategoryInput {
   image_url: string | null;
   sort_order: number;
   is_active: boolean;
+}
+
+export interface ProductVariantInput {
+  variant_name: string;
+  variant_value: string;
+  sku?: string | null;
+  price_override?: number | null;
+  stock_quantity?: number | null;
+  is_active?: boolean;
 }
 
 export interface OrderItemInput {
@@ -93,6 +103,13 @@ export interface CatalogDriver {
     categoryId: string,
     filters?: ProductFilters,
   ): Promise<Paginated<Product>>;
+
+  /** Variant stock management */
+  updateVariantStock(variantId: string, stockQuantity: number): Promise<void>;
+  getProductVariants(productId: string): Promise<ProductVariant[]>;
+  createVariant(productId: string, variant: ProductVariantInput): Promise<ProductVariant>;
+  deleteVariant(variantId: string): Promise<void>;
+  deleteProductVariants(productId: string): Promise<void>;
 
   listOrders(options?: { status?: OrderStatus }): Promise<Order[]>;
   getOrderById(id: string): Promise<Order | null>;

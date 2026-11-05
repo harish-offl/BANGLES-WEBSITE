@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RefreshCw } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -20,7 +20,13 @@ export function CustomerOrdersList({
   customerId,
 }: CustomerOrdersListProps) {
   const [orders, setOrders] = useState(initialOrders);
+  const [syncedInitialOrders, setSyncedInitialOrders] = useState(initialOrders);
   const [refreshing, setRefreshing] = useState(false);
+
+  if (initialOrders !== syncedInitialOrders) {
+    setSyncedInitialOrders(initialOrders);
+    setOrders(initialOrders);
+  }
 
   async function refresh() {
     setRefreshing(true);
@@ -40,10 +46,6 @@ export function CustomerOrdersList({
   useCustomerOrderRealtime(customerId, () => {
     void refresh();
   });
-
-  useEffect(() => {
-    setOrders(initialOrders);
-  }, [initialOrders]);
 
   if (orders.length === 0) {
     return (

@@ -15,12 +15,12 @@ import {
   DEFAULT_BANGLE_SIZE,
   getSizeSurcharge,
   isBangleCategory,
+  isGlassBanglesCategory,
 } from "@/lib/product-sizes";
 import { getPurchaseState, getStockLabel } from "@/lib/product-utils";
 import { cn } from "@/lib/utils";
 import { buildWhatsAppMessage, buildWhatsAppUrl } from "@/lib/whatsapp/shared";
-import type { Product } from "@/types";
-import { isGlassBanglesCategory } from "@/lib/product-sizes";
+import type { Product, ProductVariant } from "@/types";
 
 interface ProductPurchasePanelProps {
   product: Product;
@@ -31,12 +31,21 @@ interface ProductPurchasePanelProps {
   onColourChange: (colour: string) => void;
 }
 
+interface SizeOption {
+  id: string;
+  label: string;
+  stock: number | null;
+  priceOverride: number | null;
+  variant: ProductVariant | null;
+}
+
 const MAX_QUANTITY = 99;
 
 /**
  * Product-page buy box: size and colour choice, quantity, add-to-bag and a
- * WhatsApp enquiry shortcut. The shop takes no online payment — the enquiry
- * hands the selection to the studio, which confirms price and delivery in chat.
+ * WhatsApp enquiry shortcut. When a product has variants, each size uses its
+ * own stock count and price override; otherwise the shared bangle sizes are
+ * offered without per-size tracking.
  */
 export function ProductPurchasePanel({
   product,
@@ -46,20 +55,65 @@ export function ProductPurchasePanel({
   onColourChange,
 }: ProductPurchasePanelProps) {
   const { add } = useCartActions();
-  const [quantity, setQuantity] = useState(1);
-  const [size, setSize] = useState<string | null>(DEFAULT_BANGLE_SIZE);
   const [added, setAdded] = useState(false);
 
   const purchase = getPurchaseState(product);
   const stockLabel = getStockLabel(product);
 
   const showSizes = isBangleCategory(product.category_name);
+
+  const variants = (product.variants ?? []).filter((variant) => variant.is_active);
+  const sizeOptions: SizeOption[] =
+    showSizes && variants.length > 0
+      ? variants.map((variant) => ({
+          id: variant.id,
+          label: variant.variant_value,
+          stock: variant.stock_quantity,
+          priceOverride: variant.price_override,
+          variant,
+        }))
+      : showSizes
+        ? BANGLE_SIZES.map((option) => ({
+            id: `size-${option.label}`,
+            label: option.label,
+            stock: null,
+            priceOverride: option.surcharge > 0 ? option.surcharge : null,
+            variant: null,
+          }))
+        : [];
+
+  const [size, setSize] = useState<string | null>(() => {
+    if (sizeOptions.some((option) => option.label === DEFAULT_BANGLE_SIZE)) {
+      return DEFAULT_BANGLE_SIZE;
+    }
+    return sizeOptions[0]?.label ?? null;
+  });
+  const [quantity, setQuantity] = useState(1);
+
+  const selectedOption = sizeOptions.find((option) => option.label === size) ?? null;
+  const selectedVariant = selectedOption?.variant ?? null;
+  const variantStock = selectedOption?.stock ?? null;
+
   const sizeSurcharge = showSizes ? getSizeSurcharge(size) : 0;
-  const unitPrice = product.price + sizeSurcharge;
+  const unitPrice = (selectedVariant?.price_override ?? product.price) + sizeSurcharge;
+
+  const isOutOfStock = variantStock === 0;
+  const isLowStock = variantStock !== null && variantStock > 0 && variantStock <= 5;
+  const canAdd =
+    purchase.available &&
+    !isOutOfStock &&
+    (variantStock === null || quantity <= variantStock);
 
   function handleAdd() {
-    if (!purchase.available) return;
-    add(toCartLine(product, { quantity, size: showSizes ? size : null, colour }));
+    if (!canAdd) return;
+    add(
+      toCartLine(product, {
+        quantity,
+        variant: selectedVariant,
+        size: showSizes ? size : null,
+        colour,
+      }),
+    );
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1600);
     toast.success("Added to bag", { description: product.name });
@@ -86,7 +140,7 @@ export function ProductPurchasePanel({
           name: product.name,
           quantity,
           unitPrice,
-          sku: product.sku,
+          sku: selectedVariant?.sku ?? product.sku,
           size: showSizes ? size : null,
           colour,
           url: `${siteUrl}/products/${product.slug}`,
@@ -102,6 +156,7 @@ export function ProductPurchasePanel({
   }
 
   const canEnquire = Boolean(whatsappNumber);
+  const colours = product.colours ?? [];
 
   return (
     <div className="space-y-6">
@@ -117,6 +172,16 @@ export function ProductPurchasePanel({
             )}
           >
             {stockLabel}
+          </span>
+        ) : null}
+        {showSizes && isOutOfStock ? (
+          <span className="rounded-full bg-destructive/10 px-2.5 py-0.5 text-xs text-destructive">
+            This size is out of stock
+          </span>
+        ) : null}
+        {showSizes && isLowStock ? (
+          <span className="rounded-full bg-warning/10 px-2.5 py-0.5 text-xs text-warning-foreground">
+            Only {variantStock} left in this size
           </span>
         ) : null}
       </div>
@@ -136,25 +201,43 @@ export function ProductPurchasePanel({
             <SizeChart />
           </div>
           <ul className="flex flex-wrap gap-2">
-            {BANGLE_SIZES.map((option) => {
+            {sizeOptions.map((option) => {
               const selected = option.label === size;
+              const isOut = option.stock === 0;
               return (
-                <li key={option.label}>
+                <li key={option.id}>
                   <button
                     type="button"
-                    onClick={() => setSize(option.label)}
+                    onClick={
+                      isOut
+                        ? undefined
+                        : () => {
+                            setSize(option.label);
+                            setQuantity(1);
+                          }
+                    }
                     aria-pressed={selected}
+                    aria-disabled={isOut}
                     className={cn(
-                      "rounded-lg border px-3.5 py-2 text-sm tabular-nums transition-colors",
-                      selected
-                        ? "border-gold-strong bg-brand-c100 font-medium text-foreground"
-                        : "border-border bg-background text-muted-foreground hover:border-gold/60 hover:text-foreground",
+                      "flex items-center gap-2 rounded-lg border px-3.5 py-2 text-sm tabular-nums transition-colors",
+                      isOut
+                        ? "cursor-not-allowed border-destructive/30 bg-destructive/5 text-destructive"
+                        : selected
+                          ? "border-gold-strong bg-brand-c100 font-medium text-foreground"
+                          : "border-border bg-background text-muted-foreground hover:border-gold/60 hover:text-foreground",
                     )}
                   >
                     {option.label}
-                    {option.surcharge > 0 ? (
-                      <span className="ml-1.5 text-xs text-gold-strong">
-                        +₹{option.surcharge}
+                    {option.stock === 0 ? (
+                      <span className="text-xs text-destructive">Out</span>
+                    ) : option.stock !== null && option.stock <= 5 ? (
+                      <span className="text-xs text-warning-foreground">
+                        {option.stock} left
+                      </span>
+                    ) : null}
+                    {option.priceOverride && option.priceOverride > 0 ? (
+                      <span className="text-xs text-gold-strong">
+                        +₹{option.priceOverride}
                       </span>
                     ) : null}
                   </button>
@@ -172,13 +255,13 @@ export function ProductPurchasePanel({
         </div>
       ) : null}
 
-      {isGlassBanglesCategory(product.category_name) && product.colours.length > 0 ? (
+      {isGlassBanglesCategory(product.category_name) && colours.length > 0 ? (
         <div>
           <p className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
             Colour
           </p>
           <ul className="flex flex-wrap gap-2">
-            {product.colours.map((option) => {
+            {colours.map((option) => {
               const selected = option === colour;
               return (
                 <li key={option}>
@@ -211,7 +294,7 @@ export function ProductPurchasePanel({
             <button
               type="button"
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              disabled={quantity <= 1}
+              disabled={quantity <= 1 || !canAdd}
               aria-label="Decrease quantity"
               className="grid size-11 place-items-center text-muted-foreground transition-colors hover:text-foreground disabled:opacity-40"
             >
@@ -225,8 +308,14 @@ export function ProductPurchasePanel({
             </span>
             <button
               type="button"
-              onClick={() => setQuantity((q) => Math.min(MAX_QUANTITY, q + 1))}
-              disabled={quantity >= MAX_QUANTITY}
+              onClick={() =>
+                setQuantity((q) =>
+                  Math.min(variantStock ?? MAX_QUANTITY, MAX_QUANTITY, q + 1),
+                )
+              }
+              disabled={
+                quantity >= (variantStock ?? MAX_QUANTITY) || !canAdd
+              }
               aria-label="Increase quantity"
               className="grid size-11 place-items-center text-muted-foreground transition-colors hover:text-foreground disabled:opacity-40"
             >
@@ -241,11 +330,17 @@ export function ProductPurchasePanel({
           type="button"
           size="lg"
           onClick={handleAdd}
-          disabled={!purchase.available}
+          disabled={!canAdd}
           className="h-12 min-w-44 flex-1 gap-2"
         >
           {added ? <Check className="size-4" aria-hidden="true" /> : <ShoppingBag className="size-4" aria-hidden="true" />}
-          {!purchase.available ? (purchase.reason ?? "Unavailable") : added ? "Added" : "Add to bag"}
+          {!purchase.available
+            ? (purchase.reason ?? "Unavailable")
+            : isOutOfStock
+              ? "Out of stock"
+              : added
+                ? "Added"
+                : "Add to bag"}
         </Button>
         <WishlistButton product={product} withLabel className="h-12" />
       </div>

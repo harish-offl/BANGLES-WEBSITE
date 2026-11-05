@@ -118,14 +118,20 @@ export async function validateCartItems(items: EnquiryItemValues[]): Promise<Car
       available = false;
       stockLabel = "Option unavailable";
     } else if (variant) {
-      available = isVariantAvailable(variant);
-      stockLabel = available
-        ? variant.stock_quantity === null
+      const trackedStock = variant.stock_quantity;
+      available =
+        isVariantAvailable(variant) &&
+        (trackedStock === null || item.quantity <= trackedStock);
+      stockLabel = isVariantAvailable(variant)
+        ? trackedStock === null
           ? "Made to order"
-          : `${variant.stock_quantity} available`
+          : `${trackedStock} available`
         : "Sold out";
     } else {
-      available = getPurchaseState(product).available;
+      const purchase = getPurchaseState(product);
+      available =
+        purchase.available &&
+        (product.stock_quantity === null || item.quantity <= product.stock_quantity);
       stockLabel = getStockLabel(product);
     }
 
@@ -172,7 +178,11 @@ export async function validateCartItems(items: EnquiryItemValues[]): Promise<Car
         kind: "unavailable",
         message: variantMissing
           ? "The selected option is no longer offered."
-          : "This item is currently unavailable.",
+          : variant &&
+              variant.stock_quantity !== null &&
+              item.quantity > variant.stock_quantity
+            ? `Only ${variant.stock_quantity} left in this size.`
+            : "This item is currently unavailable.",
       });
     }
   }

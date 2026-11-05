@@ -3,6 +3,16 @@ import "server-only";
 import { getCustomerIdentity } from "@/lib/auth/auth-utils";
 import { createAuthClient } from "@/lib/supabase/server";
 
+interface WishlistItemRow {
+  product_id: string;
+  products: {
+    name: string;
+    primary_image_url: string | null;
+    price: number;
+    sku: string | null;
+  } | null;
+}
+
 export async function getCustomerWishlist() {
   const identity = await getCustomerIdentity();
   if (!identity) return null;
@@ -16,8 +26,8 @@ export async function getCustomerWishlist() {
     .eq("user_id", identity.userId)
     .order("created_at", { ascending: false });
 
-  const wishlistItems = (items ?? []).map((item: any) => {
-    const product = item.products as any;
+  const wishlistItems = ((items ?? []) as WishlistItemRow[]).map((item) => {
+    const product = item.products;
     return {
       productId: item.product_id,
       name: product?.name ?? "Product",

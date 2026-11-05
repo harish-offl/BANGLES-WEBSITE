@@ -79,7 +79,7 @@ export async function ensureCustomerProfile(): Promise<string | null> {
   if (existing) return user.id;
 
   // Build profile from auth user metadata, mirroring handle_new_user.
-  const meta = (user as any).user_metadata ?? {};
+  const meta = user.user_metadata ?? {};
   const display_name =
     meta.full_name ?? meta.name ?? meta.display_name ?? splitEmailLocal(user.email ?? "");
   const email = meta.email ?? user.email ?? null;

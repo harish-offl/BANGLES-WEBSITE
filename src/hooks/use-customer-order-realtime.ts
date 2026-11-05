@@ -17,7 +17,10 @@ export function useCustomerOrderRealtime(
   onChange: () => void,
 ): void {
   const callbackRef = useRef(onChange);
-  callbackRef.current = onChange;
+
+  useEffect(() => {
+    callbackRef.current = onChange;
+  }, [onChange]);
 
   const [client] = useState(() => {
     try {

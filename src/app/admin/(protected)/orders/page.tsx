@@ -1,136 +1,97 @@
 import type { Metadata } from "next";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { OrderStatusUpdateDialog } from "@/components/admin/order-status-update-dialog";
-import { EnquiryDetailModal } from "@/components/admin/enquiry-detail-modal";
-import { WhatsAppOrderButton } from "@/components/admin/whatsapp-order-button";
 import { AdminPageHeader, StatCard } from "@/components/admin/ui";
-import { EmptyState } from "@/components/shared/empty-state";
-import { getAdminOrderOverview, getAllOrders } from "@/lib/admin/queries";
+import { Button } from "@/components/ui/button";
+import { getCatalog } from "@/lib/data";
 import { formatPrice } from "@/lib/site";
-import { DELIVERY_STAGE_LABELS } from "@/lib/orders/lifecycle";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Order Management" };
 
-function formatDate(value: string): string {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
-  return new Intl.DateTimeFormat("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
-
-function deliveryStageBadgeClass(deliveryStage: string): string {
-  switch (deliveryStage) {
-    case "delivered":
-      return "bg-success/10 text-success border border-success/20";
-    case "out_for_delivery":
-      return "bg-brand-c200 text-brand-ink border border-brand-c300";
-    case "shipped":
-      return "bg-brand-c100 text-brand-ink border border-brand-c300";
-    case "packing":
-      return "bg-warning/10 text-warning-foreground border border-warning/20";
-    case "order_confirmed":
-      return "bg-brand-c100 text-brand-ink border border-brand-c300";
-    default:
-      return "bg-brand-c100 text-brand-ink border border-brand-c300";
-  }
-}
-
 export default async function AdminOrdersPage() {
-  const [orders, overview] = await Promise.all([
-    getAllOrders(),
-    getAdminOrderOverview(),
-  ]);
+  const catalog = getCatalog();
+  const [orders] = await Promise.all([catalog.listOrders()]);
+
+  const totalOrders = orders.length;
+  const pendingOrders = orders.filter(
+    (o) => o.status === "pending" || o.status === "confirmed"
+  ).length;
+  const shippedOrders = orders.filter((o) => o.status === "shipped").length;
+  const deliveredOrders = orders.filter((o) => o.status === "delivered").length;
+  const cancelledOrders = orders.filter((o) => o.status === "cancelled").length;
 
   return (
-    <>
+    <div>
       <AdminPageHeader
         title="Order Management"
-        description={`${overview.total} orders recorded from the storefront bag.`}
+        description={`Manage orders and update shipping status. ${orders.length} order${orders.length === 1 ? "" : "s"} on record.`}
       />
 
-      <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        <StatCard label="Total orders" value={overview.total} />
-        <StatCard label="Order Confirmed" value={overview.order_confirmed} />
-        <StatCard label="Packing" value={overview.packing} />
-        <StatCard label="Shipped" value={overview.shipped} />
-        <StatCard label="Out for Delivery" value={overview.outForDelivery} />
-        <StatCard label="Delivered" value={overview.delivered} />
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard label="Total Orders" value={totalOrders} />
+        <StatCard label="New Orders" value={pendingOrders} />
+        <StatCard label="Shipped" value={shippedOrders} />
+        <StatCard label="Delivered" value={deliveredOrders} />
+        <StatCard label="Cancelled" value={cancelledOrders} />
       </div>
 
-      {orders.length === 0 ? (
-        <EmptyState
-          icon={<span className="size-5 text-muted-foreground">🛍️</span>}
-          title="No orders yet"
-          description="When a customer places an order, it will appear here so you can manage the full lifecycle."
-        />
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-border bg-card">
+      <div className="mt-8 rounded-xl border border-border bg-card p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="font-display text-lg">Order Management</h2>
+        </div>
+        <div className="overflow-x-auto rounded-lg border border-border bg-card">
           <table className="w-full min-w-[900px] text-sm">
             <thead>
               <tr className="border-b border-border text-left text-xs tracking-[0.12em] text-muted-foreground uppercase">
-                <th className="px-4 py-3 font-medium tabular-nums">S.No</th>
-                <th className="px-4 py-3 font-medium">Order</th>
+                <th className="px-4 py-3 font-medium tabular-nums">Order ID</th>
                 <th className="px-4 py-3 font-medium">Customer</th>
                 <th className="px-4 py-3 font-medium">Total</th>
-                <th className="px-4 py-3 font-medium">Delivery Stage</th>
-                <th className="px-4 py-3 font-medium">Last updated</th>
-                <th className="px-4 py-3 text-right font-medium">Actions</th>
+                <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium text-right">Action</th>
               </tr>
             </thead>
             <tbody>
-              {orders.map((order, index) => (
-                <tr key={order.id} className="border-b border-border last:border-0 group">
-                  <td className="px-4 py-3 tabular-nums text-muted-foreground">{index + 1}</td>
-                  <td className="px-4 py-3">
-                    <span className="text-foreground font-medium">{order.order_number}</span>
+              {orders.map((order) => (
+                <tr key={order.id} className="border-b border-border last:border-0">
+                  <td className="px-4 py-3 tabular-nums text-muted-foreground">
+                    {order.order_number}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {order.customer_name ?? "—"}
-                    {order.customer_phone ? ` · ${order.customer_phone}` : ""}
                   </td>
-                  <td className="px-4 py-3 tabular-nums text-foreground font-medium">
+                  <td className="px-4 py-3 tabular-nums text-right font-medium">
                     {formatPrice(order.total_amount, order.currency)}
                   </td>
                   <td className="px-4 py-3">
                     <span
                       className={cn(
                         "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-                        deliveryStageBadgeClass(order.delivery_stage ?? ""),
+                        order.status === "delivered"
+                          ? "bg-green-100 text-green-800 border border-green-200"
+                          : order.status === "cancelled"
+                          ? "bg-destructive/10 text-destructive border border-destructive/20"
+                          : "bg-brand-c100 text-brand-ink border border-brand-c300",
                       )}
                     >
-                      {DELIVERY_STAGE_LABELS[order.delivery_stage ?? ""] ?? order.delivery_stage ?? "Not Started"}
+                      {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {formatDate(order.updated_at)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-end gap-2">
-                      <OrderStatusUpdateDialog
-                        order={order}
-                        trigger={
-                          <Button variant="outline" size="sm" className="h-8">
-                            Update status
-                          </Button>
-                        }
-                      />
-                      <EnquiryDetailModal order={order} />
-                      <WhatsAppOrderButton order={order} />
-                    </div>
+                  <td className="px-4 py-3 text-right">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {}}
+                      className="h-8"
+                    >
+                      Update status
+                    </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 }

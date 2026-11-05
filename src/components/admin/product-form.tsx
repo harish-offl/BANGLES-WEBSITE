@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import { Loader2, Save } from "lucide-react";
 
@@ -11,7 +11,8 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import type { Category, Product } from "@/types";
+import { VariantListForm } from "@/components/admin/variant-list-form";
+import type { Category, Product, ProductVariant } from "@/types";
 
 interface ProductFormProps {
   categories: Category[];
@@ -25,6 +26,9 @@ export function ProductForm({ categories, product }: ProductFormProps) {
   );
   const errors = state.status === "error" ? state.fieldErrors ?? {} : {};
   const isEdit = Boolean(product);
+  const [variants, setVariants] = useState<ProductVariant[]>(
+    product?.variants ?? [],
+  );
 
   return (
     <form action={formAction} className="space-y-8">
@@ -112,6 +116,20 @@ export function ProductForm({ categories, product }: ProductFormProps) {
                 placeholder="Red, Gold"
               />
             </Field>
+          </section>
+
+          <section className="space-y-4 rounded-xl border border-border bg-card p-5">
+            <h2 className="font-display text-lg">Size &amp; stock</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Set stock for each size variant. Each size maintains its own
+              inventory count.
+            </p>
+            <VariantListForm variants={variants} onChange={setVariants} />
+            <input
+              type="hidden"
+              name="variants_json"
+              value={JSON.stringify(variants)}
+            />
           </section>
 
           <section className="space-y-4 rounded-xl border border-border bg-card p-5">

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 import {
@@ -50,6 +50,15 @@ function fieldErrorsFrom(error: {
 
 function revalidateStorefront(): void {
   revalidatePath("/", "layout");
+}
+
+function revalidateInventory(productId: string): void {
+  revalidateTag("products", { expire: 0 });
+  revalidatePath("/admin/inventory");
+  revalidatePath(`/admin/inventory/${productId}`);
+  revalidatePath("/admin/products");
+  revalidatePath(`/admin/products/${productId}`);
+  revalidateStorefront();
 }
 
 /** Converts an empty form value into `null` so optional numeric/string fields clear. */
@@ -155,7 +164,40 @@ export async function saveProductAction(
     if (id) {
       await catalog.updateProduct(id, parsed.data);
     } else {
-      await catalog.createProduct(parsed.data);
+      const created = await catalog.createProduct(parsed.data);
+      id = created.id;
+    }
+
+    // Handle variants: delete all existing and recreate from form data
+    const variantsJson = optionalString(formData.get("variants_json"));
+    if (id && variantsJson) {
+      try {
+        const variants = JSON.parse(variantsJson) as Array<{
+          id?: string;
+          variant_name: string;
+          variant_value: string;
+          stock_quantity: number;
+          price_override?: number | null;
+          is_active?: boolean;
+        }>;
+
+        // Delete existing variants
+        await catalog.deleteProductVariants(id);
+
+        // Create new variants
+        for (const v of variants) {
+          await catalog.createVariant(id, {
+            variant_name: v.variant_name,
+            variant_value: v.variant_value,
+            stock_quantity: v.stock_quantity ?? 0,
+            price_override: v.price_override ?? null,
+            is_active: v.is_active ?? true,
+          });
+        }
+      } catch (err) {
+        console.error("Failed to save variants:", err);
+        // Don't fail the whole product save if variants fail
+      }
     }
 
     revalidateStorefront();
@@ -400,4 +442,288 @@ export async function updateOrderLifecycleAction(
       message: error instanceof Error ? error.message : "Could not update the order status.",
     };
   }
+}
+
+/**
+ * Server action to update stock for a product variant (size).
+ * Called from the admin inventory management page.
+ */
+export async function updateVariantStockAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  try {
+    await requireAdminAccess();
+    const catalog = getCatalog();
+
+    const productId = optionalString(formData.get("productId"));
+    if (!productId) {
+      return { status: "error", message: "Missing product ID." };
+    }
+
+    // Collect all variant stock updates from the form
+    const updates: { variantId: string; stockQuantity: number }[] = [];
+    for (const [key, value] of formData.entries()) {
+      if (key.startsWith("variant_") && value !== null) {
+        const variantId = key.replace("variant_", "");
+        const stockQuantity = Number(value);
+        if (Number.isInteger(stockQuantity) && stockQuantity >= 0) {
+          updates.push({ variantId, stockQuantity });
+        }
+      }
+    }
+
+    if (updates.length === 0) {
+      return { status: "error", message: "No stock changes to save." };
+    }
+
+    // Apply each update sequentially
+    for (const update of updates) {
+      await catalog.updateVariantStock(update.variantId, update.stockQuantity);
+    }
+
+    revalidateInventory(productId);
+
+    return { status: "success", message: "Stock updated." };
+  } catch (error) {
+    if (error instanceof AdminAccessError) {
+      return { status: "error", message: error.message };
+    }
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Could not update stock.",
+    };
+  }
+}
+
+export async function addProductVariantAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  try {
+    await requireAdminAccess();
+    const catalog = getCatalog();
+
+    const productId = optionalString(formData.get("productId"));
+    if (!productId) {
+      return { status: "error", message: "Missing product ID." };
+    }
+
+    const product = await catalog.getProductById(productId);
+    if (!product) {
+      return { status: "error", message: "Product not found." };
+    }
+
+    const size = optionalString(formData.get("size"));
+    if (!size) {
+      return {
+        status: "error",
+        message: "Enter a size.",
+        fieldErrors: { size: "Size is required." },
+      };
+    }
+    if (size.length > 50) {
+      return {
+        status: "error",
+        message: "Size must be 50 characters or fewer.",
+        fieldErrors: { size: "Size must be 50 characters or fewer." },
+      };
+    }
+
+    const stockValue = optionalString(formData.get("stock"));
+    const stockQuantity = stockValue === null ? 0 : Number(stockValue);
+    if (!Number.isInteger(stockQuantity) || stockQuantity < 0) {
+      return {
+        status: "error",
+        message: "Stock must be a non-negative whole number.",
+        fieldErrors: { stock: "Enter a whole number of 0 or more." },
+      };
+    }
+
+    const variantSku = optionalString(formData.get("sku"));
+
+    const existing = await catalog.getProductVariants(productId);
+    const duplicate = existing.some(
+      (variant) =>
+        variant.variant_value.trim().toLowerCase() === size.toLowerCase(),
+    );
+    if (duplicate) {
+      return {
+        status: "error",
+        message: `Size ${size} already exists for this product. Update its stock below.`,
+        fieldErrors: { size: "This size already exists." },
+      };
+    }
+
+    await catalog.createVariant(productId, {
+      variant_name: "Size",
+      variant_value: size,
+      sku: variantSku,
+      stock_quantity: stockQuantity,
+      price_override: null,
+      is_active: true,
+    });
+
+    revalidateInventory(productId);
+
+    return { status: "success", message: `Size ${size} added with stock ${stockQuantity}.` };
+  } catch (error) {
+    if (error instanceof AdminAccessError) {
+      return { status: "error", message: error.message };
+    }
+    const message =
+      error instanceof Error ? error.message : "Could not add the size.";
+    if (/duplicate|unique/i.test(message)) {
+      return {
+        status: "error",
+        message: "That size already exists for this product.",
+        fieldErrors: { size: "This size already exists." },
+      };
+    }
+    return { status: "error", message };
+  }
+}
+
+export async function addProductVariantsAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  try {
+    await requireAdminAccess();
+    const catalog = getCatalog();
+
+    const productId = optionalString(formData.get("productId"));
+    if (!productId) {
+      return { status: "error", message: "Missing product ID." };
+    }
+
+    const product = await catalog.getProductById(productId);
+    if (!product) {
+      return { status: "error", message: "Product not found." };
+    }
+
+    const sizes = formData.getAll("size");
+    const stocks = formData.getAll("stock");
+    const skus = formData.getAll("sku");
+
+    if (sizes.length === 0) {
+      return { status: "error", message: "Add at least one size." };
+    }
+
+    const fieldErrors: Record<string, string> = {};
+    const seen = new Set<string>();
+    const rows: { size: string; stockQuantity: number; sku: string | null }[] = [];
+
+    for (let index = 0; index < sizes.length; index += 1) {
+      const size = String(sizes[index] ?? "").trim();
+      if (!size) {
+        fieldErrors[`size_${index}`] = "Size is required.";
+        continue;
+      }
+      if (size.length > 50) {
+        fieldErrors[`size_${index}`] = "Size must be 50 characters or fewer.";
+        continue;
+      }
+
+      const key = size.toLowerCase();
+      if (seen.has(key)) {
+        fieldErrors[`size_${index}`] = "This size is listed more than once.";
+        continue;
+      }
+      seen.add(key);
+
+      const stockRaw = String(stocks[index] ?? "").trim();
+      const stockQuantity = stockRaw === "" ? 0 : Number(stockRaw);
+      if (!Number.isInteger(stockQuantity) || stockQuantity < 0) {
+        fieldErrors[`stock_${index}`] = "Enter a whole number of 0 or more.";
+        continue;
+      }
+
+      const skuRaw = String(skus[index] ?? "").trim();
+      rows.push({
+        size,
+        stockQuantity,
+        sku: skuRaw.length ? skuRaw : null,
+      });
+    }
+
+    if (Object.keys(fieldErrors).length > 0) {
+      return {
+        status: "error",
+        message: "Please correct the highlighted sizes.",
+        fieldErrors,
+      };
+    }
+
+    const existing = await catalog.getProductVariants(productId);
+    const existingSizes = new Set(
+      existing.map((variant) => variant.variant_value.trim().toLowerCase()),
+    );
+    const duplicateSizes = rows
+      .filter((row) => existingSizes.has(row.size.toLowerCase()))
+      .map((row) => row.size);
+
+    if (duplicateSizes.length > 0) {
+      return {
+        status: "error",
+        message: `${duplicateSizes.join(", ")} already ${
+          duplicateSizes.length === 1 ? "exists" : "exist"
+        } for this product. Update the existing stock instead.`,
+      };
+    }
+
+    for (const row of rows) {
+      await catalog.createVariant(productId, {
+        variant_name: "Size",
+        variant_value: row.size,
+        sku: row.sku,
+        stock_quantity: row.stockQuantity,
+        price_override: null,
+        is_active: true,
+      });
+    }
+
+    revalidateInventory(productId);
+
+    return {
+      status: "success",
+      message: `Added ${rows.length} size${rows.length === 1 ? "" : "s"}.`,
+    };
+  } catch (error) {
+    if (error instanceof AdminAccessError) {
+      return { status: "error", message: error.message };
+    }
+    const message =
+      error instanceof Error ? error.message : "Could not add the sizes.";
+    if (/duplicate|unique/i.test(message)) {
+      return {
+        status: "error",
+        message: "One of these sizes already exists for this product.",
+      };
+    }
+    return { status: "error", message };
+  }
+}
+
+export async function deleteProductVariantAction(formData: FormData): Promise<void> {
+  await requireAdminAccess();
+  const catalog = getCatalog();
+  const productId = optionalString(formData.get("productId"));
+  const variantId = optionalString(formData.get("variantId"));
+
+  if (!productId || !variantId) {
+    redirect("/admin/inventory");
+  }
+
+  const product = await catalog.getProductById(productId);
+  const belongsToProduct = product?.variants?.some(
+    (variant) => variant.id === variantId,
+  );
+  if (!belongsToProduct) {
+    redirect(`/admin/inventory/${productId}?error=1`);
+  }
+
+  await catalog.deleteVariant(variantId);
+  revalidateInventory(productId);
+  redirect(`/admin/inventory/${productId}?deleted=1`);
 }

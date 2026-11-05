@@ -13,11 +13,12 @@ import type {
   Paginated,
   Product,
   ProductFilters,
+  ProductVariant,
   StoreSettings,
   UpdateOrderLifecycleInput,
 } from "@/types";
 
-import type { CatalogDriver } from "./driver";
+import type { CatalogDriver, ProductVariantInput } from "./driver";
 import { decodeHtmlEntities, normalizeDescription } from "./text";
 
 /** Strips characters that carry meaning in PostgREST `or=` filter syntax. */
@@ -104,7 +105,7 @@ const getProductBySlugCached = unstable_cache(
     return hydrate(data as Record<string, unknown> | null);
   },
   ["product"],
-  { revalidate: 300 },
+  { revalidate: 300, tags: ["products"] },
 );
 
 const getProductByIdCached = unstable_cache(
@@ -112,14 +113,14 @@ const getProductByIdCached = unstable_cache(
     const supabase = getAnonServerClient();
     const { data, error } = await supabase
       .from("products")
-      .select(`${PRODUCT_SELECT}, images:product_images(*)`)
+      .select(`${PRODUCT_SELECT}, images:product_images(*), variants:product_variants(*)`)
       .eq("id", id)
       .maybeSingle();
     if (error) throw new Error(`Failed to load product: ${error.message}`);
     return hydrate(data as Record<string, unknown> | null);
   },
   ["product"],
-  { revalidate: 300 },
+  { revalidate: 300, tags: ["products"] },
 );
 
 /**
@@ -238,7 +239,11 @@ export const supabaseDriver: CatalogDriver = {
       }
     }
 
-    let base = supabase.from("products").select(PRODUCT_SELECT, { count: "exact" });
+    let base = filters.include_variants
+      ? supabase
+          .from("products")
+          .select(`${PRODUCT_SELECT}, variants:product_variants(*)`, { count: "exact" })
+      : supabase.from("products").select(PRODUCT_SELECT, { count: "exact" });
     if (productIds) base = base.in("id", productIds) as typeof base;
     base = applyFilters(base, filters) as typeof base;
 
@@ -271,7 +276,7 @@ export const supabaseDriver: CatalogDriver = {
     const supabase = getAnonServerClient();
     const { data, error } = await supabase
       .from("products")
-      .select(PRODUCT_SELECT)
+      .select(`${PRODUCT_SELECT}, variants:product_variants(*)`)
       .in("id", ids);
     if (error) throw new Error(`Failed to load products: ${error.message}`);
     return (data ?? []).map((row) => hydrate(row as Record<string, unknown>)).filter(Boolean) as Product[];
@@ -641,6 +646,72 @@ export const supabaseDriver: CatalogDriver = {
     if (error) throw new Error(error.message);
 
     return data as Order;
+  },
+
+  async updateVariantStock(variantId: string, stockQuantity: number): Promise<void> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const { error } = await supabase
+      .from("product_variants")
+      .update({ stock_quantity: stockQuantity, updated_at: new Date().toISOString() })
+      .eq("id", variantId);
+    if (error) throw new Error(error.message);
+  },
+
+  async getProductVariants(productId: string): Promise<ProductVariant[]> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const { data, error } = await supabase
+      .from("product_variants")
+      .select("*")
+      .eq("product_id", productId)
+      .eq("is_active", true)
+      .order("variant_value", { ascending: true });
+    if (error) throw new Error(error.message);
+    return (data ?? []) as ProductVariant[];
+  },
+
+  async createVariant(
+    productId: string,
+    variant: ProductVariantInput,
+  ): Promise<ProductVariant> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const { data, error } = await supabase
+      .from("product_variants")
+      .insert({
+        product_id: productId,
+        variant_name: variant.variant_name,
+        variant_value: variant.variant_value,
+        sku: variant.sku ?? null,
+        stock_quantity: variant.stock_quantity ?? 0,
+        price_override: variant.price_override ?? null,
+        is_active: variant.is_active ?? true,
+      })
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    return data as ProductVariant;
+  },
+
+  async deleteVariant(variantId: string): Promise<void> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const { error } = await supabase
+      .from("product_variants")
+      .delete()
+      .eq("id", variantId);
+    if (error) throw new Error(error.message);
+  },
+
+  async deleteProductVariants(productId: string): Promise<void> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const { error } = await supabase
+      .from("product_variants")
+      .delete()
+      .eq("product_id", productId);
+    if (error) throw new Error(error.message);
   },
 
   async listOrderStatusHistory(orderId: string): Promise<OrderStatusHistory[]> {

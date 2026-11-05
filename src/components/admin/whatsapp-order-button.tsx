@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { Send, PhoneOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Order } from "@/types";
-import { formatPrice } from "@/lib/site";
 import { ORDER_STATUS_LABELS } from "@/lib/orders/lifecycle";
 
 interface WhatsAppOrderButtonProps {
@@ -13,14 +11,12 @@ interface WhatsAppOrderButtonProps {
 }
 
 export function WhatsAppOrderButton({ order }: WhatsAppOrderButtonProps) {
-  const [didOpen, setDidOpen] = useState(false);
-
   const customerPhone = order.customer_phone ?? null;
   const hasPhone = Boolean(customerPhone);
 
   // Format phone number: remove spaces, +, and other special chars; ensure country code 91
   const normalizePhone = (phone: string): string => {
-    let digits = phone.replace(/\D/g, "");
+    const digits = phone.replace(/\D/g, "");
     // If already starts with country code 91, keep as is
     if (digits.startsWith("91") && digits.length >= 10) {
       return digits;
@@ -125,7 +121,6 @@ export function WhatsAppOrderButton({ order }: WhatsAppOrderButtonProps) {
     const message = buildWhatsAppMessage();
     const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
-    setDidOpen(true);
     window.open(whatsappUrl, "_blank");
   };
 

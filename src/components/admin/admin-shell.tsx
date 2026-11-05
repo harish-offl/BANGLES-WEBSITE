@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
@@ -16,13 +16,6 @@ interface AdminShellProps {
 export function AdminShell({ displayName, mode, children }: AdminShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  useEffect(() => {
-    // On tablet/desktop, keep drawer closed
-    if (typeof window !== "undefined" && window.innerWidth >= 768) {
-      setDrawerOpen(false);
-    }
-  }, []);
 
   return (
     <div className="mx-auto flex min-h-dvh w-full flex-col lg:flex-row">

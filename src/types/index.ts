@@ -129,6 +129,8 @@ export interface ProductFilters {
   new_arrivals?: boolean;
   ids?: string[];
   include_inactive?: boolean;
+  /** Include per-size variant stock (used by the admin inventory screen). */
+  include_variants?: boolean;
 }
 
 export interface Paginated<T> {

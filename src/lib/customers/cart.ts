@@ -5,6 +5,18 @@ import { redirect } from "next/navigation";
 import { getCustomerIdentity } from "@/lib/auth/auth-utils";
 import { createAuthClient } from "@/lib/supabase/server";
 
+interface CartItemRow {
+  id: string;
+  product_id: string;
+  quantity: number;
+  products: {
+    name: string;
+    primary_image_url: string | null;
+    price: number;
+    sku: string | null;
+  } | null;
+}
+
 export async function ensureCustomerCart(): Promise<string> {
   const identity = await getCustomerIdentity();
   if (!identity) redirect("/login?redirect=/account/cart");
@@ -104,8 +116,8 @@ export async function getCustomerCart() {
     .eq("cart_id", cart.id)
     .order("created_at", { ascending: false });
 
-  const cartItems = (items ?? []).map((item: any) => {
-    const product = item.products as any;
+  const cartItems = ((items ?? []) as CartItemRow[]).map((item) => {
+    const product = item.products;
     return {
       id: item.id,
       productId: item.product_id,

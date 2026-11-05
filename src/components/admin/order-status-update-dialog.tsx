@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 import { Loader2 } from "lucide-react";
 
 import { updateOrderLifecycleAction } from "@/app/admin/actions";
@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -24,7 +23,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import type { Order, OrderStatus } from "@/types";
+import type { ActionState } from "@/lib/admin/action-state";
+import type { Order } from "@/types";
 import { ORDER_STATUS_LABELS } from "@/lib/orders/lifecycle";
 
 interface OrderStatusUpdateDialogProps {
@@ -49,19 +49,19 @@ export function OrderStatusUpdateDialog({
   trigger,
 }: OrderStatusUpdateDialogProps) {
   const [open, setOpen] = useState(false);
-  const [state, formAction, isPending] = useActionState(
-    updateOrderLifecycleAction,
+  const [, formAction, isPending] = useActionState<ActionState, FormData>(
+    async (previous, formData) => {
+      const result = await updateOrderLifecycleAction(previous, formData);
+      if (result.status === "success") {
+        toast.success(result.message);
+        setOpen(false);
+      } else if (result.status === "error") {
+        toast.error(result.message);
+      }
+      return result;
+    },
     { status: "idle" },
   );
-
-  useEffect(() => {
-    if (state.status === "success") {
-      toast.success(state.message);
-      setOpen(false);
-    } else if (state.status === "error") {
-      toast.error(state.message);
-    }
-  }, [state]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
