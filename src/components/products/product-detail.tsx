@@ -129,7 +129,7 @@ export function ProductDetail({
             <dt className="text-muted-foreground">Category</dt>
             <dd className="text-foreground">{product.category_name ?? "—"}</dd>
           </div>
-          {isGlassBanglesCategory(product.category_name) && product.colours.length > 0 ? (
+          {isGlassBanglesCategory(product.category_name) && product.colours.length > 1 ? (
             <div className="flex gap-2 sm:col-span-2">
               <dt className="text-muted-foreground">Colours</dt>
               <dd className="capitalize text-foreground">{product.colours.join(", ")}</dd>

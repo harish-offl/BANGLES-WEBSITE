@@ -18,6 +18,7 @@ import {
   isGlassBanglesCategory,
 } from "@/lib/product-sizes";
 import { getPurchaseState, getStockLabel } from "@/lib/product-utils";
+import { colourHex } from "@/lib/glass-colours";
 import { cn } from "@/lib/utils";
 import { buildWhatsAppMessage, buildWhatsAppUrl } from "@/lib/whatsapp/shared";
 import type { Product, ProductVariant } from "@/types";
@@ -41,6 +42,17 @@ interface SizeOption {
 
 const MAX_QUANTITY = 99;
 
+function pickDefaultSize(options: SizeOption[]): string | null {
+  return (
+    options.find(
+      (option) => option.label === DEFAULT_BANGLE_SIZE && option.stock !== 0,
+    )?.label ??
+    options.find((option) => option.stock !== 0)?.label ??
+    options[0]?.label ??
+    null
+  );
+}
+
 /**
  * Product-page buy box: size and colour choice, quantity, add-to-bag and a
  * WhatsApp enquiry shortcut. When a product has variants, each size uses its
@@ -61,34 +73,86 @@ export function ProductPurchasePanel({
   const stockLabel = getStockLabel(product);
 
   const showSizes = isBangleCategory(product.category_name);
+  const isGlass = isGlassBanglesCategory(product.category_name);
 
   const variants = (product.variants ?? []).filter((variant) => variant.is_active);
-  const sizeOptions: SizeOption[] =
-    showSizes && variants.length > 0
-      ? variants.map((variant) => ({
-          id: variant.id,
-          label: variant.variant_value,
-          stock: variant.stock_quantity,
-          priceOverride: variant.price_override,
-          variant,
-        }))
-      : showSizes
-        ? BANGLE_SIZES.map((option) => ({
-            id: `size-${option.label}`,
-            label: option.label,
-            stock: null,
-            priceOverride: option.surcharge > 0 ? option.surcharge : null,
-            variant: null,
-          }))
-        : [];
+  const hasColourVariants = variants.some((variant) => Boolean(variant.colour));
+  const palette = product.colour_palette ?? [];
 
-  const [size, setSize] = useState<string | null>(() => {
-    if (sizeOptions.some((option) => option.label === DEFAULT_BANGLE_SIZE)) {
-      return DEFAULT_BANGLE_SIZE;
+  const colourNames = (() => {
+    if (!isGlass) return [] as string[];
+    const source = hasColourVariants
+      ? variants.map((variant) => variant.colour).filter((name): name is string => Boolean(name))
+      : (product.colours ?? []);
+    const unique = [...new Set(source)];
+    const order = new Map(
+      palette.map((colour, index) => [colour.name.toLowerCase(), index]),
+    );
+    return unique.sort(
+      (a, b) =>
+        (order.get(a.toLowerCase()) ?? Number.MAX_SAFE_INTEGER) -
+        (order.get(b.toLowerCase()) ?? Number.MAX_SAFE_INTEGER),
+    );
+  })();
+
+  const activeColour =
+    colour && colourNames.some((name) => name.toLowerCase() === colour.toLowerCase())
+      ? colourNames.find((name) => name.toLowerCase() === colour.toLowerCase()) ?? colour
+      : colourNames[0] ?? null;
+
+  function optionsFor(colourName: string | null): SizeOption[] {
+    if (!showSizes) return [];
+    const colourKey = colourName?.trim().toLowerCase() ?? null;
+    const matching =
+      isGlass && hasColourVariants && colourKey
+        ? variants.filter(
+            (variant) => (variant.colour ?? "").trim().toLowerCase() === colourKey,
+          )
+        : variants;
+
+    if (matching.length > 0) {
+      return matching.map((variant) => ({
+        id: variant.id,
+        label: variant.size ?? variant.variant_value,
+        stock: variant.stock_quantity,
+        priceOverride: variant.price_override,
+        variant,
+      }));
     }
-    return sizeOptions[0]?.label ?? null;
-  });
+
+    // Only fall back to the untracked store-wide sizes when the product has no
+    // variant matrix at all. A colour with no rows is genuinely unavailable.
+    if (hasColourVariants) return [];
+    return BANGLE_SIZES.map((option) => ({
+      id: `size-${option.label}`,
+      label: option.label,
+      stock: null,
+      priceOverride: null,
+      variant: null,
+    }));
+  }
+
+  const sizeOptions = optionsFor(activeColour);
+
+  const initialSize = pickDefaultSize(sizeOptions);
+  const [sizeSelection, setSizeSelection] = useState<{
+    colour: string | null;
+    size: string | null;
+  }>(() => ({ colour: activeColour, size: initialSize }));
   const [quantity, setQuantity] = useState(1);
+
+  if (sizeSelection.colour !== activeColour) {
+    setSizeSelection({
+      colour: activeColour,
+      size: pickDefaultSize(optionsFor(activeColour)),
+    });
+    setQuantity(1);
+  }
+
+  const size =
+    sizeSelection.colour === activeColour ? sizeSelection.size : initialSize;
+  const setSize = (next: string | null) =>
+    setSizeSelection({ colour: activeColour, size: next });
 
   const selectedOption = sizeOptions.find((option) => option.label === size) ?? null;
   const selectedVariant = selectedOption?.variant ?? null;
@@ -97,11 +161,15 @@ export function ProductPurchasePanel({
   const sizeSurcharge = showSizes ? getSizeSurcharge(size) : 0;
   const unitPrice = (selectedVariant?.price_override ?? product.price) + sizeSurcharge;
 
-  const isOutOfStock = variantStock === 0;
+  const needsSize = showSizes && !size;
+  const isOutOfStock =
+    (showSizes && sizeOptions.length === 0) || variantStock === 0;
   const isLowStock = variantStock !== null && variantStock > 0 && variantStock <= 5;
   const canAdd =
     purchase.available &&
     !isOutOfStock &&
+    !needsSize &&
+    (!isGlass || colourNames.length === 0 || Boolean(activeColour)) &&
     (variantStock === null || quantity <= variantStock);
 
   function handleAdd() {
@@ -111,7 +179,7 @@ export function ProductPurchasePanel({
         quantity,
         variant: selectedVariant,
         size: showSizes ? size : null,
-        colour,
+        colour: activeColour,
       }),
     );
     setAdded(true);
@@ -122,7 +190,7 @@ export function ProductPurchasePanel({
   function handleEnquire() {
     const details = [
       showSizes && size ? `Size: ${size}` : null,
-      colour ? `Colour: ${colour}` : null,
+      activeColour ? `Colour: ${activeColour}` : null,
     ]
       .filter(Boolean)
       .join(", ");
@@ -142,7 +210,7 @@ export function ProductPurchasePanel({
           unitPrice,
           sku: selectedVariant?.sku ?? product.sku,
           size: showSizes ? size : null,
-          colour,
+          colour: activeColour,
           url: `${siteUrl}/products/${product.slug}`,
         },
       ],
@@ -156,7 +224,6 @@ export function ProductPurchasePanel({
   }
 
   const canEnquire = Boolean(whatsappNumber);
-  const colours = product.colours ?? [];
 
   return (
     <div className="space-y-6">
@@ -176,7 +243,9 @@ export function ProductPurchasePanel({
         ) : null}
         {showSizes && isOutOfStock ? (
           <span className="rounded-full bg-destructive/10 px-2.5 py-0.5 text-xs text-destructive">
-            This size is out of stock
+            {sizeOptions.length === 0
+              ? "This colour is out of stock"
+              : "This size is out of stock"}
           </span>
         ) : null}
         {showSizes && isLowStock ? (
@@ -235,9 +304,9 @@ export function ProductPurchasePanel({
                         {option.stock} left
                       </span>
                     ) : null}
-                    {option.priceOverride && option.priceOverride > 0 ? (
+                    {getSizeSurcharge(option.label) > 0 ? (
                       <span className="text-xs text-gold-strong">
-                        +₹{option.priceOverride}
+                        +₹{getSizeSurcharge(option.label)}
                       </span>
                     ) : null}
                   </button>
@@ -255,27 +324,34 @@ export function ProductPurchasePanel({
         </div>
       ) : null}
 
-      {isGlassBanglesCategory(product.category_name) && colours.length > 0 ? (
+      {isGlass && colourNames.length > 1 ? (
         <div>
           <p className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-            Colour
+            Colour{activeColour ? ` — ${activeColour}` : ""}
           </p>
           <ul className="flex flex-wrap gap-2">
-            {colours.map((option) => {
-              const selected = option === colour;
+            {colourNames.map((option) => {
+              const selected =
+                activeColour?.toLowerCase() === option.toLowerCase();
               return (
                 <li key={option}>
                   <button
                     type="button"
                     onClick={() => onColourChange(option)}
                     aria-pressed={selected}
+                    aria-label={`Colour ${option}`}
                     className={cn(
-                      "rounded-full border px-3.5 py-1.5 text-sm capitalize transition-colors",
+                      "inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm transition-colors",
                       selected
                         ? "border-gold-strong bg-brand-c100 font-medium text-foreground"
                         : "border-border bg-background text-muted-foreground hover:border-gold/60 hover:text-foreground",
                     )}
                   >
+                    <span
+                      aria-hidden="true"
+                      className="size-4 rounded-full border border-black/10"
+                      style={{ backgroundColor: colourHex(option, palette) }}
+                    />
                     {option}
                   </button>
                 </li>

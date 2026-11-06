@@ -12,14 +12,21 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { VariantListForm } from "@/components/admin/variant-list-form";
-import type { Category, Product, ProductVariant } from "@/types";
+import { ColourVariantForm } from "@/components/admin/colour-variant-form";
+import { isGlassBanglesCategory } from "@/lib/product-sizes";
+import type { Category, Product, ProductColour, ProductVariant } from "@/types";
 
 interface ProductFormProps {
   categories: Category[];
   product?: Product | null;
+  palettesByCategory?: Record<string, ProductColour[]>;
 }
 
-export function ProductForm({ categories, product }: ProductFormProps) {
+export function ProductForm({
+  categories,
+  product,
+  palettesByCategory = {},
+}: ProductFormProps) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
     saveProductAction,
     initialActionState,
@@ -29,6 +36,21 @@ export function ProductForm({ categories, product }: ProductFormProps) {
   const [variants, setVariants] = useState<ProductVariant[]>(
     product?.variants ?? [],
   );
+  const [categoryId, setCategoryId] = useState(product?.category_id ?? "");
+  const selectedCategory = categories.find((category) => category.id === categoryId);
+  const isGlass = isGlassBanglesCategory(selectedCategory?.name);
+  const palette =
+    palettesByCategory[categoryId] ??
+    (product?.category_id === categoryId ? (product?.colour_palette ?? []) : []);
+
+  const submittedVariants = isGlass
+    ? variants
+    : variants.map((variant) => ({
+        ...variant,
+        colour: null,
+        colour_hex: null,
+        size: variant.size ?? variant.variant_value,
+      }));
 
   return (
     <form action={formAction} className="space-y-8">
@@ -89,7 +111,8 @@ export function ProductForm({ categories, product }: ProductFormProps) {
                 <select
                   id="category_id"
                   name="category_id"
-                  defaultValue={product?.category_id ?? ""}
+                  value={categoryId}
+                  onChange={(event) => setCategoryId(event.target.value)}
                   className="h-9 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
                 >
                   <option value="">Uncategorised</option>
@@ -103,33 +126,45 @@ export function ProductForm({ categories, product }: ProductFormProps) {
               </Field>
             </div>
 
-            <Field
-              label="Colours"
-              htmlFor="colours"
-              error={errors.colours}
-              hint="Comma-separated, e.g. Red, Gold, Green. Used by the shop colour filter."
-            >
-              <Input
-                id="colours"
-                name="colours"
-                defaultValue={(product?.colours ?? []).join(", ")}
-                placeholder="Red, Gold"
-              />
-            </Field>
+            {isGlass ? null : (
+              <Field
+                label="Colours"
+                htmlFor="colours"
+                error={errors.colours}
+                hint="Comma-separated, e.g. Red, Gold, Green. Used by the shop colour filter."
+              >
+                <Input
+                  id="colours"
+                  name="colours"
+                  defaultValue={(product?.colours ?? []).join(", ")}
+                  placeholder="Red, Gold"
+                />
+              </Field>
+            )}
           </section>
 
           <section className="space-y-4 rounded-xl border border-border bg-card p-5">
-            <h2 className="font-display text-lg">Size &amp; stock</h2>
-            <p className="text-sm text-muted-foreground mb-4">
-              Set stock for each size variant. Each size maintains its own
-              inventory count.
-            </p>
-            <VariantListForm variants={variants} onChange={setVariants} />
-            <input
-              type="hidden"
-              name="variants_json"
-              value={JSON.stringify(variants)}
-            />
+            {isGlass ? (
+              <ColourVariantForm
+                key={categoryId}
+                palette={palette}
+                product={product ?? undefined}
+              />
+            ) : (
+              <>
+                <h2 className="font-display text-lg">Size &amp; stock</h2>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Set stock for each size variant. Each size maintains its own
+                  inventory count.
+                </p>
+                <VariantListForm variants={variants} onChange={setVariants} />
+                <input
+                  type="hidden"
+                  name="variants_json"
+                  value={JSON.stringify(submittedVariants)}
+                />
+              </>
+            )}
           </section>
 
           <section className="space-y-4 rounded-xl border border-border bg-card p-5">

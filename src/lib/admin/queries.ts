@@ -1,7 +1,7 @@
 import "server-only";
 
 import { getCatalog } from "@/lib/data";
-import type { Category, Order, Paginated, Product } from "@/types";
+import type { Category, Order, Paginated, Product, ProductColour } from "@/types";
 
 const MAX_PAGE_SIZE = 100;
 
@@ -73,6 +73,30 @@ export async function getAdminCategories(): Promise<Category[]> {
 export async function getAdminCategory(id: string): Promise<Category | null> {
   const categories = await getCatalog().listCategories();
   return categories.find((category) => category.id === id) ?? null;
+}
+
+export async function getAdminProductColours(
+  categoryId: string,
+): Promise<ProductColour[]> {
+  return getCatalog().listProductColours(categoryId);
+}
+
+/**
+ * Loads every category palette once so the product form can switch colours
+ * client-side without a round trip on each category change.
+ */
+export async function getAdminColourPalettes(): Promise<
+  Record<string, ProductColour[]>
+> {
+  const catalog = getCatalog();
+  const categories = await catalog.listCategories();
+  const entries = await Promise.all(
+    categories.map(async (category) => {
+      const colours = await catalog.listProductColours(category.id);
+      return [category.id, colours] as const;
+    }),
+  );
+  return Object.fromEntries(entries.filter(([, colours]) => colours.length > 0));
 }
 
 export async function getAdminProduct(id: string): Promise<Product | null> {

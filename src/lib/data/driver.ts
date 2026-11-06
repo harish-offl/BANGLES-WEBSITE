@@ -1,5 +1,6 @@
 import type {
   Category,
+  ColourImage,
   CustomerNotification,
   DataMode,
   DataModeInfo,
@@ -8,6 +9,7 @@ import type {
   OrderStatusHistory,
   Paginated,
   Product,
+  ProductColour,
   ProductVariant,
   ProductFilters,
   StoreSettings,
@@ -25,6 +27,7 @@ export interface ProductInput {
   category_id: string | null;
   primary_image_url: string | null;
   colours: string[];
+  colour_images: ColourImage[];
   is_active: boolean;
   is_featured: boolean;
   is_new_arrival: boolean;
@@ -44,9 +47,22 @@ export interface CategoryInput {
 export interface ProductVariantInput {
   variant_name: string;
   variant_value: string;
+  colour?: string | null;
+  colour_hex?: string | null;
+  size?: string | null;
+  image_url?: string | null;
   sku?: string | null;
   price_override?: number | null;
   stock_quantity?: number | null;
+  is_active?: boolean;
+}
+
+export interface ProductColourInput {
+  id?: string;
+  name: string;
+  hex_code: string;
+  image_url?: string | null;
+  sort_order?: number;
   is_active?: boolean;
 }
 
@@ -54,6 +70,9 @@ export interface OrderItemInput {
   productId: string | null;
   productName: string;
   variant: string | null;
+  variantId?: string | null;
+  colour?: string | null;
+  size?: string | null;
   quantity: number;
   unitPrice: number;
 }
@@ -105,13 +124,28 @@ export interface CatalogDriver {
   ): Promise<Paginated<Product>>;
 
   /** Variant stock management */
-  updateVariantStock(variantId: string, stockQuantity: number): Promise<void>;
+  updateVariantStock(variantId: string, stockQuantity: number | null): Promise<void>;
   getProductVariants(productId: string): Promise<ProductVariant[]>;
   createVariant(productId: string, variant: ProductVariantInput): Promise<ProductVariant>;
+  updateVariant(variantId: string, variant: Partial<ProductVariantInput>): Promise<ProductVariant>;
   deleteVariant(variantId: string): Promise<void>;
   deleteProductVariants(productId: string): Promise<void>;
 
+  /** Category-level colour palettes (glass bangles). */
+  listProductColours(categoryId: string): Promise<ProductColour[]>;
+  syncProductColours(
+    categoryId: string,
+    colours: ProductColourInput[],
+  ): Promise<ProductColour[]>;
+
   listOrders(options?: { status?: OrderStatus }): Promise<Order[]>;
+  listOrdersPage(options?: {
+    status?: OrderStatus;
+    page?: number;
+    pageSize?: number;
+  }): Promise<Paginated<Order>>;
+  /** Count of orders grouped by status, used by the admin dashboard header. */
+  getOrderStatusCounts(): Promise<Partial<Record<OrderStatus, number>>>;
   getOrderById(id: string): Promise<Order | null>;
   createOrder(input: OrderInput): Promise<Order>;
   updateOrderStatus(id: string, status: OrderStatus): Promise<Order>;

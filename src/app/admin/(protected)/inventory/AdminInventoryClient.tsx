@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronDown, ChevronUp, Package, Search } from "lucide-react";
 
@@ -11,10 +12,25 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { Category, Product } from "@/types";
 
+interface PaginationMeta {
+  page: number;
+  pageSize: number;
+  total: number;
+  pageCount: number;
+}
+
+interface InventoryFilters {
+  q?: string;
+  category: string;
+  stock: "all" | "out" | "low" | "no-sizes";
+}
+
 interface AdminInventoryClientProps {
   products: Product[];
   categories: Category[];
   categoryById: Record<string, Category>;
+  pagination: PaginationMeta;
+  filters: InventoryFilters;
   totalProducts: number;
   totalVariants: number;
   totalStock: number;
@@ -35,42 +51,41 @@ export default function AdminInventoryClient({
   products,
   categories,
   categoryById,
+  pagination,
+  filters,
   totalProducts,
   totalVariants,
   totalStock,
   lowStockProducts,
   outOfStockProducts,
 }: AdminInventoryClientProps) {
-  const [query, setQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
-  const [stockFilter, setStockFilter] = useState<StockFilter>("all");
-  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [stockFilter, setStockFilter] = useState<StockFilter>(
+    (filters.stock ?? "all") as StockFilter,
+  );
+
+  useEffect(() => {
+    const next = new URLSearchParams(searchParams.toString());
+    if (stockFilter === "all") {
+      next.delete("stock");
+    } else {
+      next.set("stock", stockFilter);
+    }
+    router.push(`?${next.toString()}`, { scroll: false });
+  }, [stockFilter, searchParams, router]);
 
   const filteredProducts = useMemo(() => {
-    const term = query.trim().toLowerCase();
     return products.filter((product) => {
-      if (categoryFilter !== "all" && product.category_id !== categoryFilter) {
-        return false;
-      }
-
       const stock = productStock(product);
       const variantCount = product.variants?.length ?? 0;
       if (stockFilter === "out" && stock !== 0) return false;
       if (stockFilter === "low" && !(stock > 0 && stock <= 5)) return false;
       if (stockFilter === "no-sizes" && variantCount > 0) return false;
-
-      if (!term) return true;
-      const haystack = [
-        product.name,
-        product.sku ?? "",
-        ...(product.colours ?? []),
-        ...(product.variants ?? []).map((variant) => variant.variant_value),
-      ]
-        .join(" ")
-        .toLowerCase();
-      return haystack.includes(term);
+      return true;
     });
-  }, [products, query, categoryFilter, stockFilter]);
+  }, [products, stockFilter]);
 
   function toggleExpanded(id: string) {
     setExpanded((prev) => {
@@ -84,13 +99,37 @@ export default function AdminInventoryClient({
     });
   }
 
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+  const { page, pageSize, total, pageCount } = pagination;
+  const start = (page - 1) * pageSize + 1;
+  const end = Math.min(start + filteredProducts.length - 1, total);
+
+  function setCategory(value: string) {
+    const next = new URLSearchParams();
+    next.set("q", filters.q ?? "");
+    next.set("category", value);
+    next.set("page", "1");
+    if (stockFilter !== "all") next.set("stock", stockFilter);
+    router.push(`?${next.toString()}`, { scroll: false });
+  }
+
+  function goToPage(targetPage: number) {
+    const next = new URLSearchParams();
+    if (filters.q) next.set("q", filters.q);
+    next.set("category", filters.category);
+    next.set("page", String(targetPage));
+    if (stockFilter !== "all") next.set("stock", stockFilter);
+    router.push(`?${next.toString()}`, { scroll: false });
+  }
+
   return (
     <>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <StatCard label="Total products" value={totalProducts} />
         <StatCard label="Size variants" value={totalVariants} />
         <StatCard label="Total stock" value={totalStock} />
-        <StatCard label="Low stock (≤5)" value={lowStockProducts} />
+        <StatCard label="Low stock (\u22645)" value={lowStockProducts} />
         <StatCard label="Out of stock" value={outOfStockProducts} />
       </div>
 
@@ -99,27 +138,40 @@ export default function AdminInventoryClient({
           <div>
             <h2 className="font-display text-lg">Product inventory</h2>
             <p className="text-sm text-muted-foreground">
-              Showing {filteredProducts.length} of {totalProducts} products
+              Showing {start}\u2013{end} of {total} products
             </p>
           </div>
 
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-            <div className="relative">
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                const formData = new FormData(event.currentTarget);
+                const q = String(formData.get("q") ?? "");
+                const next = new URLSearchParams();
+                if (q) next.set("q", q);
+                next.set("category", filters.category);
+                next.set("page", "1");
+                if (stockFilter !== "all") next.set("stock", stockFilter);
+                router.push(`?${next.toString()}`, { scroll: false });
+              }}
+              className="relative flex items-center gap-2"
+            >
               <Search
                 className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
                 aria-hidden="true"
               />
               <Input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search name, SKU, size or colour…"
+                name="q"
+                defaultValue={filters.q ?? ""}
+                placeholder="Search name, SKU, size or colour\u2026"
                 aria-label="Search products"
                 className="w-full pl-9 sm:w-64"
               />
-            </div>
+            </form>
             <select
-              value={categoryFilter}
-              onChange={(event) => setCategoryFilter(event.target.value)}
+              value={filters.category}
+              onChange={(event) => setCategory(event.target.value)}
               aria-label="Filter by category"
               className="h-9 rounded-lg border border-input bg-transparent px-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
             >
@@ -138,7 +190,7 @@ export default function AdminInventoryClient({
             >
               <option value="all">All stock</option>
               <option value="out">Out of stock</option>
-              <option value="low">Low stock (≤5)</option>
+              <option value="low">Low stock (\u22645)</option>
               <option value="no-sizes">No sizes added</option>
             </select>
           </div>
@@ -174,7 +226,7 @@ export default function AdminInventoryClient({
                 const isOutOfStock = stock === 0;
                 const isLowStock = stock > 0 && stock <= 5;
                 const isExpanded = expanded.has(product.id);
-                const serialNumber = index + 1;
+                const serialNumber = (page - 1) * pageSize + index + 1;
                 return (
                   <Fragment key={product.id}>
                     <tr className="border-b border-border last:border-0">
@@ -208,7 +260,7 @@ export default function AdminInventoryClient({
                         </div>
                       </td>
                       <td className="px-4 py-3 text-muted-foreground">
-                        {category?.name ?? "—"}
+                        {category?.name ?? "\u2014"}
                       </td>
                       <td className="px-4 py-3 tabular-nums text-right font-medium">
                         {stock}
@@ -331,6 +383,30 @@ export default function AdminInventoryClient({
             </tbody>
           </table>
         </div>
+
+        {pageCount > 1 && (
+          <nav className="mt-6 flex items-center justify-between gap-2">
+            <div className="text-sm text-muted-foreground">
+              Page {page} of {pageCount} ({total} total)
+            </div>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => goToPage(page - 1)}
+                disabled={page === 1}
+                className="px-3 py-1.5 text-sm rounded-lg border border-input bg-transparent text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-50 disabled:pointer-events-none"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => goToPage(page + 1)}
+                disabled={page === pageCount}
+                className="px-3 py-1.5 text-sm rounded-lg border border-input bg-transparent text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-50 disabled:pointer-events-none"
+              >
+                Next
+              </button>
+            </div>
+          </nav>
+        )}
       </div>
     </>
   );

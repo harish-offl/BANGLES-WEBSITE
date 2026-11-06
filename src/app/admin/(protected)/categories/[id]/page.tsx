@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 
 import { CategoryForm } from "@/components/admin/category-form";
 import { AdminPageHeader } from "@/components/admin/ui";
-import { getAdminCategory } from "@/lib/admin/queries";
+import { getAdminCategory, getAdminProductColours } from "@/lib/admin/queries";
 
 interface EditCategoryPageProps {
   params: Promise<{ id: string }>;
@@ -23,6 +23,8 @@ export default async function EditCategoryPage({ params }: EditCategoryPageProps
 
   if (!category) notFound();
 
+  const colourPalette = await getAdminProductColours(id);
+
   return (
     <>
       <Link
@@ -33,7 +35,7 @@ export default async function EditCategoryPage({ params }: EditCategoryPageProps
         Back to categories
       </Link>
       <AdminPageHeader title="Edit category" description={category.name} />
-      <CategoryForm category={category} />
+      <CategoryForm category={category} colourPalette={colourPalette} />
     </>
   );
 }

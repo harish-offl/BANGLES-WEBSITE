@@ -16,15 +16,18 @@ import { SmartImage } from "@/components/shared/smart-image";
 import { cn } from "@/lib/utils";
 import type { Category, Product } from "@/types";
 import { LocalImagePreview } from "@/components/admin/local-image-preview";
+import { ColourPaletteForm } from "@/components/admin/colour-palette-form";
 import { formatPrice } from "@/lib/site";
+import type { ProductColour } from "@/types";
 
 const PAGE_SIZE = 24;
 
 interface CategoryFormProps {
   category?: Category | null;
+  colourPalette?: ProductColour[];
 }
 
-export function CategoryForm({ category }: CategoryFormProps) {
+export function CategoryForm({ category, colourPalette = [] }: CategoryFormProps) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
     saveCategoryAction,
     initialActionState,
@@ -32,6 +35,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
   const errors = state.status === "error" ? state.fieldErrors ?? {} : {};
   const isEdit = Boolean(category);
   const [localFile, setLocalFile] = useState<File | null>(null);
+  const [palette, setPalette] = useState<ProductColour[]>(colourPalette);
 
   const [assignedProducts, setAssignedProducts] = useState<Product[]>([]);
   const [selectedProductIds, setSelectedProductIds] = useState<Set<string>>(new Set());
@@ -122,6 +126,11 @@ export function CategoryForm({ category }: CategoryFormProps) {
         name="category_product_ids"
         value={selectedIds.join(",")}
       />
+      <input
+        type="hidden"
+        name="colour_palette_json"
+        value={JSON.stringify(palette)}
+      />
       <FormMessage state={state} />
 
       {/* Existing category fields */}
@@ -195,6 +204,10 @@ export function CategoryForm({ category }: CategoryFormProps) {
           defaultChecked={category ? category.is_active : true}
         />
       </div>
+
+      <section className="rounded-xl border border-border bg-card p-6">
+        <ColourPaletteForm colours={palette} onChange={setPalette} />
+      </section>
 
       {/* ========================================================================
          ASSIGN PRODUCTS TO THIS CATEGORY

@@ -12,10 +12,13 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { ProductVariant } from "@/types";
 
-function toQuantities(variants: ProductVariant[]): Record<string, number> {
+function toQuantities(variants: ProductVariant[]): Record<string, string> {
   return variants.reduce(
-    (acc, v) => ({ ...acc, [v.id]: v.stock_quantity ?? 0 }),
-    {} as Record<string, number>,
+    (acc, v) => ({
+      ...acc,
+      [v.id]: v.stock_quantity === null ? "" : String(v.stock_quantity),
+    }),
+    {} as Record<string, string>,
   );
 }
 
@@ -40,8 +43,14 @@ export default function StockUpdateForm({
     setQuantities(toQuantities(variants));
   }
 
-  const hasChanges = variants.some((v) => quantities[v.id] !== (v.stock_quantity ?? 0));
-  const totalStock = Object.values(quantities).reduce((sum, q) => sum + q, 0);
+  const hasChanges = variants.some(
+    (v) =>
+      quantities[v.id] !== (v.stock_quantity === null ? "" : String(v.stock_quantity)),
+  );
+  const totalStock = Object.values(quantities).reduce(
+    (sum, q) => sum + (q.trim() === "" ? 0 : Number(q) || 0),
+    0,
+  );
 
   if (variants.length === 0) {
     return (
@@ -77,6 +86,7 @@ export default function StockUpdateForm({
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border text-left text-xs tracking-[0.12em] text-muted-foreground uppercase">
+                <th className="px-4 py-3 font-medium">Colour</th>
                 <th className="px-4 py-3 font-medium">Size</th>
                 <th className="px-4 py-3 font-medium text-right">Current stock</th>
                 <th className="px-4 py-3 font-medium text-right">New stock</th>
@@ -86,17 +96,33 @@ export default function StockUpdateForm({
             </thead>
             <tbody className="divide-y divide-border">
               {variants.map((variant) => {
-                const currentQty = variant.stock_quantity ?? 0;
-                const newQty = quantities[variant.id] ?? currentQty;
-                const isOut = newQty === 0;
-                const isLow = newQty > 0 && newQty <= 5;
+                const currentQty = variant.stock_quantity;
+                const newQty = quantities[variant.id] ?? "";
+                const numericQty = newQty.trim() === "" ? null : Number(newQty);
+                const isUntracked = numericQty === null;
+                const isOut = numericQty === 0;
+                const isLow = numericQty !== null && numericQty > 0 && numericQty <= 5;
                 return (
                   <tr key={variant.id} className="last:border-0">
+                    <td className="px-4 py-3 text-sm text-foreground">
+                      {variant.colour ? (
+                        <span className="inline-flex items-center gap-2">
+                          <span
+                            aria-hidden="true"
+                            className="size-3 rounded-full border border-black/10"
+                            style={{ backgroundColor: variant.colour_hex ?? "#C9A227" }}
+                          />
+                          {variant.colour}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-sm tabular-nums text-foreground">
-                      {variant.variant_value}
+                      {variant.size ?? variant.variant_value}
                     </td>
                     <td className="px-4 py-3 tabular-nums text-muted-foreground text-right">
-                      {currentQty}
+                      {currentQty === null ? "—" : currentQty}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <Input
@@ -107,26 +133,35 @@ export default function StockUpdateForm({
                         step="1"
                         value={newQty}
                         onChange={(e) => {
-                          const val = Number(e.target.value);
-                          if (Number.isInteger(val) && val >= 0) {
-                            setQuantities((prev) => ({ ...prev, [variant.id]: val }));
+                          const raw = e.target.value;
+                          if (raw === "" || (Number.isInteger(Number(raw)) && Number(raw) >= 0)) {
+                            setQuantities((prev) => ({ ...prev, [variant.id]: raw }));
                           }
                         }}
-                        className="w-20 h-9 rounded-lg border border-input px-3 text-sm tabular-nums text-right outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
+                        placeholder="Untracked"
+                        className="w-24 h-9 rounded-lg border border-input px-3 text-sm tabular-nums text-right outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
                       />
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <span
                         className={cn(
                           "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-                          isOut
+                          isUntracked
+                            ? "bg-muted text-muted-foreground border border-border"
+                            : isOut
                             ? "bg-destructive/10 text-destructive border border-destructive/20"
                             : isLow
                             ? "bg-warning/10 text-warning-foreground border border-warning/20"
                             : "bg-brand-c100 text-brand-ink border border-brand-c300",
                         )}
                       >
-                        {isOut ? "Out of stock" : isLow ? "Low stock" : "In stock"}
+                        {isUntracked
+                          ? "Made to order"
+                          : isOut
+                            ? "Out of stock"
+                            : isLow
+                              ? "Low stock"
+                              : "In stock"}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -141,7 +176,7 @@ export default function StockUpdateForm({
                         onClick={(event) => {
                           if (
                             !window.confirm(
-                              `Remove size ${variant.variant_value}? This cannot be undone.`,
+                              `Remove ${variant.colour ? `${variant.colour} ` : ""}size ${variant.size ?? variant.variant_value}? This cannot be undone.`,
                             )
                           ) {
                             event.preventDefault();
@@ -158,7 +193,7 @@ export default function StockUpdateForm({
             </tbody>
             <tfoot>
               <tr className="border-t border-border font-medium bg-brand-c50">
-                <td className="px-4 py-3 text-right" colSpan={2}>
+                <td className="px-4 py-3 text-right" colSpan={3}>
                   Total stock
                 </td>
                 <td className="px-4 py-3 tabular-nums text-right font-semibold">

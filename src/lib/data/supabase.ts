@@ -12,13 +12,18 @@ import type {
   OrderStatusHistory,
   Paginated,
   Product,
+  ProductColour,
   ProductFilters,
   ProductVariant,
   StoreSettings,
   UpdateOrderLifecycleInput,
 } from "@/types";
 
-import type { CatalogDriver, ProductVariantInput } from "./driver";
+import type {
+  CatalogDriver,
+  ProductColourInput,
+  ProductVariantInput,
+} from "./driver";
 import { decodeHtmlEntities, normalizeDescription } from "./text";
 
 /** Strips characters that carry meaning in PostgREST `or=` filter syntax. */
@@ -93,6 +98,36 @@ const listCategoriesCached = unstable_cache(
 
 const PRODUCT_SELECT = "*, category:categories(*)";
 
+/**
+ * Palette rows are category-level, so the same handful of records is reused by
+ * every product in that category. Caching by category id avoids an extra query
+ * per product page render.
+ */
+const getCategoryColoursCached = unstable_cache(
+  async (categoryId: string): Promise<ProductColour[]> => {
+    const supabase = getAnonServerClient();
+    const { data, error } = await supabase
+      .from("product_colours")
+      .select("*")
+      .eq("category_id", categoryId)
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true })
+      .order("name", { ascending: true });
+    if (error) return [];
+    return (data ?? []) as ProductColour[];
+  },
+  ["product-colours"],
+  { revalidate: 3600, tags: ["products", "categories"] },
+);
+
+async function attachPalette(product: Product | null): Promise<Product | null> {
+  if (!product) return null;
+  product.colour_palette = product.category_id
+    ? await getCategoryColoursCached(product.category_id)
+    : [];
+  return product;
+}
+
 const getProductBySlugCached = unstable_cache(
   async (slug: string): Promise<Product | null> => {
     const supabase = getAnonServerClient();
@@ -102,7 +137,7 @@ const getProductBySlugCached = unstable_cache(
       .eq("slug", slug)
       .maybeSingle();
     if (error) throw new Error(`Failed to load product: ${error.message}`);
-    return hydrate(data as Record<string, unknown> | null);
+    return attachPalette(hydrate(data as Record<string, unknown> | null));
   },
   ["product"],
   { revalidate: 300, tags: ["products"] },
@@ -117,7 +152,7 @@ const getProductByIdCached = unstable_cache(
       .eq("id", id)
       .maybeSingle();
     if (error) throw new Error(`Failed to load product: ${error.message}`);
-    return hydrate(data as Record<string, unknown> | null);
+    return attachPalette(hydrate(data as Record<string, unknown> | null));
   },
   ["product"],
   { revalidate: 300, tags: ["products"] },
@@ -556,6 +591,45 @@ export const supabaseDriver: CatalogDriver = {
     return (data ?? []) as Order[];
   },
 
+  async listOrdersPage(options = {}): Promise<Paginated<Order>> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const pageSize = Math.min(Math.max(options.pageSize ?? 25, 1), 100);
+    const page = Math.max(options.page ?? 1, 1);
+
+    let query = supabase
+      .from("orders")
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false });
+    if (options.status) query = query.eq("status", options.status);
+
+    const from = (page - 1) * pageSize;
+    const { data, error, count } = await query.range(from, from + pageSize - 1);
+    if (error) throw new Error(`Failed to list orders: ${error.message}`);
+
+    const total = count ?? 0;
+    return {
+      items: (data ?? []) as Order[],
+      total,
+      page,
+      pageSize,
+      pageCount: Math.max(1, Math.ceil(total / pageSize)),
+    };
+  },
+
+  async getOrderStatusCounts(): Promise<Partial<Record<OrderStatus, number>>> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const { data, error } = await supabase.from("orders").select("status");
+    if (error) throw new Error(`Failed to count orders: ${error.message}`);
+
+    const counts: Partial<Record<OrderStatus, number>> = {};
+    for (const row of (data ?? []) as { status: OrderStatus }[]) {
+      counts[row.status] = (counts[row.status] ?? 0) + 1;
+    }
+    return counts;
+  },
+
   async getOrderById(id: string): Promise<Order | null> {
     const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
     const supabase = getServiceRoleClient();
@@ -595,6 +669,9 @@ export const supabaseDriver: CatalogDriver = {
       const rows = input.items.map((item) => ({
         order_id: order.id,
         product_id: item.productId,
+        variant_id: item.variantId ?? null,
+        colour: item.colour ?? null,
+        size: item.size ?? null,
         product_name_snapshot: item.productName,
         selected_variant_snapshot: item.variant,
         quantity: item.quantity,
@@ -648,7 +725,10 @@ export const supabaseDriver: CatalogDriver = {
     return data as Order;
   },
 
-  async updateVariantStock(variantId: string, stockQuantity: number): Promise<void> {
+  async updateVariantStock(
+    variantId: string,
+    stockQuantity: number | null,
+  ): Promise<void> {
     const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
     const supabase = getServiceRoleClient();
     const { error } = await supabase
@@ -666,6 +746,7 @@ export const supabaseDriver: CatalogDriver = {
       .select("*")
       .eq("product_id", productId)
       .eq("is_active", true)
+      .order("colour", { ascending: true })
       .order("variant_value", { ascending: true });
     if (error) throw new Error(error.message);
     return (data ?? []) as ProductVariant[];
@@ -683,8 +764,12 @@ export const supabaseDriver: CatalogDriver = {
         product_id: productId,
         variant_name: variant.variant_name,
         variant_value: variant.variant_value,
+        colour: variant.colour ?? null,
+        colour_hex: variant.colour_hex ?? null,
+        size: variant.size ?? null,
+        image_url: variant.image_url ?? null,
         sku: variant.sku ?? null,
-        stock_quantity: variant.stock_quantity ?? 0,
+        stock_quantity: variant.stock_quantity ?? null,
         price_override: variant.price_override ?? null,
         is_active: variant.is_active ?? true,
       })
@@ -692,6 +777,119 @@ export const supabaseDriver: CatalogDriver = {
       .single();
     if (error) throw new Error(error.message);
     return data as ProductVariant;
+  },
+
+  async updateVariant(
+    variantId: string,
+    variant: Partial<ProductVariantInput>,
+  ): Promise<ProductVariant> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const update: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    for (const key of [
+      "variant_name",
+      "variant_value",
+      "colour",
+      "colour_hex",
+      "size",
+      "image_url",
+      "sku",
+      "price_override",
+      "stock_quantity",
+      "is_active",
+    ] as const) {
+      if (variant[key] !== undefined) update[key] = variant[key];
+    }
+    const { data, error } = await supabase
+      .from("product_variants")
+      .update(update)
+      .eq("id", variantId)
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    return data as ProductVariant;
+  },
+
+  async listProductColours(categoryId: string): Promise<ProductColour[]> {
+    const supabase = getAnonServerClient();
+    const { data, error } = await supabase
+      .from("product_colours")
+      .select("*")
+      .eq("category_id", categoryId)
+      .order("sort_order", { ascending: true })
+      .order("name", { ascending: true });
+    if (error) return [];
+    return (data ?? []) as ProductColour[];
+  },
+
+  async syncProductColours(
+    categoryId: string,
+    colours: ProductColourInput[],
+  ): Promise<ProductColour[]> {
+    const { getServiceRoleClient } = await import("@/lib/supabase/service-role");
+    const supabase = getServiceRoleClient();
+    const { data: existing, error: readError } = await supabase
+      .from("product_colours")
+      .select("*")
+      .eq("category_id", categoryId);
+    if (readError) throw new Error(readError.message);
+
+    const existingRows = (existing ?? []) as ProductColour[];
+    const keep = new Set<string>();
+    const saved: ProductColour[] = [];
+
+    for (const [index, colour] of colours.entries()) {
+      const match =
+        (colour.id ? existingRows.find((row) => row.id === colour.id) : undefined) ??
+        existingRows.find(
+          (row) => row.name.trim().toLowerCase() === colour.name.trim().toLowerCase(),
+        );
+
+      const payload = {
+        category_id: categoryId,
+        name: colour.name.trim(),
+        hex_code: colour.hex_code,
+        image_url: colour.image_url ?? null,
+        is_active: colour.is_active ?? true,
+        sort_order: colour.sort_order ?? index,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (match) {
+        keep.add(match.id);
+        const { data, error } = await supabase
+          .from("product_colours")
+          .update(payload)
+          .eq("id", match.id)
+          .select()
+          .single();
+        if (error) throw new Error(error.message);
+        saved.push(data as ProductColour);
+      } else {
+        const { data, error } = await supabase
+          .from("product_colours")
+          .insert(payload)
+          .select()
+          .single();
+        if (error) throw new Error(error.message);
+        saved.push(data as ProductColour);
+      }
+    }
+
+    // Deactivate palette entries that were removed from the form instead of
+    // deleting them. Existing products keep their historical colour names.
+    const staleIds = existingRows
+      .filter((row) => !keep.has(row.id) && row.is_active)
+      .map((row) => row.id);
+    if (staleIds.length) {
+      const { error } = await supabase
+        .from("product_colours")
+        .update({ is_active: false, updated_at: new Date().toISOString() })
+        .in("id", staleIds);
+      if (error) throw new Error(error.message);
+    }
+
+    return saved;
   },
 
   async deleteVariant(variantId: string): Promise<void> {

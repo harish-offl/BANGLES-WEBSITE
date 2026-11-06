@@ -9,15 +9,30 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { ActionState } from "@/lib/admin/action-state";
 import { BANGLE_SIZES } from "@/lib/product-sizes";
+import { cn } from "@/lib/utils";
+import type { ProductColour } from "@/types";
 
 const initialState: ActionState = { status: "idle" };
 
-export default function AddSizeForm({ productId }: { productId: string }) {
+interface RowState {
+  id: number;
+  colour: string;
+}
+
+export default function AddSizeForm({
+  productId,
+  palette = [],
+}: {
+  productId: string;
+  palette?: ProductColour[];
+}) {
   const [state, formAction, pending] = useActionState(
     addProductVariantsAction,
     initialState,
   );
-  const [rows, setRows] = useState<number[]>([1]);
+  const [rows, setRows] = useState<RowState[]>([
+    { id: 1, colour: palette[0]?.name ?? "" },
+  ]);
   const nextRowId = useRef(2);
   const formRef = useRef<HTMLFormElement>(null);
   const fieldErrors = state.status === "error" ? state.fieldErrors : undefined;
@@ -29,12 +44,19 @@ export default function AddSizeForm({ productId }: { productId: string }) {
   }, [state]);
 
   function addRow() {
-    setRows((prev) => [...prev, nextRowId.current]);
+    setRows((prev) => [
+      ...prev,
+      { id: nextRowId.current, colour: palette[0]?.name ?? "" },
+    ]);
     nextRowId.current += 1;
   }
 
   function removeRow(id: number) {
-    setRows((prev) => (prev.length > 1 ? prev.filter((row) => row !== id) : prev));
+    setRows((prev) => (prev.length > 1 ? prev.filter((row) => row.id !== id) : prev));
+  }
+
+  function setRowColour(id: number, colour: string) {
+    setRows((prev) => prev.map((row) => (row.id === id ? { ...row, colour } : row)));
   }
 
   return (
@@ -51,6 +73,9 @@ export default function AddSizeForm({ productId }: { productId: string }) {
       <p className="mt-1 text-sm text-muted-foreground">
         Add one or more bangle sizes with their opening stock. Sizes are stored
         as text, so 2.10 stays 2.10.
+        {palette.length > 0
+          ? " Choose the colour each size belongs to."
+          : null}
       </p>
 
       <datalist id="bangle-size-options">
@@ -60,20 +85,57 @@ export default function AddSizeForm({ productId }: { productId: string }) {
       </datalist>
 
       <div className="mt-4 space-y-3">
-        {rows.map((rowId, index) => (
+        {rows.map((row, index) => (
           <div
-            key={rowId}
-            className="grid gap-3 border-t border-border pt-3 first:border-0 first:pt-0 sm:grid-cols-2 lg:grid-cols-[1fr_140px_1fr_auto] lg:items-end"
+            key={row.id}
+            className={cn(
+              "grid gap-3 border-t border-border pt-3 first:border-0 first:pt-0 sm:grid-cols-2 lg:items-end",
+              palette.length > 0
+                ? "lg:grid-cols-[160px_1fr_140px_1fr_auto]"
+                : "lg:grid-cols-[1fr_140px_1fr_auto]",
+            )}
           >
+            {palette.length > 0 ? (
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor={`colour-${row.id}`}
+                  className={index === 0 ? undefined : "sr-only"}
+                >
+                  Colour
+                </Label>
+                <select
+                  id={`colour-${row.id}`}
+                  name="colour"
+                  value={row.colour}
+                  onChange={(event) => setRowColour(row.id, event.target.value)}
+                  required
+                  className="h-9 w-full rounded-lg border border-input bg-background px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
+                >
+                  {palette.map((colour) => (
+                    <option key={colour.id} value={colour.name}>
+                      {colour.name}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="hidden"
+                  name="colour_hex"
+                  value={
+                    palette.find((colour) => colour.name === row.colour)?.hex_code ?? ""
+                  }
+                />
+              </div>
+            ) : null}
+
             <div className="space-y-1.5">
               <Label
-                htmlFor={`size-${rowId}`}
-                className={index === 0 ? undefined : "sr-only"}
+                htmlFor={`size-${row.id}`}
+                className={index === 0 && palette.length === 0 ? undefined : "sr-only"}
               >
                 Size
               </Label>
               <Input
-                id={`size-${rowId}`}
+                id={`size-${row.id}`}
                 name="size"
                 list="bangle-size-options"
                 placeholder="e.g. 2.6"
@@ -88,13 +150,13 @@ export default function AddSizeForm({ productId }: { productId: string }) {
 
             <div className="space-y-1.5">
               <Label
-                htmlFor={`stock-${rowId}`}
-                className={index === 0 ? undefined : "sr-only"}
+                htmlFor={`stock-${row.id}`}
+                className={index === 0 && palette.length === 0 ? undefined : "sr-only"}
               >
                 Initial stock
               </Label>
               <Input
-                id={`stock-${rowId}`}
+                id={`stock-${row.id}`}
                 name="stock"
                 type="number"
                 min="0"
@@ -111,13 +173,13 @@ export default function AddSizeForm({ productId }: { productId: string }) {
 
             <div className="space-y-1.5">
               <Label
-                htmlFor={`sku-${rowId}`}
-                className={index === 0 ? undefined : "sr-only"}
+                htmlFor={`sku-${row.id}`}
+                className={index === 0 && palette.length === 0 ? undefined : "sr-only"}
               >
                 Variant SKU (optional)
               </Label>
               <Input
-                id={`sku-${rowId}`}
+                id={`sku-${row.id}`}
                 name="sku"
                 placeholder="e.g. BNG-108-26"
                 aria-label="Variant SKU (optional)"
@@ -128,7 +190,7 @@ export default function AddSizeForm({ productId }: { productId: string }) {
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => removeRow(rowId)}
+              onClick={() => removeRow(row.id)}
               disabled={rows.length === 1}
               className="h-9 gap-1.5 text-destructive hover:bg-destructive/5"
             >

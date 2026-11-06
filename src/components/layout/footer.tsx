@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, MapPin, MessageCircle } from "lucide-react";
+import { Code, Mail, MapPin, MessageCircle } from "lucide-react";
 
 import {
   FacebookIcon,
@@ -181,16 +181,14 @@ export function Footer({ settings }: FooterProps) {
             <p>
               © {year} {settings.store_name}. All rights reserved.
             </p>
-            <p>
-              <a
-                href="https://annamalaiportfolio.vercel.app/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline-offset-2 hover:underline"
-              >
-                Meet the developer
-              </a>
-            </p>
+            <Link
+              href="/developer"
+              className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-medium text-brand-c200 transition-colors hover:bg-white/10 hover:text-white"
+              aria-label="View developer profile"
+            >
+              <Code className="size-3.5" aria-hidden="true" />
+              Developer Profile
+            </Link>
           </div>
         </div>
       </div>

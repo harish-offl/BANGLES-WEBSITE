@@ -22,7 +22,13 @@ const LINKS = [
   { href: "/admin/settings", label: "Settings", Icon: Settings, exact: false },
 ] as const;
 
-export function AdminNav({ collapsed = false }: { collapsed?: boolean }) {
+export function AdminNav({
+  collapsed = false,
+  onNavigate,
+}: {
+  collapsed?: boolean;
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
 
   return (
@@ -33,6 +39,7 @@ export function AdminNav({ collapsed = false }: { collapsed?: boolean }) {
           <Link
             key={href}
             href={href}
+            onClick={onNavigate}
             aria-current={active ? "page" : undefined}
             className={cn(
               "flex min-h-11 items-center gap-3 rounded-lg border border-transparent px-3 py-2.5 text-sm font-medium transition-colors",
@@ -51,6 +58,7 @@ export function AdminNav({ collapsed = false }: { collapsed?: boolean }) {
         href="/"
         target="_blank"
         rel="noopener noreferrer"
+        onClick={onNavigate}
         className="mt-4 flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-brand-c100/60 hover:text-foreground"
       >
         <Store className="size-4 shrink-0" aria-hidden="true" />

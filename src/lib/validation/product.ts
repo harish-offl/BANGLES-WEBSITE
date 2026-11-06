@@ -13,6 +13,11 @@ export const slugSchema = z
 
 export const colourSchema = z.string().trim().min(1).max(40);
 
+export const colourImageSchema = z.object({
+  colour: colourSchema,
+  image_url: z.string().trim().min(1).max(1000),
+});
+
 /**
  * Foreign keys are opaque strings rather than strict UUIDs because the local
  * development driver mints `local-*` identifiers. Supabase rows are UUIDs, so
@@ -37,6 +42,7 @@ export const productInputSchema = z
     category_id: referenceIdSchema.nullable(),
     primary_image_url: z.string().trim().max(1000).nullable(),
     colours: z.array(colourSchema).max(20).default([]),
+    colour_images: z.array(colourImageSchema).max(20).default([]),
     is_active: z.boolean().default(true),
     is_featured: z.boolean().default(false),
     is_new_arrival: z.boolean().default(false),
@@ -63,6 +69,7 @@ export const productUpdateSchema = z
     category_id: referenceIdSchema.nullable().optional(),
     primary_image_url: z.string().trim().max(1000).nullable().optional(),
     colours: z.array(colourSchema).max(20).optional(),
+    colour_images: z.array(colourImageSchema).max(20).optional(),
     is_active: z.boolean().optional(),
     is_featured: z.boolean().optional(),
     is_new_arrival: z.boolean().optional(),

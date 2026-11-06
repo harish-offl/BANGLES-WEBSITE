@@ -8,6 +8,7 @@ import {
   requireAdminAccess,
 } from "@/lib/admin/access";
 import { getCatalog } from "@/lib/data";
+import { assertValidTransition } from "@/lib/orders/lifecycle";
 import { getServiceRoleClient, isServiceRoleConfigured } from "@/lib/supabase/service-role";
 import {
   categoryInputSchema,
@@ -15,7 +16,15 @@ import {
   settingsUpdateSchema,
 } from "@/lib/validation";
 import type { ActionState } from "@/lib/admin/action-state";
-import type { OrderStatus, Product, Paginated, ProductFilters } from "@/types";
+import type {
+  ColourImage,
+  OrderStatus,
+  Product,
+  Paginated,
+  ProductFilters,
+  ProductVariant,
+} from "@/types";
+import type { ProductColourInput, ProductVariantInput } from "@/lib/data/driver";
 
 const ORDER_STATUSES: readonly OrderStatus[] = [
   "pending",
@@ -81,6 +90,192 @@ function parseColours(value: FormDataEntryValue | null): string[] {
   return [...new Set(text.split(",").map((c) => c.trim()).filter(Boolean))];
 }
 
+function parseJsonArray(value: FormDataEntryValue | null): unknown[] {
+  const text = optionalString(value);
+  if (!text) return [];
+  try {
+    const parsed = JSON.parse(text);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function parseColourImages(value: FormDataEntryValue | null): ColourImage[] {
+  const seen = new Set<string>();
+  const images: ColourImage[] = [];
+  for (const entry of parseJsonArray(value)) {
+    if (!entry || typeof entry !== "object") continue;
+    const row = entry as { colour?: unknown; image_url?: unknown };
+    const colour = typeof row.colour === "string" ? row.colour.trim() : "";
+    const imageUrl = typeof row.image_url === "string" ? row.image_url.trim() : "";
+    if (!colour || !imageUrl) continue;
+    const key = colour.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    images.push({ colour, image_url: imageUrl });
+  }
+  return images;
+}
+
+interface ParsedVariant {
+  id: string | null;
+  input: ProductVariantInput;
+}
+
+function parseVariants(value: FormDataEntryValue | null): {
+  variants: ParsedVariant[];
+  error: string | null;
+} {
+  const variants: ParsedVariant[] = [];
+  const seen = new Set<string>();
+
+  for (const entry of parseJsonArray(value)) {
+    if (!entry || typeof entry !== "object") continue;
+    const row = entry as Record<string, unknown>;
+    const size =
+      typeof row.size === "string" && row.size.trim()
+        ? row.size.trim()
+        : typeof row.variant_value === "string"
+          ? row.variant_value.trim()
+          : "";
+    const colour =
+      typeof row.colour === "string" && row.colour.trim() ? row.colour.trim() : null;
+    if (!size) {
+      return { variants: [], error: "Every colour/size option needs a size." };
+    }
+
+    const key = `${(colour ?? "").toLowerCase()}::${size.toLowerCase()}`;
+    if (seen.has(key)) {
+      return {
+        variants: [],
+        error: `${colour ? `${colour} — ` : ""}${size} is listed more than once.`,
+      };
+    }
+    seen.add(key);
+
+    const stockRaw = row.stock_quantity;
+    const stock =
+      stockRaw === null || stockRaw === undefined || stockRaw === ""
+        ? null
+        : Number(stockRaw);
+    if (stock !== null && (!Number.isInteger(stock) || stock < 0)) {
+      return { variants: [], error: "Stock must be a whole number of 0 or more." };
+    }
+
+    const priceRaw = row.price_override;
+    const price =
+      priceRaw === null || priceRaw === undefined || priceRaw === ""
+        ? null
+        : Number(priceRaw);
+    if (price !== null && (!Number.isFinite(price) || price < 0)) {
+      return { variants: [], error: "Price overrides must be zero or more." };
+    }
+
+    const colourHex =
+      typeof row.colour_hex === "string" && row.colour_hex.trim()
+        ? row.colour_hex.trim()
+        : null;
+    const imageUrl =
+      typeof row.image_url === "string" && row.image_url.trim()
+        ? row.image_url.trim()
+        : null;
+    const sku = typeof row.sku === "string" && row.sku.trim() ? row.sku.trim() : null;
+    const id = typeof row.id === "string" && row.id.trim() ? row.id.trim() : null;
+
+    variants.push({
+      id,
+      input: {
+        variant_name:
+          typeof row.variant_name === "string" && row.variant_name.trim()
+            ? row.variant_name.trim()
+            : "Size",
+        variant_value: size,
+        size,
+        colour,
+        colour_hex: colourHex,
+        image_url: imageUrl,
+        sku,
+        stock_quantity: stock,
+        price_override: price,
+        is_active: row.is_active === false ? false : true,
+      },
+    });
+  }
+
+  return { variants, error: null };
+}
+
+function parsePalette(value: FormDataEntryValue | null): {
+  colours: ProductColourInput[];
+  error: string | null;
+} {
+  const colours: ProductColourInput[] = [];
+  const seen = new Set<string>();
+
+  for (const [index, entry] of parseJsonArray(value).entries()) {
+    if (!entry || typeof entry !== "object") continue;
+    const row = entry as Record<string, unknown>;
+    const name = typeof row.name === "string" ? row.name.trim() : "";
+    if (!name) continue;
+    if (name.length > 40) {
+      return { colours: [], error: "Colour names must be 40 characters or fewer." };
+    }
+    const key = name.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    const hex =
+      typeof row.hex_code === "string" && /^#[0-9a-f]{6}$/i.test(row.hex_code.trim())
+        ? row.hex_code.trim()
+        : "#C9A227";
+    const imageUrl =
+      typeof row.image_url === "string" && row.image_url.trim()
+        ? row.image_url.trim()
+        : null;
+
+    colours.push({
+      id: typeof row.id === "string" && row.id.trim() ? row.id.trim() : undefined,
+      name,
+      hex_code: hex,
+      image_url: imageUrl,
+      is_active: row.is_active === false ? false : true,
+      sort_order: index,
+    });
+  }
+
+  return { colours, error: null };
+}
+
+async function syncProductVariants(
+  productId: string,
+  parsed: ParsedVariant[],
+  existing: ProductVariant[],
+): Promise<void> {
+  const catalog = getCatalog();
+  const existingIds = new Set(existing.map((variant) => variant.id));
+  const submittedIds = new Set<string>();
+
+  for (const variant of parsed) {
+    if (variant.id && existingIds.has(variant.id)) {
+      await catalog.updateVariant(variant.id, variant.input);
+      submittedIds.add(variant.id);
+    } else {
+      const created = await catalog.createVariant(productId, variant.input);
+      submittedIds.add(created.id);
+    }
+  }
+
+  // The form submits the complete set of options, so anything omitted was
+  // deliberately removed. Stock rows that remain keep their original ids and
+  // counts (no delete-and-recreate reset).
+  for (const variant of existing) {
+    if (!submittedIds.has(variant.id)) {
+      await catalog.deleteVariant(variant.id);
+    }
+  }
+}
+
 async function resolveImageUrl(
   formData: FormData,
   fallback: string | null,
@@ -144,6 +339,10 @@ export async function saveProductAction(
       category_id: optionalString(formData.get("category_id")),
       primary_image_url: image.url,
       colours: parseColours(formData.get("colours")),
+      colour_images:
+        formData.get("colour_images_json") === null
+          ? (existing?.colour_images ?? [])
+          : parseColourImages(formData.get("colour_images_json")),
       is_active: formData.get("is_active") === "on",
       is_featured: formData.get("is_featured") === "on",
       is_new_arrival: formData.get("is_new_arrival") === "on",
@@ -160,6 +359,17 @@ export async function saveProductAction(
       };
     }
 
+    const variantsJson = formData.get("variants_json");
+    const parsedVariants =
+      variantsJson === null ? null : parseVariants(variantsJson);
+    if (parsedVariants?.error) {
+      return {
+        status: "error",
+        message: parsedVariants.error,
+        fieldErrors: { variants: parsedVariants.error },
+      };
+    }
+
     const catalog = getCatalog();
     if (id) {
       await catalog.updateProduct(id, parsed.data);
@@ -168,38 +378,11 @@ export async function saveProductAction(
       id = created.id;
     }
 
-    // Handle variants: delete all existing and recreate from form data
-    const variantsJson = optionalString(formData.get("variants_json"));
-    if (id && variantsJson) {
-      try {
-        const variants = JSON.parse(variantsJson) as Array<{
-          id?: string;
-          variant_name: string;
-          variant_value: string;
-          stock_quantity: number;
-          price_override?: number | null;
-          is_active?: boolean;
-        }>;
-
-        // Delete existing variants
-        await catalog.deleteProductVariants(id);
-
-        // Create new variants
-        for (const v of variants) {
-          await catalog.createVariant(id, {
-            variant_name: v.variant_name,
-            variant_value: v.variant_value,
-            stock_quantity: v.stock_quantity ?? 0,
-            price_override: v.price_override ?? null,
-            is_active: v.is_active ?? true,
-          });
-        }
-      } catch (err) {
-        console.error("Failed to save variants:", err);
-        // Don't fail the whole product save if variants fail
-      }
+    if (id && parsedVariants) {
+      await syncProductVariants(id, parsedVariants.variants, existing?.variants ?? []);
     }
 
+    revalidateTag("products", { expire: 0 });
     revalidateStorefront();
   } catch (error) {
     if (error instanceof AdminAccessError) {
@@ -267,8 +450,23 @@ export async function saveCategoryAction(
         ? productIdsParam.split(",").map((s) => s.trim()).filter(Boolean)
         : [];
       await catalog.replaceCategoryProducts(savedCategory.id, productIds);
+
+      const paletteValue = formData.get("colour_palette_json");
+      if (paletteValue !== null) {
+        const palette = parsePalette(paletteValue);
+        if (palette.error) {
+          return {
+            status: "error",
+            message: palette.error,
+            fieldErrors: { colour_palette: palette.error },
+          };
+        }
+        await catalog.syncProductColours(savedCategory.id, palette.colours);
+      }
     }
 
+    revalidateTag("products", { expire: 0 });
+    revalidateTag("categories", { expire: 0 });
     revalidateStorefront();
   } catch (error) {
     if (error instanceof AdminAccessError) {
@@ -380,9 +578,19 @@ export async function updateOrderStatusAction(formData: FormData): Promise<void>
   await requireAdminAccess();
   const id = optionalString(formData.get("id"));
   const status = optionalString(formData.get("status")) as OrderStatus | null;
-  if (!id || !status || !ORDER_STATUSES.includes(status)) return;
+  if (!id || !status || !ORDER_STATUSES.includes(status)) {
+    redirect("/admin/orders?error=1");
+  }
   try {
-    await getCatalog().updateOrderStatus(id, status);
+    const catalog = getCatalog();
+    const order = await catalog.getOrderById(id);
+    if (!order) {
+      redirect("/admin/orders?error=1");
+    }
+    if (order.status !== status) {
+      assertValidTransition(order.status, status);
+      await catalog.updateOrderStatus(id, status);
+    }
   } catch {
     redirect("/admin/orders?error=1");
   }
@@ -461,11 +669,17 @@ export async function updateVariantStockAction(
       return { status: "error", message: "Missing product ID." };
     }
 
-    // Collect all variant stock updates from the form
-    const updates: { variantId: string; stockQuantity: number }[] = [];
+    // Collect all variant stock updates from the form. A blank value means the
+    // colour/size is made to order and is not inventory-tracked.
+    const updates: { variantId: string; stockQuantity: number | null }[] = [];
     for (const [key, value] of formData.entries()) {
-      if (key.startsWith("variant_") && value !== null) {
+      if (key.startsWith("variant_") && typeof value === "string") {
         const variantId = key.replace("variant_", "");
+        if (!variantId) continue;
+        if (value.trim() === "") {
+          updates.push({ variantId, stockQuantity: null });
+          continue;
+        }
         const stockQuantity = Number(value);
         if (Number.isInteger(stockQuantity) && stockQuantity >= 0) {
           updates.push({ variantId, stockQuantity });
@@ -541,16 +755,19 @@ export async function addProductVariantAction(
     }
 
     const variantSku = optionalString(formData.get("sku"));
+    const colour = optionalString(formData.get("colour"));
+    const colourHex = optionalString(formData.get("colour_hex"));
 
     const existing = await catalog.getProductVariants(productId);
     const duplicate = existing.some(
       (variant) =>
-        variant.variant_value.trim().toLowerCase() === size.toLowerCase(),
+        variant.variant_value.trim().toLowerCase() === size.toLowerCase() &&
+        (variant.colour ?? "").trim().toLowerCase() === (colour ?? "").toLowerCase(),
     );
     if (duplicate) {
       return {
         status: "error",
-        message: `Size ${size} already exists for this product. Update its stock below.`,
+        message: `${colour ? `${colour} — ` : ""}size ${size} already exists for this product. Update its stock below.`,
         fieldErrors: { size: "This size already exists." },
       };
     }
@@ -558,6 +775,9 @@ export async function addProductVariantAction(
     await catalog.createVariant(productId, {
       variant_name: "Size",
       variant_value: size,
+      size,
+      colour,
+      colour_hex: colourHex,
       sku: variantSku,
       stock_quantity: stockQuantity,
       price_override: null,
@@ -605,6 +825,8 @@ export async function addProductVariantsAction(
     const sizes = formData.getAll("size");
     const stocks = formData.getAll("stock");
     const skus = formData.getAll("sku");
+    const colours = formData.getAll("colour");
+    const colourHexes = formData.getAll("colour_hex");
 
     if (sizes.length === 0) {
       return { status: "error", message: "Add at least one size." };
@@ -612,10 +834,17 @@ export async function addProductVariantsAction(
 
     const fieldErrors: Record<string, string> = {};
     const seen = new Set<string>();
-    const rows: { size: string; stockQuantity: number; sku: string | null }[] = [];
+    const rows: {
+      size: string;
+      colour: string | null;
+      colourHex: string | null;
+      stockQuantity: number;
+      sku: string | null;
+    }[] = [];
 
     for (let index = 0; index < sizes.length; index += 1) {
       const size = String(sizes[index] ?? "").trim();
+      const colour = String(colours[index] ?? "").trim() || null;
       if (!size) {
         fieldErrors[`size_${index}`] = "Size is required.";
         continue;
@@ -625,9 +854,9 @@ export async function addProductVariantsAction(
         continue;
       }
 
-      const key = size.toLowerCase();
+      const key = `${(colour ?? "").toLowerCase()}::${size.toLowerCase()}`;
       if (seen.has(key)) {
-        fieldErrors[`size_${index}`] = "This size is listed more than once.";
+        fieldErrors[`size_${index}`] = "This colour/size is listed more than once.";
         continue;
       }
       seen.add(key);
@@ -640,8 +869,11 @@ export async function addProductVariantsAction(
       }
 
       const skuRaw = String(skus[index] ?? "").trim();
+      const colourHexRaw = String(colourHexes[index] ?? "").trim();
       rows.push({
         size,
+        colour,
+        colourHex: colourHexRaw.length ? colourHexRaw : null,
         stockQuantity,
         sku: skuRaw.length ? skuRaw : null,
       });
@@ -656,18 +888,25 @@ export async function addProductVariantsAction(
     }
 
     const existing = await catalog.getProductVariants(productId);
-    const existingSizes = new Set(
-      existing.map((variant) => variant.variant_value.trim().toLowerCase()),
+    const existingKeys = new Set(
+      existing.map(
+        (variant) =>
+          `${(variant.colour ?? "").trim().toLowerCase()}::${variant.variant_value
+            .trim()
+            .toLowerCase()}`,
+      ),
     );
-    const duplicateSizes = rows
-      .filter((row) => existingSizes.has(row.size.toLowerCase()))
-      .map((row) => row.size);
+    const duplicates = rows
+      .filter((row) =>
+        existingKeys.has(`${(row.colour ?? "").toLowerCase()}::${row.size.toLowerCase()}`),
+      )
+      .map((row) => (row.colour ? `${row.colour} ${row.size}` : row.size));
 
-    if (duplicateSizes.length > 0) {
+    if (duplicates.length > 0) {
       return {
         status: "error",
-        message: `${duplicateSizes.join(", ")} already ${
-          duplicateSizes.length === 1 ? "exists" : "exist"
+        message: `${duplicates.join(", ")} already ${
+          duplicates.length === 1 ? "exists" : "exist"
         } for this product. Update the existing stock instead.`,
       };
     }
@@ -676,6 +915,9 @@ export async function addProductVariantsAction(
       await catalog.createVariant(productId, {
         variant_name: "Size",
         variant_value: row.size,
+        size: row.size,
+        colour: row.colour,
+        colour_hex: row.colourHex,
         sku: row.sku,
         stock_quantity: row.stockQuantity,
         price_override: null,

@@ -1,30 +1,43 @@
 import type { Metadata } from "next";
 
 import { AdminPageHeader, StatCard } from "@/components/admin/ui";
+import { ListingPagination } from "@/components/shop/listing-pagination";
 import { Button } from "@/components/ui/button";
+import { updateOrderStatusAction } from "@/app/admin/actions";
 import { getCatalog } from "@/lib/data";
+import { allowedTransitions, ORDER_STATUS_LABELS } from "@/lib/orders/lifecycle";
 import { formatPrice } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import type { OrderStatus } from "@/types";
 
 export const metadata: Metadata = { title: "Order Management" };
 
-export default async function AdminOrdersPage() {
-  const catalog = getCatalog();
-  const [orders] = await Promise.all([catalog.listOrders()]);
+const PAGE_SIZE = 25;
 
-  const totalOrders = orders.length;
-  const pendingOrders = orders.filter(
-    (o) => o.status === "pending" || o.status === "confirmed"
-  ).length;
-  const shippedOrders = orders.filter((o) => o.status === "shipped").length;
-  const deliveredOrders = orders.filter((o) => o.status === "delivered").length;
-  const cancelledOrders = orders.filter((o) => o.status === "cancelled").length;
+export default async function AdminOrdersPage(props: PageProps<"/admin/orders">) {
+  const searchParams = await props.searchParams;
+  const page = Math.max(1, Number(searchParams.page) || 1);
+  const catalog = getCatalog();
+  const [result, counts] = await Promise.all([
+    catalog.listOrdersPage({ page, pageSize: PAGE_SIZE }),
+    catalog.getOrderStatusCounts(),
+  ]);
+  const orders = result.items;
+
+  const totalOrders = (Object.values(counts) as number[]).reduce(
+    (sum, value) => sum + value,
+    0,
+  );
+  const pendingOrders = (counts.pending ?? 0) + (counts.confirmed ?? 0);
+  const shippedOrders = counts.shipped ?? 0;
+  const deliveredOrders = counts.delivered ?? 0;
+  const cancelledOrders = counts.cancelled ?? 0;
 
   return (
     <div>
       <AdminPageHeader
         title="Order Management"
-        description={`Manage orders and update shipping status. ${orders.length} order${orders.length === 1 ? "" : "s"} on record.`}
+        description={`Manage orders and update shipping status. ${totalOrders} order${totalOrders === 1 ? "" : "s"} on record.`}
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -51,6 +64,13 @@ export default async function AdminOrdersPage() {
               </tr>
             </thead>
             <tbody>
+              {orders.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
+                    No orders yet.
+                  </td>
+                </tr>
+              ) : null}
               {orders.map((order) => (
                 <tr key={order.id} className="border-b border-border last:border-0">
                   <td className="px-4 py-3 tabular-nums text-muted-foreground">
@@ -77,21 +97,58 @@ export default async function AdminOrdersPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {}}
-                      className="h-8"
-                    >
-                      Update status
-                    </Button>
+                    <OrderStatusForm orderId={order.id} status={order.status} />
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+        <ListingPagination
+          page={result.page}
+          pageCount={result.pageCount}
+          basePath="/admin/orders"
+          baseParams=""
+        />
       </div>
     </div>
+  );
+}
+
+function OrderStatusForm({
+  orderId,
+  status,
+}: {
+  orderId: string;
+  status: OrderStatus;
+}) {
+  const nextStatuses = allowedTransitions(status);
+
+  if (nextStatuses.length === 0) {
+    return <span className="text-xs text-muted-foreground">No actions</span>;
+  }
+
+  return (
+    <form action={updateOrderStatusAction} className="flex items-center justify-end gap-2">
+      <input type="hidden" name="id" value={orderId} />
+      <label className="sr-only" htmlFor={`status-${orderId}`}>
+        Update order status
+      </label>
+      <select
+        id={`status-${orderId}`}
+        name="status"
+        defaultValue={nextStatuses[0]}
+        className="h-8 rounded-lg border border-border bg-background px-2 text-xs"
+      >
+        {nextStatuses.map((next) => (
+          <option key={next} value={next}>
+            {ORDER_STATUS_LABELS[next] ?? next}
+          </option>
+        ))}
+      </select>
+      <Button type="submit" variant="outline" size="sm" className="h-8">
+        Update
+      </Button>
+    </form>
   );
 }

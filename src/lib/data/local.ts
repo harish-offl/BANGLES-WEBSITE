@@ -9,6 +9,7 @@ import {
   assertValidTransition,
   type OrderStatus,
 } from "@/lib/orders/lifecycle";
+import { GLASS_COLOUR_PALETTE } from "@/lib/glass-colours";
 import type {
   Category,
   CustomerNotification,
@@ -16,18 +17,25 @@ import type {
   OrderStatusHistory,
   Paginated,
   Product,
+  ProductColour,
   ProductVariant,
   ProductFilters,
   StoreSettings,
   UpdateOrderLifecycleInput,
 } from "@/types";
 
-import type { CatalogDriver, OrderInput, ProductVariantInput } from "./driver";
+import type {
+  CatalogDriver,
+  OrderInput,
+  ProductColourInput,
+  ProductVariantInput,
+} from "./driver";
 import { decodeHtmlEntities, normalizeDescription } from "./text";
 
 interface CatalogFile {
   categories: Category[];
   products: Product[];
+  product_colours?: ProductColour[];
 }
 
 const SEED_PATH = path.join(process.cwd(), "src", "lib", "data", "catalog.json");
@@ -65,6 +73,35 @@ function decodeCatalog(data: CatalogFile): CatalogFile {
   return {
     categories: data.categories.map(decodeCategoryText),
     products: data.products.map(decodeProductText),
+    product_colours: data.product_colours ?? [],
+  };
+}
+
+function withPalette(
+  product: Product,
+  categories: Category[],
+  colours: ProductColour[],
+): Product {
+  const category = product.category_id
+    ? categories.find((c) => c.id === product.category_id)
+    : undefined;
+  let palette = colours.filter((colour) => colour.category_id === product.category_id);
+
+  if (palette.length === 0 && category && /glass/i.test(category.name)) {
+    palette = GLASS_COLOUR_PALETTE.map((colour, index) => ({
+      id: `local-glass-${index}`,
+      category_id: product.category_id ?? "",
+      name: colour.name,
+      hex_code: colour.hex,
+      image_url: null,
+      is_active: true,
+      sort_order: index,
+    }));
+  }
+
+  return {
+    ...withCategory(product, categories),
+    colour_palette: palette,
   };
 }
 
@@ -246,10 +283,10 @@ export const localDriver: CatalogDriver = {
   },
 
   async getProductBySlug(slug): Promise<Product | null> {
-    const { categories, products } = readCatalog();
+    const { categories, products, product_colours } = readCatalog();
     const found = products.find((p) => p.slug === slug);
     if (!found) return null;
-    const hydrated = withCategory(found, categories);
+    const hydrated = withPalette(found, categories, product_colours ?? []);
     return {
       ...hydrated,
       images: hydrated.primary_image_url
@@ -268,15 +305,17 @@ export const localDriver: CatalogDriver = {
   },
 
   async getProductById(id): Promise<Product | null> {
-    const { categories, products } = readCatalog();
+    const { categories, products, product_colours } = readCatalog();
     const found = products.find((p) => p.id === id);
-    return found ? withCategory(found, categories) : null;
+    return found ? withPalette(found, categories, product_colours ?? []) : null;
   },
 
   async getProductsByIds(ids): Promise<Product[]> {
-    const { categories, products } = readCatalog();
+    const { categories, products, product_colours } = readCatalog();
     const set = new Set(ids);
-    return products.filter((p) => set.has(p.id)).map((p) => withCategory(p, categories));
+    return products
+      .filter((p) => set.has(p.id))
+      .map((p) => withPalette(p, categories, product_colours ?? []));
   },
 
   async listCategories(options = {}): Promise<Category[]> {
@@ -306,7 +345,7 @@ export const localDriver: CatalogDriver = {
   },
 
   async replaceCategoryProducts(categoryId: string, productIds: string[]): Promise<void> {
-    const { categories, products } = readCatalog();
+    const { categories, products, product_colours } = readCatalog();
     // In local mode, products have a single category_id. Clear previous assignments
     // to this category, then assign the selected ones.
     for (const p of products) {
@@ -318,7 +357,7 @@ export const localDriver: CatalogDriver = {
       const idx = products.findIndex((p) => p.id === id);
       if (idx >= 0) products[idx].category_id = categoryId;
     }
-    writeCatalog({ categories, products });
+    writeCatalog({ categories, products, product_colours });
   },
 
   async listProductsByCategory(
@@ -374,7 +413,7 @@ export const localDriver: CatalogDriver = {
   },
 
   async createProduct(input): Promise<Product> {
-    const { categories, products } = readCatalog();
+    const { categories, products, product_colours } = readCatalog();
     const slug = uniqueSlug(input.slug || input.name, products);
     const product: Product = {
       id: `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -385,12 +424,12 @@ export const localDriver: CatalogDriver = {
       updated_at: now(),
       sort_index: -Date.now(),
     };
-    writeCatalog({ categories, products: [product, ...products] });
-    return withCategory(product, categories);
+    writeCatalog({ categories, products: [product, ...products], product_colours });
+    return withPalette(product, categories, product_colours ?? []);
   },
 
   async updateProduct(id, input): Promise<Product> {
-    const { categories, products } = readCatalog();
+    const { categories, products, product_colours } = readCatalog();
     const idx = products.findIndex((p) => p.id === id);
     if (idx < 0) throw new Error("Product not found");
     const current = products[idx];
@@ -400,17 +439,21 @@ export const localDriver: CatalogDriver = {
         : current.slug;
     const updated: Product = { ...current, ...input, slug, updated_at: now() };
     products[idx] = updated;
-    writeCatalog({ categories, products });
-    return withCategory(updated, categories);
+    writeCatalog({ categories, products, product_colours });
+    return withPalette(updated, categories, product_colours ?? []);
   },
 
   async deleteProduct(id): Promise<void> {
-    const { categories, products } = readCatalog();
-    writeCatalog({ categories, products: products.filter((p) => p.id !== id) });
+    const { categories, products, product_colours } = readCatalog();
+    writeCatalog({
+      categories,
+      products: products.filter((p) => p.id !== id),
+      product_colours,
+    });
   },
 
   async createCategory(input): Promise<Category> {
-    const { categories, products } = readCatalog();
+    const { categories, products, product_colours } = readCatalog();
     const category: Category = {
       id: `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       ...input,
@@ -418,33 +461,64 @@ export const localDriver: CatalogDriver = {
       updated_at: now(),
       product_count: 0,
     };
-    writeCatalog({ categories: [...categories, category], products });
+    writeCatalog({ categories: [...categories, category], products, product_colours });
     return category;
   },
 
   async updateCategory(id, input): Promise<Category> {
-    const { categories, products } = readCatalog();
+    const { categories, products, product_colours } = readCatalog();
     const idx = categories.findIndex((c) => c.id === id);
     if (idx < 0) throw new Error("Category not found");
     const updated = { ...categories[idx], ...input, updated_at: now() };
     categories[idx] = updated;
-    writeCatalog({ categories, products });
+    writeCatalog({ categories, products, product_colours });
     return updated;
   },
 
   async deleteCategory(id): Promise<void> {
-    const { categories, products } = readCatalog();
+    const { categories, products, product_colours } = readCatalog();
     const inUse = products.some((p) => p.category_id === id);
     if (inUse) {
       throw new Error("Category still has products. Reassign or remove them first.");
     }
-    writeCatalog({ categories: categories.filter((c) => c.id !== id), products });
+    writeCatalog({
+      categories: categories.filter((c) => c.id !== id),
+      products,
+      product_colours: (product_colours ?? []).filter((colour) => colour.category_id !== id),
+    });
   },
 
   async listOrders(options = {}): Promise<Order[]> {
     const orders = readOrders();
     const filtered = options.status ? orders.filter((o) => o.status === options.status) : orders;
     return [...filtered].sort((a, b) => b.created_at.localeCompare(a.created_at));
+  },
+
+  async listOrdersPage(options = {}): Promise<Paginated<Order>> {
+    const filtered = options.status
+      ? readOrders().filter((o) => o.status === options.status)
+      : readOrders();
+    const sorted = [...filtered].sort((a, b) => b.created_at.localeCompare(a.created_at));
+    const pageSize = Math.min(Math.max(options.pageSize ?? 25, 1), 100);
+    const page = Math.max(options.page ?? 1, 1);
+    const from = (page - 1) * pageSize;
+    const total = sorted.length;
+
+    return {
+      items: sorted.slice(from, from + pageSize),
+      total,
+      page,
+      pageSize,
+      pageCount: Math.max(1, Math.ceil(total / pageSize)),
+    };
+  },
+
+  async getOrderStatusCounts(): Promise<Partial<Record<OrderStatus, number>>> {
+    const counts: Partial<Record<OrderStatus, number>> = {};
+    for (const order of readOrders()) {
+      counts[order.status] = (counts[order.status] ?? 0) + 1;
+    }
+    return counts;
   },
 
   async getOrderById(id: string): Promise<Order | null> {
@@ -475,6 +549,9 @@ export const localDriver: CatalogDriver = {
         id: `${id}-item-${index + 1}`,
         order_id: id,
         product_id: item.productId,
+        variant_id: item.variantId ?? null,
+        colour: item.colour ?? null,
+        size: item.size ?? null,
         product_name_snapshot: item.productName,
         selected_variant_snapshot: item.variant,
         quantity: item.quantity,
@@ -521,7 +598,10 @@ export const localDriver: CatalogDriver = {
     return updated;
   },
 
-  async updateVariantStock(variantId: string, stockQuantity: number): Promise<void> {
+  async updateVariantStock(
+    variantId: string,
+    stockQuantity: number | null,
+  ): Promise<void> {
     const catalog = readCatalog();
     const productIdx = catalog.products.findIndex((p) =>
       p.variants?.some((v) => v.id === variantId),
@@ -539,7 +619,13 @@ export const localDriver: CatalogDriver = {
     const catalog = readCatalog();
     const product = catalog.products.find((p) => p.id === productId);
     if (!product) return [];
-    return (product.variants ?? []).filter((v) => v.is_active);
+    return (product.variants ?? [])
+      .filter((v) => v.is_active)
+      .sort(
+        (a, b) =>
+          (a.colour ?? "").localeCompare(b.colour ?? "") ||
+          a.variant_value.localeCompare(b.variant_value),
+      );
   },
 
   async createVariant(
@@ -554,8 +640,12 @@ export const localDriver: CatalogDriver = {
       product_id: productId,
       variant_name: variant.variant_name,
       variant_value: variant.variant_value,
+      colour: variant.colour ?? null,
+      colour_hex: variant.colour_hex ?? null,
+      size: variant.size ?? null,
+      image_url: variant.image_url ?? null,
       sku: variant.sku ?? null,
-      stock_quantity: variant.stock_quantity ?? 0,
+      stock_quantity: variant.stock_quantity ?? null,
       price_override: variant.price_override ?? null,
       is_active: variant.is_active ?? true,
       created_at: new Date().toISOString(),
@@ -567,6 +657,115 @@ export const localDriver: CatalogDriver = {
     catalog.products[productIdx].variants.push(newVariant);
     writeCatalog(catalog);
     return newVariant;
+  },
+
+  async updateVariant(
+    variantId: string,
+    variant: Partial<ProductVariantInput>,
+  ): Promise<ProductVariant> {
+    const catalog = readCatalog();
+    const productIdx = catalog.products.findIndex((p) =>
+      p.variants?.some((v) => v.id === variantId),
+    );
+    if (productIdx < 0) throw new Error("Product not found for variant");
+    const variants = catalog.products[productIdx].variants ?? [];
+    const variantIdx = variants.findIndex((v) => v.id === variantId);
+    if (variantIdx < 0) throw new Error("Variant not found");
+
+    const next: ProductVariant = {
+      ...variants[variantIdx],
+      ...Object.fromEntries(
+        Object.entries(variant).filter(([, value]) => value !== undefined),
+      ),
+      updated_at: new Date().toISOString(),
+    };
+    variants[variantIdx] = next;
+    catalog.products[productIdx].variants = variants;
+    writeCatalog(catalog);
+    return next;
+  },
+
+  async listProductColours(categoryId: string): Promise<ProductColour[]> {
+    const catalog = readCatalog();
+    const stored = (catalog.product_colours ?? []).filter(
+      (colour) => colour.category_id === categoryId,
+    );
+    if (stored.length) {
+      return [...stored].sort(
+        (a, b) => a.sort_order - b.sort_order || a.name.localeCompare(b.name),
+      );
+    }
+
+    const category = catalog.categories.find((c) => c.id === categoryId);
+    if (!category || !/glass/i.test(category.name)) return [];
+    return GLASS_COLOUR_PALETTE.map((colour, index) => ({
+      id: `local-glass-${index}`,
+      category_id: categoryId,
+      name: colour.name,
+      hex_code: colour.hex,
+      image_url: null,
+      is_active: true,
+      sort_order: index,
+    }));
+  },
+
+  async syncProductColours(
+    categoryId: string,
+    colours: ProductColourInput[],
+  ): Promise<ProductColour[]> {
+    const catalog = readCatalog();
+    const existing = catalog.product_colours ?? [];
+    const kept = new Set<string>();
+    const saved: ProductColour[] = [];
+
+    for (const [index, colour] of colours.entries()) {
+      const name = colour.name.trim();
+      const match =
+        (colour.id ? existing.find((row) => row.id === colour.id) : undefined) ??
+        existing.find(
+          (row) =>
+            row.category_id === categoryId &&
+            row.name.trim().toLowerCase() === name.toLowerCase(),
+        );
+      const next: ProductColour = match
+        ? {
+            ...match,
+            name,
+            hex_code: colour.hex_code,
+            image_url: colour.image_url ?? null,
+            is_active: colour.is_active ?? true,
+            sort_order: colour.sort_order ?? index,
+            updated_at: now(),
+          }
+        : {
+            id: `local-colour-${Date.now()}-${index}`,
+            category_id: categoryId,
+            name,
+            hex_code: colour.hex_code,
+            image_url: colour.image_url ?? null,
+            is_active: colour.is_active ?? true,
+            sort_order: colour.sort_order ?? index,
+            created_at: now(),
+            updated_at: now(),
+          };
+      kept.add(next.id);
+      saved.push(next);
+    }
+
+    const nextAll = [
+      ...existing
+        .filter((row) => row.category_id !== categoryId)
+        .concat(saved),
+      ...existing
+        .filter(
+          (row) =>
+            row.category_id === categoryId && !kept.has(row.id) && row.is_active,
+        )
+        .map((row) => ({ ...row, is_active: false, updated_at: now() })),
+    ];
+
+    writeCatalog({ ...catalog, product_colours: nextAll });
+    return saved;
   },
 
   async deleteVariant(variantId: string): Promise<void> {

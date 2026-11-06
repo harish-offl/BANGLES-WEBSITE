@@ -7,14 +7,9 @@ import AdminInventoryClient from "./AdminInventoryClient";
 
 export const metadata: Metadata = { title: "Inventory Management" };
 
-const PAGE_SIZE = 100;
+const DEFAULT_PAGE_SIZE = 10;
 const MAX_PAGES = 100;
 
-/**
- * The catalog drivers cap a single page at 100 rows. The admin inventory needs
- * the complete catalogue, so walk every page instead of relying on one large
- * (and silently truncated) request.
- */
 async function listAllProducts(
   catalog: ReturnType<typeof getCatalog>,
 ): Promise<Product[]> {
@@ -25,7 +20,7 @@ async function listAllProducts(
     const result = await catalog.listProducts({
       include_inactive: true,
       include_variants: true,
-      pageSize: PAGE_SIZE,
+      pageSize: 100,
       page,
       sort: "newest",
     });
@@ -37,47 +32,108 @@ async function listAllProducts(
       }
     }
 
-    if (result.items.length < PAGE_SIZE) break;
+    if (result.items.length < 100) break;
     if (result.total > 0 && products.length >= result.total) break;
   }
 
   return products;
 }
 
-export default async function AdminInventoryPage() {
+interface PaginationMeta {
+  page: number;
+  pageSize: number;
+  total: number;
+  pageCount: number;
+}
+
+interface InventoryFilters {
+  q?: string;
+  category: string;
+  stock: "all" | "out" | "low" | "no-sizes";
+}
+
+export default async function AdminInventoryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    page?: string;
+    pageSize?: string;
+    q?: string;
+    category?: string;
+    stock?: string;
+  }>;
+}) {
+  const params = await searchParams;
+  const page = Math.max(Number(params.page) || 1, 1);
+  const pageSize = Math.min(
+    Math.max(Number(params.pageSize) || DEFAULT_PAGE_SIZE, 1),
+    100,
+  );
+  const q = params.q?.trim() || undefined;
+  const category = params.category?.trim() || "all";
+  const stock = (params.stock as
+    | "all"
+    | "out"
+    | "low"
+    | "no-sizes") ?? "all";
+
   const catalog = getCatalog();
-  const [products, categories] = await Promise.all([
-    listAllProducts(catalog),
+
+  const [paginated, categories] = await Promise.all([
+    catalog.listProducts({
+      include_inactive: true,
+      include_variants: true,
+      pageSize,
+      page,
+      q,
+      category: category === "all" ? undefined : category,
+      sort: "newest",
+    }),
     catalog.listCategories(),
   ]);
+
+  // Global stats computed from the full catalogue (accurate dashboard context).
+  const allProducts = await listAllProducts(catalog);
   const categoryById = Object.fromEntries(
     categories.map((c) => [c.id, c]),
   ) as Record<string, Category>;
 
-  const totalProducts = products.length;
-  const totalVariants = products.reduce(
+  const totalProducts = allProducts.length;
+  const totalVariants = allProducts.reduce(
     (sum, product) => sum + (product.variants?.length ?? 0),
     0,
   );
-  const totalStock = products.reduce(
-    (sum, p) => sum + (p.variants?.reduce((s, v) => s + (v.stock_quantity ?? 0), 0) ?? 0),
+  const totalStock = allProducts.reduce(
+    (sum, p) =>
+      sum + (p.variants?.reduce((s, v) => s + (v.stock_quantity ?? 0), 0) ?? 0),
     0,
   );
-  const lowStockProducts = products.filter((p) => {
+  const lowStockProducts = allProducts.filter((p) => {
     const stock =
       p.variants?.reduce((s, v) => s + (v.stock_quantity ?? 0), 0) ?? 0;
     return stock > 0 && stock <= 5;
   }).length;
-  const outOfStockProducts = products.filter(
+  const outOfStockProducts = allProducts.filter(
     (p) =>
       (p.variants?.reduce((s, v) => s + (v.stock_quantity ?? 0), 0) ?? 0) === 0,
   ).length;
 
+  const pagination: PaginationMeta = {
+    page: paginated.page,
+    pageSize: paginated.pageSize,
+    total: paginated.total,
+    pageCount: paginated.pageCount,
+  };
+
+  const filters: InventoryFilters = { q, category, stock };
+
   return (
     <AdminInventoryClient
-      products={products}
+      products={paginated.items}
       categories={categories}
       categoryById={categoryById}
+      pagination={pagination}
+      filters={filters}
       totalProducts={totalProducts}
       totalVariants={totalVariants}
       totalStock={totalStock}

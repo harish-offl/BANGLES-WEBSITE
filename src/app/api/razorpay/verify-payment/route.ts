@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { clientKey, rateLimit } from "@/lib/api/rate-limit";
 import { recordPaymentEvent, updateOrderPayment } from "@/lib/razorpay/store";
+import { decrementOrderStock } from "@/lib/orders/stock";
 import { verifyPaymentSignature } from "@/lib/razorpay/client";
 import { z } from "zod";
 
@@ -47,6 +48,11 @@ export async function POST(request: Request) {
     if (!updated) {
       return NextResponse.json({ error: "Order not found or already processed." }, { status: 404 });
     }
+    const stock =
+      updated.payment_status === "paid"
+        ? await decrementOrderStock(updated.id)
+        : { ok: true, message: null };
+
     await recordPaymentEvent({
       event_id: `verify:${parsed.data.razorpay_payment_id}`,
       event_type: "payment.verified",
@@ -59,6 +65,7 @@ export async function POST(request: Request) {
       status: updated.payment_status,
       total_amount: updated.total_amount,
       currency: updated.currency,
+      stockUpdated: stock.ok,
     });
   } catch {
     return NextResponse.json(

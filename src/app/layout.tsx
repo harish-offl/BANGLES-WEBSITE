@@ -1,4 +1,3 @@
-import { headers } from "next/headers";
 import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display, Poppins } from "next/font/google";
 
@@ -7,7 +6,6 @@ import { Header } from "@/components/layout/header";
 import { SiteChrome } from "@/components/layout/site-chrome";
 import { WhatsAppFab } from "@/components/layout/whatsapp-fab";
 import { CartProvider } from "@/components/cart/cart-provider";
-import { ClickSparkLayer } from "@/components/effects/click-spark-layer";
 import { Toaster } from "@/components/ui/sonner";
 import { getCatalog } from "@/lib/data";
 import { DEFAULT_SETTINGS, SITE_NAME, SITE_URL } from "@/lib/site";
@@ -99,9 +97,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     // The page still renders with empty categories and default settings.
   }
 
-  const headersList = await headers();
-  const isAdminRoute = headersList.get("x-is-admin-route") === "true";
-
   return (
     <html
       lang="en"
@@ -117,26 +112,20 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </a>
 
         <CartProvider>
-          {!isAdminRoute ? (
-            <SiteChrome
-              header={
-                <Header categories={categories} announcement={settings.announcement ?? null} />
-              }
-              footer={<Footer settings={settings} />}
-              floatingAction={
-                <WhatsAppFab
-                  phone={settings.whatsapp_number}
-                  storeName={settings.store_name}
-                />
-              }
-            >
-              <ClickSparkLayer>{children}</ClickSparkLayer>
-            </SiteChrome>
-          ) : (
-            <div className="min-h-dvh bg-brand-smoke">
-              {children}
-            </div>
-          )}
+          <SiteChrome
+            header={
+              <Header categories={categories} announcement={settings.announcement ?? null} />
+            }
+            footer={<Footer settings={settings} />}
+            floatingAction={
+              <WhatsAppFab
+                phone={settings.whatsapp_number}
+                storeName={settings.store_name}
+              />
+            }
+          >
+            {children}
+          </SiteChrome>
           <Toaster position="top-right" richColors closeButton />
         </CartProvider>
       </body>

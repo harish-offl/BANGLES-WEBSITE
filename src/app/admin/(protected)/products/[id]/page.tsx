@@ -5,7 +5,11 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 
 import { ProductForm } from "@/components/admin/product-form";
 import { AdminPageHeader } from "@/components/admin/ui";
-import { getAdminCategories, getAdminProduct } from "@/lib/admin/queries";
+import {
+  getAdminCategories,
+  getAdminColourPalettes,
+  getAdminProduct,
+} from "@/lib/admin/queries";
 
 interface EditProductPageProps {
   params: Promise<{ id: string }>;
@@ -20,9 +24,10 @@ export async function generateMetadata({ params }: EditProductPageProps): Promis
 
 export default async function EditProductPage({ params, searchParams }: EditProductPageProps) {
   const [{ id }, query] = await Promise.all([params, searchParams]);
-  const [product, categories] = await Promise.all([
+  const [product, categories, palettesByCategory] = await Promise.all([
     getAdminProduct(id),
     getAdminCategories(),
+    getAdminColourPalettes(),
   ]);
 
   if (!product) notFound();
@@ -60,7 +65,11 @@ export default async function EditProductPage({ params, searchParams }: EditProd
       ) : null}
 
       <AdminPageHeader title="Edit product" description={product.name} />
-      <ProductForm categories={categories} product={product} />
+      <ProductForm
+        categories={categories}
+        product={product}
+        palettesByCategory={palettesByCategory}
+      />
     </>
   );
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { verifyWebhookSignature } from "@/lib/razorpay/client";
 import { recordPaymentEvent } from "@/lib/razorpay/store";
+import { decrementOrderStock } from "@/lib/orders/stock";
 import { getServiceRoleClient } from "@/lib/supabase/service-role";
 
 export const dynamic = "force-dynamic";
@@ -80,7 +81,7 @@ export async function POST(request: Request) {
   if (newStatus && internalOrderId) {
     // Only transition from pending so a late failed event cannot downgrade a
     // payment that has already been confirmed as paid.
-    await supabase
+    const { data: transitioned } = await supabase
       .from("orders")
       .update({
         payment_status: newStatus,
@@ -90,7 +91,12 @@ export async function POST(request: Request) {
         updated_at: new Date().toISOString(),
       })
       .eq("id", internalOrderId)
-      .eq("payment_status", "pending");
+      .eq("payment_status", "pending")
+      .select("id");
+
+    if (newStatus === "paid" && transitioned && transitioned.length > 0) {
+      await decrementOrderStock(internalOrderId);
+    }
   }
 
   await recordPaymentEvent({

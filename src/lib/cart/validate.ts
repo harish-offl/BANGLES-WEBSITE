@@ -4,6 +4,7 @@ import { getCatalog } from "@/lib/data";
 import {
   getSizeSurcharge,
   isBangleCategory,
+  isGlassBanglesCategory,
   isValidBangleSize,
 } from "@/lib/product-sizes";
 import { getPurchaseState, getStockLabel, isVariantAvailable } from "@/lib/product-utils";
@@ -105,11 +106,46 @@ export async function validateCartItems(items: EnquiryItemValues[]): Promise<Car
       continue;
     }
 
-    const variant = item.variantId
-      ? (product.variants ?? []).find((v) => v.id === item.variantId) ?? null
-      : null;
+    const appliesSize = isBangleCategory(product.category_name);
+    const isGlass = isGlassBanglesCategory(product.category_name);
+    const activeVariants = (product.variants ?? []).filter((v) => v.is_active);
+    const requestedSize = appliesSize ? item.size?.trim() ?? null : null;
+    const requestedColour = item.colour?.trim() ?? null;
 
-    const variantMissing = Boolean(item.variantId) && !variant;
+    let variant = item.variantId
+      ? activeVariants.find((v) => v.id === item.variantId) ?? null
+      : null;
+    const variantMissingById = Boolean(item.variantId) && !variant;
+
+    // Older carts may not carry a variant id. Resolve the option from the
+    // colour and size so the server still prices and stocks the right row.
+    if (!variant && !item.variantId && isGlass && activeVariants.length > 0) {
+      variant =
+        activeVariants.find((v) => {
+          const size = (v.size ?? v.variant_value).trim().toLowerCase();
+          const colour = (v.colour ?? "").trim().toLowerCase();
+          return (
+            (!requestedSize || size === requestedSize.toLowerCase()) &&
+            (!requestedColour || colour === requestedColour.toLowerCase())
+          );
+        }) ?? null;
+    }
+
+    const variantSize = variant
+      ? (variant.size ?? variant.variant_value).trim()
+      : null;
+    const variantColour = variant?.colour?.trim() || null;
+    const optionMismatch =
+      Boolean(variant) &&
+      ((requestedSize &&
+        variantSize &&
+        requestedSize.toLowerCase() !== variantSize.toLowerCase()) ||
+        (requestedColour &&
+          variantColour &&
+          requestedColour.toLowerCase() !== variantColour.toLowerCase()));
+    const requiresVariant = isGlass && activeVariants.length > 0;
+    const variantMissing =
+      variantMissingById || optionMismatch || (requiresVariant && !variant);
 
     let available: boolean;
     let stockLabel: string | null;
@@ -135,16 +171,17 @@ export async function validateCartItems(items: EnquiryItemValues[]): Promise<Car
       stockLabel = getStockLabel(product);
     }
 
-    const appliesSize = isBangleCategory(product.category_name);
-    const resolvedSize =
-      appliesSize && isValidBangleSize(item.size) ? item.size?.trim() ?? null : null;
-    const resolvedColour =
-      item.colour &&
-      (product.colours ?? []).some(
-        (c) => c.toLowerCase() === item.colour!.trim().toLowerCase(),
-      )
-        ? item.colour.trim()
-        : null;
+    const resolvedSize = appliesSize
+      ? variant
+        ? variantSize
+        : isValidBangleSize(requestedSize)
+          ? requestedSize
+          : null
+      : null;
+    const requestedColourMatch = product.colours?.find(
+      (colour) => colour.toLowerCase() === requestedColour?.toLowerCase(),
+    );
+    const resolvedColour = variantColour ?? requestedColourMatch ?? null;
     const sizeSurcharge = appliesSize ? getSizeSurcharge(resolvedSize) : 0;
 
     const unitPrice = available
@@ -177,7 +214,11 @@ export async function validateCartItems(items: EnquiryItemValues[]): Promise<Car
         name: product.name,
         kind: "unavailable",
         message: variantMissing
-          ? "The selected option is no longer offered."
+          ? optionMismatch
+            ? "The selected colour or size is no longer available."
+            : requiresVariant && !variant
+              ? "Please choose an available colour and size."
+              : "The selected option is no longer offered."
           : variant &&
               variant.stock_quantity !== null &&
               item.quantity > variant.stock_quantity

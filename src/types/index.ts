@@ -53,10 +53,34 @@ export interface ProductVariant {
   product_id: string;
   variant_name: string;
   variant_value: string;
+  /** Colourway name for products with a colour palette (glass bangles). */
+  colour?: string | null;
+  /** Swatch colour used by the storefront. */
+  colour_hex?: string | null;
+  /** Display size, e.g. "2.10". */
+  size?: string | null;
+  /** Optional photograph of this exact colourway. */
+  image_url?: string | null;
   sku: string | null;
   price_override: number | null;
   stock_quantity: number | null;
   is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+/**
+ * A category-level colour palette. Glass bangles share one palette so new
+ * colourways do not require duplicating the product.
+ */
+export interface ProductColour {
+  id: string;
+  category_id: string;
+  name: string;
+  hex_code: string;
+  image_url: string | null;
+  is_active: boolean;
+  sort_order: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -95,6 +119,8 @@ export interface Product {
    * matching image as the shopper switches colour. Absent for most products.
    */
   colour_images?: ColourImage[];
+  /** Category palette, populated with the product detail query. */
+  colour_palette?: ProductColour[];
   is_active: boolean;
   is_featured: boolean;
   is_new_arrival: boolean;
@@ -239,6 +265,10 @@ export interface OrderItem {
   id: string;
   order_id: string;
   product_id: string | null;
+  /** Variant purchased, when the product uses colour/size inventory. */
+  variant_id?: string | null;
+  colour?: string | null;
+  size?: string | null;
   product_name_snapshot: string;
   selected_variant_snapshot: string | null;
   quantity: number;

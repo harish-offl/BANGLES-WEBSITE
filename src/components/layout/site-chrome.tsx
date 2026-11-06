@@ -3,6 +3,8 @@
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
+import { ClickSparkLayer } from "@/components/effects/click-spark-layer";
+
 interface SiteChromeProps {
   header: ReactNode;
   footer: ReactNode;
@@ -17,10 +19,14 @@ export function SiteChrome({
   children,
 }: SiteChromeProps) {
   const pathname = usePathname();
-  const standalonePortfolio =
-    pathname === "/developers" || pathname.startsWith("/developers/");
+  const standalone =
+    pathname === "/developer" ||
+    pathname === "/developers" ||
+    pathname.startsWith("/developers/") ||
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/");
 
-  if (standalonePortfolio) {
+  if (standalone) {
     return <>{children}</>;
   }
 
@@ -28,7 +34,7 @@ export function SiteChrome({
     <>
       {header}
       <main id="main-content" className="flex-1">
-        {children}
+        <ClickSparkLayer>{children}</ClickSparkLayer>
       </main>
       {footer}
       {floatingAction}

@@ -68,7 +68,7 @@ export function ProductCard({
           ) : null}
         </div>
 
-        {isGlassBanglesCategory(product.category_name) && product.colours.length > 0 ? (
+        {isGlassBanglesCategory(product.category_name) && product.colours.length > 1 ? (
           <ul className="flex flex-wrap gap-1.5" aria-label="Available colours">
             {product.colours.slice(0, 4).map((colour) => (
               <li key={colour}>

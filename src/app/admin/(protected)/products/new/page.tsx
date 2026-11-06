@@ -4,12 +4,15 @@ import { ArrowLeft } from "lucide-react";
 
 import { ProductForm } from "@/components/admin/product-form";
 import { AdminPageHeader } from "@/components/admin/ui";
-import { getAdminCategories } from "@/lib/admin/queries";
+import { getAdminCategories, getAdminColourPalettes } from "@/lib/admin/queries";
 
 export const metadata: Metadata = { title: "New product" };
 
 export default async function NewProductPage() {
-  const categories = await getAdminCategories();
+  const [categories, palettesByCategory] = await Promise.all([
+    getAdminCategories(),
+    getAdminColourPalettes(),
+  ]);
 
   return (
     <>
@@ -21,7 +24,7 @@ export default async function NewProductPage() {
         Back to products
       </Link>
       <AdminPageHeader title="New product" description="Add a piece to the catalogue." />
-      <ProductForm categories={categories} />
+      <ProductForm categories={categories} palettesByCategory={palettesByCategory} />
     </>
   );
 }

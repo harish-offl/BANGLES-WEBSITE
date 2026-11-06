@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 
 import { SmartImage } from "@/components/shared/smart-image";
 import { getCatalog } from "@/lib/data";
+import { getAdminProductColours } from "@/lib/admin/queries";
 
 import AddSizeForm from "./AddSizeForm";
 import StockUpdateForm from "./StockUpdateForm";
@@ -23,11 +24,18 @@ export default async function ManageStockPage({
 
   if (!product) return null;
 
-  const variants = product.variants ?? [];
+  const variants = [...(product.variants ?? [])].sort((a, b) => {
+    const colour = (a.colour ?? "").localeCompare(b.colour ?? "");
+    if (colour !== 0) return colour;
+    return (a.size ?? a.variant_value).localeCompare(b.size ?? b.variant_value);
+  });
   const totalStock = variants.reduce(
     (sum, variant) => sum + (variant.stock_quantity ?? 0),
     0,
   );
+  const palette = product.category_id
+    ? await getAdminProductColours(product.category_id)
+    : [];
 
   return (
     <>
@@ -87,7 +95,7 @@ export default async function ManageStockPage({
 
         <div className="space-y-6">
           <StockUpdateForm product={product} variants={variants} />
-          <AddSizeForm productId={product.id} />
+          <AddSizeForm productId={product.id} palette={palette} />
         </div>
       </div>
     </>
