@@ -3745,7 +3745,7 @@
       "legacy_id": "159",
       "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
       "sort_index": 152,
-      "updated_at": "2026-11-06T05:56:02.475Z"
+      "updated_at": "2026-11-06T06:00:08.777Z"
     },
     {
       "id": "ad8d85f4-b013-533e-a3f5-e8cf066120b4",
@@ -3955,7 +3955,7 @@
       "sort_index": 161
     },
     {
-      "id": "61ac43e2-1798-461a-bb1d-e8495a96b85a",
+      "id": "99140881-21c3-4a97-a2f5-c3e85fad570c",
       "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
       "name": "Raindrop Glass bangles – Forest Green",
       "slug": "raindrop-glass-bangles-forest-green",
@@ -3982,12 +3982,12 @@
       "legacy_id": "159",
       "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
       "sort_index": 152,
-      "created_at": "2026-11-06T03:08:32.673Z",
-      "updated_at": "2026-11-06T03:08:32.674Z",
+      "created_at": "2026-11-06T06:00:08.774Z",
+      "updated_at": "2026-11-06T06:00:08.776Z",
       "variants": [
         {
-          "id": "730c53a4-168a-4ba2-896f-cc89b1c1b98d",
-          "product_id": "61ac43e2-1798-461a-bb1d-e8495a96b85a",
+          "id": "405555ae-6931-4d88-93f7-adad34446c88",
+          "product_id": "99140881-21c3-4a97-a2f5-c3e85fad570c",
           "variant_name": "Size",
           "variant_value": "2.2",
           "size": "2.2",
@@ -3998,12 +3998,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "d2ace3c3-1bd2-4847-9f86-afc1646636ba",
-          "product_id": "61ac43e2-1798-461a-bb1d-e8495a96b85a",
+          "id": "97ae77af-28ec-4619-b9d7-66905bde0758",
+          "product_id": "99140881-21c3-4a97-a2f5-c3e85fad570c",
           "variant_name": "Size",
           "variant_value": "2.4",
           "size": "2.4",
@@ -4014,12 +4014,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "38cacb8a-1a3e-46b8-b5b9-f77b0d9db1ed",
-          "product_id": "61ac43e2-1798-461a-bb1d-e8495a96b85a",
+          "id": "dff64768-0369-44e3-93e4-c12f59add886",
+          "product_id": "99140881-21c3-4a97-a2f5-c3e85fad570c",
           "variant_name": "Size",
           "variant_value": "2.6",
           "size": "2.6",
@@ -4030,12 +4030,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "15ce1474-1d22-4b8e-a86d-abc291e4ad15",
-          "product_id": "61ac43e2-1798-461a-bb1d-e8495a96b85a",
+          "id": "5c1d2023-8eef-4c0c-9f65-b86fa9e87434",
+          "product_id": "99140881-21c3-4a97-a2f5-c3e85fad570c",
           "variant_name": "Size",
           "variant_value": "2.8",
           "size": "2.8",
@@ -4046,12 +4046,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "3fc13a6f-cea7-4cc0-b991-1bceefc863e8",
-          "product_id": "61ac43e2-1798-461a-bb1d-e8495a96b85a",
+          "id": "ad791b3e-5b81-44dd-b75b-146285423fe5",
+          "product_id": "99140881-21c3-4a97-a2f5-c3e85fad570c",
           "variant_name": "Size",
           "variant_value": "2.10",
           "size": "2.10",
@@ -4062,13 +4062,13 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         }
       ]
     },
     {
-      "id": "e237edb6-9d94-4cde-92e3-05c88456383c",
+      "id": "7b8f2fd4-fa6f-4001-89e5-ea69a6d1754c",
       "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
       "name": "Raindrop Glass bangles – Pista Green",
       "slug": "raindrop-glass-bangles-pista-green",
@@ -4095,12 +4095,12 @@
       "legacy_id": "159",
       "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
       "sort_index": 152,
-      "created_at": "2026-11-06T03:08:32.674Z",
-      "updated_at": "2026-11-06T03:08:32.674Z",
+      "created_at": "2026-11-06T06:00:08.776Z",
+      "updated_at": "2026-11-06T06:00:08.776Z",
       "variants": [
         {
-          "id": "f5e55493-e523-4dca-bc12-7fe0ec812fec",
-          "product_id": "e237edb6-9d94-4cde-92e3-05c88456383c",
+          "id": "77bf10b8-3913-48d2-829b-bed9eb5f3867",
+          "product_id": "7b8f2fd4-fa6f-4001-89e5-ea69a6d1754c",
           "variant_name": "Size",
           "variant_value": "2.2",
           "size": "2.2",
@@ -4111,12 +4111,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "e47bcb31-d2b2-4311-8bd5-0b6d7edb7a93",
-          "product_id": "e237edb6-9d94-4cde-92e3-05c88456383c",
+          "id": "d8d5c4c3-fb15-4f25-b477-1e29a5fda27f",
+          "product_id": "7b8f2fd4-fa6f-4001-89e5-ea69a6d1754c",
           "variant_name": "Size",
           "variant_value": "2.4",
           "size": "2.4",
@@ -4127,12 +4127,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "23ac43a0-44b6-4b8b-af74-ab4c8336abc4",
-          "product_id": "e237edb6-9d94-4cde-92e3-05c88456383c",
+          "id": "9a05d5e3-dd89-4e0d-a193-052018a478e7",
+          "product_id": "7b8f2fd4-fa6f-4001-89e5-ea69a6d1754c",
           "variant_name": "Size",
           "variant_value": "2.6",
           "size": "2.6",
@@ -4143,12 +4143,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "45ce8461-7bf9-47be-a524-07d477cd95e2",
-          "product_id": "e237edb6-9d94-4cde-92e3-05c88456383c",
+          "id": "c1ffa531-2073-45f9-8f06-ce642fff381a",
+          "product_id": "7b8f2fd4-fa6f-4001-89e5-ea69a6d1754c",
           "variant_name": "Size",
           "variant_value": "2.8",
           "size": "2.8",
@@ -4159,12 +4159,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "58a66960-913c-4651-b02b-688b9a8513f7",
-          "product_id": "e237edb6-9d94-4cde-92e3-05c88456383c",
+          "id": "a0baabb3-ea4e-4575-ab99-01db3eee083b",
+          "product_id": "7b8f2fd4-fa6f-4001-89e5-ea69a6d1754c",
           "variant_name": "Size",
           "variant_value": "2.10",
           "size": "2.10",
@@ -4175,13 +4175,13 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         }
       ]
     },
     {
-      "id": "477febdc-c757-48dc-93bf-635bb9230521",
+      "id": "61db78e0-8c3d-420c-b513-6881befdc385",
       "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
       "name": "Raindrop Glass bangles – Pink",
       "slug": "raindrop-glass-bangles-pink",
@@ -4208,12 +4208,12 @@
       "legacy_id": "159",
       "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
       "sort_index": 152,
-      "created_at": "2026-11-06T03:08:32.674Z",
-      "updated_at": "2026-11-06T03:08:32.674Z",
+      "created_at": "2026-11-06T06:00:08.776Z",
+      "updated_at": "2026-11-06T06:00:08.776Z",
       "variants": [
         {
-          "id": "5c46dacc-a073-467b-8daa-bf10aa914fe9",
-          "product_id": "477febdc-c757-48dc-93bf-635bb9230521",
+          "id": "35642186-41ba-4fae-a8b1-12c5a0716153",
+          "product_id": "61db78e0-8c3d-420c-b513-6881befdc385",
           "variant_name": "Size",
           "variant_value": "2.2",
           "size": "2.2",
@@ -4224,12 +4224,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "43711a4d-6e29-4547-9014-120b492af6a4",
-          "product_id": "477febdc-c757-48dc-93bf-635bb9230521",
+          "id": "63950028-d4de-4ccc-abc4-f287a9ee3d81",
+          "product_id": "61db78e0-8c3d-420c-b513-6881befdc385",
           "variant_name": "Size",
           "variant_value": "2.4",
           "size": "2.4",
@@ -4240,12 +4240,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "34397208-3f80-4859-929d-f6aaeee107c7",
-          "product_id": "477febdc-c757-48dc-93bf-635bb9230521",
+          "id": "4a300745-ad42-432f-b921-3c84db6c0cf7",
+          "product_id": "61db78e0-8c3d-420c-b513-6881befdc385",
           "variant_name": "Size",
           "variant_value": "2.6",
           "size": "2.6",
@@ -4256,12 +4256,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "47399ba1-56ec-4733-8848-2e888131ac2d",
-          "product_id": "477febdc-c757-48dc-93bf-635bb9230521",
+          "id": "a0ea030d-4b79-4793-89dc-06e247274041",
+          "product_id": "61db78e0-8c3d-420c-b513-6881befdc385",
           "variant_name": "Size",
           "variant_value": "2.8",
           "size": "2.8",
@@ -4272,12 +4272,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "790bebea-f633-4a26-9001-432ec09e8b6f",
-          "product_id": "477febdc-c757-48dc-93bf-635bb9230521",
+          "id": "1956445d-cb03-4a9b-8022-9ff1d80fef58",
+          "product_id": "61db78e0-8c3d-420c-b513-6881befdc385",
           "variant_name": "Size",
           "variant_value": "2.10",
           "size": "2.10",
@@ -4288,13 +4288,13 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         }
       ]
     },
     {
-      "id": "44547f29-8489-4c15-bb3d-5dc655d2cd14",
+      "id": "daf0ea29-2994-4859-b5a4-6df12341709d",
       "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
       "name": "Raindrop Glass bangles – Maroon",
       "slug": "raindrop-glass-bangles-maroon",
@@ -4321,12 +4321,12 @@
       "legacy_id": "159",
       "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
       "sort_index": 152,
-      "created_at": "2026-11-06T03:08:32.674Z",
-      "updated_at": "2026-11-06T03:08:32.674Z",
+      "created_at": "2026-11-06T06:00:08.776Z",
+      "updated_at": "2026-11-06T06:00:08.776Z",
       "variants": [
         {
-          "id": "ee727855-a8ba-425c-854e-22e755485e07",
-          "product_id": "44547f29-8489-4c15-bb3d-5dc655d2cd14",
+          "id": "ddd6f004-b51a-4e82-b177-21f836cc38c3",
+          "product_id": "daf0ea29-2994-4859-b5a4-6df12341709d",
           "variant_name": "Size",
           "variant_value": "2.2",
           "size": "2.2",
@@ -4337,12 +4337,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "c7c32ffb-8ee3-4500-acdf-8ba6925b0436",
-          "product_id": "44547f29-8489-4c15-bb3d-5dc655d2cd14",
+          "id": "7f112e5e-d118-4935-88be-52f7116bcace",
+          "product_id": "daf0ea29-2994-4859-b5a4-6df12341709d",
           "variant_name": "Size",
           "variant_value": "2.4",
           "size": "2.4",
@@ -4353,12 +4353,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "20d2914a-0658-4b79-a558-cec71a58dc73",
-          "product_id": "44547f29-8489-4c15-bb3d-5dc655d2cd14",
+          "id": "cc8a0a20-74c3-40d7-b977-dba57e79a1bc",
+          "product_id": "daf0ea29-2994-4859-b5a4-6df12341709d",
           "variant_name": "Size",
           "variant_value": "2.6",
           "size": "2.6",
@@ -4369,12 +4369,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "c702346f-df3a-4d40-bd1b-8ca0fa6624e9",
-          "product_id": "44547f29-8489-4c15-bb3d-5dc655d2cd14",
+          "id": "ed0e568a-62ca-4d61-8da0-ae53f5a7536c",
+          "product_id": "daf0ea29-2994-4859-b5a4-6df12341709d",
           "variant_name": "Size",
           "variant_value": "2.8",
           "size": "2.8",
@@ -4385,12 +4385,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "d9b89c70-98fc-4a1c-b696-e863a0c23a56",
-          "product_id": "44547f29-8489-4c15-bb3d-5dc655d2cd14",
+          "id": "79572192-be07-43e4-9690-524076de9b64",
+          "product_id": "daf0ea29-2994-4859-b5a4-6df12341709d",
           "variant_name": "Size",
           "variant_value": "2.10",
           "size": "2.10",
@@ -4401,13 +4401,13 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.674Z",
-          "updated_at": "2026-11-06T03:08:32.674Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         }
       ]
     },
     {
-      "id": "9414f9ed-e77a-440b-8698-c041902c463e",
+      "id": "be3774d5-fcde-4c1f-8f9b-9d05f63e42da",
       "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
       "name": "Raindrop Glass bangles – Red",
       "slug": "raindrop-glass-bangles-red",
@@ -4434,12 +4434,12 @@
       "legacy_id": "159",
       "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
       "sort_index": 152,
-      "created_at": "2026-11-06T03:08:32.675Z",
-      "updated_at": "2026-11-06T03:08:32.675Z",
+      "created_at": "2026-11-06T06:00:08.776Z",
+      "updated_at": "2026-11-06T06:00:08.776Z",
       "variants": [
         {
-          "id": "26597ca5-675b-4310-9c9a-dd0a4fa3a9d7",
-          "product_id": "9414f9ed-e77a-440b-8698-c041902c463e",
+          "id": "a60571c1-6def-4e4b-8e5d-29101b29bad5",
+          "product_id": "be3774d5-fcde-4c1f-8f9b-9d05f63e42da",
           "variant_name": "Size",
           "variant_value": "2.2",
           "size": "2.2",
@@ -4450,12 +4450,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "c8117c99-28ff-45ed-911d-461cdab15dda",
-          "product_id": "9414f9ed-e77a-440b-8698-c041902c463e",
+          "id": "c339c430-3912-4e44-b1d6-bd10bc8d4d86",
+          "product_id": "be3774d5-fcde-4c1f-8f9b-9d05f63e42da",
           "variant_name": "Size",
           "variant_value": "2.4",
           "size": "2.4",
@@ -4466,12 +4466,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "75ded847-94cd-4fdb-b609-781f436e4597",
-          "product_id": "9414f9ed-e77a-440b-8698-c041902c463e",
+          "id": "8bf5153c-fb99-47aa-a5d4-40281f98651e",
+          "product_id": "be3774d5-fcde-4c1f-8f9b-9d05f63e42da",
           "variant_name": "Size",
           "variant_value": "2.6",
           "size": "2.6",
@@ -4482,12 +4482,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "eb140ed1-1597-4174-986b-0640cb84556e",
-          "product_id": "9414f9ed-e77a-440b-8698-c041902c463e",
+          "id": "941aa2ed-1bbe-4bf3-b981-cdc4dd75eb98",
+          "product_id": "be3774d5-fcde-4c1f-8f9b-9d05f63e42da",
           "variant_name": "Size",
           "variant_value": "2.8",
           "size": "2.8",
@@ -4498,12 +4498,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         },
         {
-          "id": "84701a07-c50e-408d-a990-843f340b00a1",
-          "product_id": "9414f9ed-e77a-440b-8698-c041902c463e",
+          "id": "16a9ba25-edcc-48c5-a530-c6d967c95624",
+          "product_id": "be3774d5-fcde-4c1f-8f9b-9d05f63e42da",
           "variant_name": "Size",
           "variant_value": "2.10",
           "size": "2.10",
@@ -4514,13 +4514,13 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.776Z",
+          "updated_at": "2026-11-06T06:00:08.776Z"
         }
       ]
     },
     {
-      "id": "f83ca0ff-2276-405a-ab87-808265df0220",
+      "id": "f1a03599-48cf-4361-8f5f-11cb45cb2aa2",
       "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
       "name": "Raindrop Glass bangles – Rust Orange",
       "slug": "raindrop-glass-bangles-rust-orange",
@@ -4547,12 +4547,12 @@
       "legacy_id": "159",
       "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
       "sort_index": 152,
-      "created_at": "2026-11-06T03:08:32.675Z",
-      "updated_at": "2026-11-06T03:08:32.675Z",
+      "created_at": "2026-11-06T06:00:08.776Z",
+      "updated_at": "2026-11-06T06:00:08.776Z",
       "variants": [
         {
-          "id": "2e062a27-1d3d-4434-8542-fa6a84a46f7a",
-          "product_id": "f83ca0ff-2276-405a-ab87-808265df0220",
+          "id": "9369bbe2-8210-432d-ae49-0515384fd632",
+          "product_id": "f1a03599-48cf-4361-8f5f-11cb45cb2aa2",
           "variant_name": "Size",
           "variant_value": "2.2",
           "size": "2.2",
@@ -4563,12 +4563,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.777Z",
+          "updated_at": "2026-11-06T06:00:08.777Z"
         },
         {
-          "id": "82abea82-c5c3-411f-8fda-ee413f51fcae",
-          "product_id": "f83ca0ff-2276-405a-ab87-808265df0220",
+          "id": "df9cb69f-8014-4e09-879e-d274a39c8ddf",
+          "product_id": "f1a03599-48cf-4361-8f5f-11cb45cb2aa2",
           "variant_name": "Size",
           "variant_value": "2.4",
           "size": "2.4",
@@ -4579,12 +4579,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.777Z",
+          "updated_at": "2026-11-06T06:00:08.777Z"
         },
         {
-          "id": "cf2919e9-f090-4944-b425-e25f854a9acb",
-          "product_id": "f83ca0ff-2276-405a-ab87-808265df0220",
+          "id": "83e0cc0c-518b-4adc-bbb9-a7e7a51e8b00",
+          "product_id": "f1a03599-48cf-4361-8f5f-11cb45cb2aa2",
           "variant_name": "Size",
           "variant_value": "2.6",
           "size": "2.6",
@@ -4595,12 +4595,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.777Z",
+          "updated_at": "2026-11-06T06:00:08.777Z"
         },
         {
-          "id": "237e4f31-1ae1-40c4-b58c-acc63f9906cd",
-          "product_id": "f83ca0ff-2276-405a-ab87-808265df0220",
+          "id": "14c88233-5e41-495b-84b2-fc49c39ffb58",
+          "product_id": "f1a03599-48cf-4361-8f5f-11cb45cb2aa2",
           "variant_name": "Size",
           "variant_value": "2.8",
           "size": "2.8",
@@ -4611,12 +4611,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.777Z",
+          "updated_at": "2026-11-06T06:00:08.777Z"
         },
         {
-          "id": "048ef938-abbd-42ab-b4de-ac9a9be3b843",
-          "product_id": "f83ca0ff-2276-405a-ab87-808265df0220",
+          "id": "b17875c2-1978-4701-a43a-f39b1488d501",
+          "product_id": "f1a03599-48cf-4361-8f5f-11cb45cb2aa2",
           "variant_name": "Size",
           "variant_value": "2.10",
           "size": "2.10",
@@ -4627,13 +4627,13 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.777Z",
+          "updated_at": "2026-11-06T06:00:08.777Z"
         }
       ]
     },
     {
-      "id": "13c15893-1775-48dc-a806-cb8286582166",
+      "id": "f1c714bc-1b4d-49c6-9235-349de2dfd1fe",
       "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
       "name": "Raindrop Glass bangles – Orange",
       "slug": "raindrop-glass-bangles-orange",
@@ -4660,12 +4660,12 @@
       "legacy_id": "159",
       "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
       "sort_index": 152,
-      "created_at": "2026-11-06T03:08:32.675Z",
-      "updated_at": "2026-11-06T03:08:32.675Z",
+      "created_at": "2026-11-06T06:00:08.777Z",
+      "updated_at": "2026-11-06T06:00:08.777Z",
       "variants": [
         {
-          "id": "02d6d9ca-abb4-40e5-9df5-d73118088545",
-          "product_id": "13c15893-1775-48dc-a806-cb8286582166",
+          "id": "946815f2-bf8d-4ddb-961b-39b630860ab1",
+          "product_id": "f1c714bc-1b4d-49c6-9235-349de2dfd1fe",
           "variant_name": "Size",
           "variant_value": "2.2",
           "size": "2.2",
@@ -4676,12 +4676,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.777Z",
+          "updated_at": "2026-11-06T06:00:08.777Z"
         },
         {
-          "id": "29c77066-06fb-43e7-965b-a2ea1501f8c7",
-          "product_id": "13c15893-1775-48dc-a806-cb8286582166",
+          "id": "7dc5dcfc-dd27-4e6d-a832-3391a37b661a",
+          "product_id": "f1c714bc-1b4d-49c6-9235-349de2dfd1fe",
           "variant_name": "Size",
           "variant_value": "2.4",
           "size": "2.4",
@@ -4692,12 +4692,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.777Z",
+          "updated_at": "2026-11-06T06:00:08.777Z"
         },
         {
-          "id": "6ba12998-f55d-4a24-a2d8-f92053d5cebb",
-          "product_id": "13c15893-1775-48dc-a806-cb8286582166",
+          "id": "5fe34a29-d7a7-4100-ac73-d246061db3c3",
+          "product_id": "f1c714bc-1b4d-49c6-9235-349de2dfd1fe",
           "variant_name": "Size",
           "variant_value": "2.6",
           "size": "2.6",
@@ -4708,12 +4708,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.777Z",
+          "updated_at": "2026-11-06T06:00:08.777Z"
         },
         {
-          "id": "f723bb07-9ecc-45e8-8f4b-8747aef2f866",
-          "product_id": "13c15893-1775-48dc-a806-cb8286582166",
+          "id": "86c2b10c-5b3b-4ac3-8282-f26288c97279",
+          "product_id": "f1c714bc-1b4d-49c6-9235-349de2dfd1fe",
           "variant_name": "Size",
           "variant_value": "2.8",
           "size": "2.8",
@@ -4724,12 +4724,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.777Z",
+          "updated_at": "2026-11-06T06:00:08.777Z"
         },
         {
-          "id": "b2b09a38-9cbf-411b-98f4-85c804b7640d",
-          "product_id": "13c15893-1775-48dc-a806-cb8286582166",
+          "id": "aacb8b5c-6a5f-48e7-9ca3-ef8d620c1548",
+          "product_id": "f1c714bc-1b4d-49c6-9235-349de2dfd1fe",
           "variant_name": "Size",
           "variant_value": "2.10",
           "size": "2.10",
@@ -4740,13 +4740,13 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.777Z",
+          "updated_at": "2026-11-06T06:00:08.777Z"
         }
       ]
     },
     {
-      "id": "7db46942-cf4a-4d32-bf6a-054ddf49c8b5",
+      "id": "360bb371-f4fd-45c8-b9a5-f85ca156fb67",
       "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
       "name": "Raindrop Glass bangles – Pista",
       "slug": "raindrop-glass-bangles-pista",
@@ -4773,12 +4773,12 @@
       "legacy_id": "159",
       "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
       "sort_index": 152,
-      "created_at": "2026-11-06T03:08:32.675Z",
-      "updated_at": "2026-11-06T03:08:32.675Z",
+      "created_at": "2026-11-06T06:00:08.777Z",
+      "updated_at": "2026-11-06T06:00:08.777Z",
       "variants": [
         {
-          "id": "873b57bb-0dd4-44db-b278-082d9fd8b02a",
-          "product_id": "7db46942-cf4a-4d32-bf6a-054ddf49c8b5",
+          "id": "7d141748-8eb2-4d42-bdde-806f9c045e23",
+          "product_id": "360bb371-f4fd-45c8-b9a5-f85ca156fb67",
           "variant_name": "Size",
           "variant_value": "2.2",
           "size": "2.2",
@@ -4789,12 +4789,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.777Z",
+          "updated_at": "2026-11-06T06:00:08.777Z"
         },
         {
-          "id": "67b5b513-a447-46ef-8c7a-54d8ca3ab28b",
-          "product_id": "7db46942-cf4a-4d32-bf6a-054ddf49c8b5",
+          "id": "f59dd457-4b0c-4db6-8a92-23258a1571a9",
+          "product_id": "360bb371-f4fd-45c8-b9a5-f85ca156fb67",
           "variant_name": "Size",
           "variant_value": "2.4",
           "size": "2.4",
@@ -4805,12 +4805,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.777Z",
+          "updated_at": "2026-11-06T06:00:08.777Z"
         },
         {
-          "id": "2be4aa1d-59c3-4ccd-b0f0-57db5de8ad2d",
-          "product_id": "7db46942-cf4a-4d32-bf6a-054ddf49c8b5",
+          "id": "dd1f997b-0b21-4482-ad6b-4008e01398bd",
+          "product_id": "360bb371-f4fd-45c8-b9a5-f85ca156fb67",
           "variant_name": "Size",
           "variant_value": "2.6",
           "size": "2.6",
@@ -4821,12 +4821,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.777Z",
+          "updated_at": "2026-11-06T06:00:08.777Z"
         },
         {
-          "id": "665753fa-c8ec-4321-85e7-40187dda8e49",
-          "product_id": "7db46942-cf4a-4d32-bf6a-054ddf49c8b5",
+          "id": "36184667-b79e-4ba0-9909-0f36f3bbbce7",
+          "product_id": "360bb371-f4fd-45c8-b9a5-f85ca156fb67",
           "variant_name": "Size",
           "variant_value": "2.8",
           "size": "2.8",
@@ -4837,12 +4837,12 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
+          "created_at": "2026-11-06T06:00:08.777Z",
+          "updated_at": "2026-11-06T06:00:08.777Z"
         },
         {
-          "id": "7646182d-1069-4fbc-99c2-56a881d92bc1",
-          "product_id": "7db46942-cf4a-4d32-bf6a-054ddf49c8b5",
+          "id": "ea54266b-10ab-465f-a264-ae2ffc8fe455",
+          "product_id": "360bb371-f4fd-45c8-b9a5-f85ca156fb67",
           "variant_name": "Size",
           "variant_value": "2.10",
           "size": "2.10",
@@ -4853,912 +4853,8 @@
           "stock_quantity": null,
           "price_override": null,
           "is_active": true,
-          "created_at": "2026-11-06T03:08:32.675Z",
-          "updated_at": "2026-11-06T03:08:32.675Z"
-        }
-      ]
-    },
-    {
-      "id": "bd005ccd-5d46-4814-9e36-40fe34d98c41",
-      "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
-      "name": "Raindrop Glass bangles – Forest Green",
-      "slug": "raindrop-glass-bangles-forest-green",
-      "description": "Raindrop glass bangles available in eight colourways — forest green, pista, pink, maroon, red, rust orange and more — each finished with delicate raindrop detailing. Stack a few for a subtle look or wear the full set for poojas and family gatherings.",
-      "sku": "BNG-159-FG",
-      "price": 280,
-      "compare_at_price": null,
-      "stock_quantity": null,
-      "primary_image_url": "/images/products/colors/bng-159-forest-green.jpg",
-      "colours": [
-        "Forest Green"
-      ],
-      "colour_images": [
-        {
-          "colour": "Forest Green",
-          "image_url": "/images/products/colors/bng-159-forest-green.jpg"
-        }
-      ],
-      "is_active": true,
-      "is_featured": true,
-      "is_new_arrival": false,
-      "seo_title": null,
-      "seo_description": null,
-      "legacy_id": "159",
-      "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
-      "sort_index": 152,
-      "created_at": "2026-11-06T05:56:02.473Z",
-      "updated_at": "2026-11-06T05:56:02.474Z",
-      "variants": [
-        {
-          "id": "924ec6e0-c1dd-4121-b393-95157262ef5b",
-          "product_id": "bd005ccd-5d46-4814-9e36-40fe34d98c41",
-          "variant_name": "Size",
-          "variant_value": "2.2",
-          "size": "2.2",
-          "colour": "Forest Green",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-forest-green.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "cd6924c4-c96c-4d59-ab3a-54a6d646bb29",
-          "product_id": "bd005ccd-5d46-4814-9e36-40fe34d98c41",
-          "variant_name": "Size",
-          "variant_value": "2.4",
-          "size": "2.4",
-          "colour": "Forest Green",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-forest-green.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "c91e8725-92c0-4a72-a33f-da5d033b14ef",
-          "product_id": "bd005ccd-5d46-4814-9e36-40fe34d98c41",
-          "variant_name": "Size",
-          "variant_value": "2.6",
-          "size": "2.6",
-          "colour": "Forest Green",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-forest-green.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "e0dfe8bd-1efe-44c0-858d-25b4417350d6",
-          "product_id": "bd005ccd-5d46-4814-9e36-40fe34d98c41",
-          "variant_name": "Size",
-          "variant_value": "2.8",
-          "size": "2.8",
-          "colour": "Forest Green",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-forest-green.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "a446b38a-2347-4744-9670-2e7a482c42b5",
-          "product_id": "bd005ccd-5d46-4814-9e36-40fe34d98c41",
-          "variant_name": "Size",
-          "variant_value": "2.10",
-          "size": "2.10",
-          "colour": "Forest Green",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-forest-green.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        }
-      ]
-    },
-    {
-      "id": "5a437b2a-614f-41e0-a49e-35dd3536b42e",
-      "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
-      "name": "Raindrop Glass bangles – Pista Green",
-      "slug": "raindrop-glass-bangles-pista-green",
-      "description": "Raindrop glass bangles available in eight colourways — forest green, pista, pink, maroon, red, rust orange and more — each finished with delicate raindrop detailing. Stack a few for a subtle look or wear the full set for poojas and family gatherings.",
-      "sku": "BNG-159-PG",
-      "price": 280,
-      "compare_at_price": null,
-      "stock_quantity": null,
-      "primary_image_url": "/images/products/colors/bng-159-pista-green.jpg",
-      "colours": [
-        "Pista Green"
-      ],
-      "colour_images": [
-        {
-          "colour": "Pista Green",
-          "image_url": "/images/products/colors/bng-159-pista-green.jpg"
-        }
-      ],
-      "is_active": true,
-      "is_featured": true,
-      "is_new_arrival": false,
-      "seo_title": null,
-      "seo_description": null,
-      "legacy_id": "159",
-      "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
-      "sort_index": 152,
-      "created_at": "2026-11-06T05:56:02.474Z",
-      "updated_at": "2026-11-06T05:56:02.474Z",
-      "variants": [
-        {
-          "id": "6b56a48b-801d-4530-ae07-411dd0172f67",
-          "product_id": "5a437b2a-614f-41e0-a49e-35dd3536b42e",
-          "variant_name": "Size",
-          "variant_value": "2.2",
-          "size": "2.2",
-          "colour": "Pista Green",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-pista-green.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "45a0cab2-4deb-4d60-86ef-5dbc0ebbf747",
-          "product_id": "5a437b2a-614f-41e0-a49e-35dd3536b42e",
-          "variant_name": "Size",
-          "variant_value": "2.4",
-          "size": "2.4",
-          "colour": "Pista Green",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-pista-green.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "ac692e62-3dfb-4b89-93f1-3b5394f4d1c8",
-          "product_id": "5a437b2a-614f-41e0-a49e-35dd3536b42e",
-          "variant_name": "Size",
-          "variant_value": "2.6",
-          "size": "2.6",
-          "colour": "Pista Green",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-pista-green.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "3ae76be7-4eb1-4aca-936c-ead40ad4a734",
-          "product_id": "5a437b2a-614f-41e0-a49e-35dd3536b42e",
-          "variant_name": "Size",
-          "variant_value": "2.8",
-          "size": "2.8",
-          "colour": "Pista Green",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-pista-green.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "cacfc41b-23ae-445c-9a39-c67409c2261c",
-          "product_id": "5a437b2a-614f-41e0-a49e-35dd3536b42e",
-          "variant_name": "Size",
-          "variant_value": "2.10",
-          "size": "2.10",
-          "colour": "Pista Green",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-pista-green.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        }
-      ]
-    },
-    {
-      "id": "f69057d9-1b35-4046-9076-d5186fe314d7",
-      "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
-      "name": "Raindrop Glass bangles – Pink",
-      "slug": "raindrop-glass-bangles-pink",
-      "description": "Raindrop glass bangles available in eight colourways — forest green, pista, pink, maroon, red, rust orange and more — each finished with delicate raindrop detailing. Stack a few for a subtle look or wear the full set for poojas and family gatherings.",
-      "sku": "BNG-159-PK",
-      "price": 280,
-      "compare_at_price": null,
-      "stock_quantity": null,
-      "primary_image_url": "/images/products/colors/bng-159-pink.jpg",
-      "colours": [
-        "Pink"
-      ],
-      "colour_images": [
-        {
-          "colour": "Pink",
-          "image_url": "/images/products/colors/bng-159-pink.jpg"
-        }
-      ],
-      "is_active": true,
-      "is_featured": true,
-      "is_new_arrival": false,
-      "seo_title": null,
-      "seo_description": null,
-      "legacy_id": "159",
-      "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
-      "sort_index": 152,
-      "created_at": "2026-11-06T05:56:02.474Z",
-      "updated_at": "2026-11-06T05:56:02.474Z",
-      "variants": [
-        {
-          "id": "c55d6143-ba3a-4f10-8959-8b66a3587448",
-          "product_id": "f69057d9-1b35-4046-9076-d5186fe314d7",
-          "variant_name": "Size",
-          "variant_value": "2.2",
-          "size": "2.2",
-          "colour": "Pink",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-pink.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "775530db-2b56-4016-a495-cfb5fdb13b9f",
-          "product_id": "f69057d9-1b35-4046-9076-d5186fe314d7",
-          "variant_name": "Size",
-          "variant_value": "2.4",
-          "size": "2.4",
-          "colour": "Pink",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-pink.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "74a7de78-cf2c-4b95-8f9c-e764e89a1140",
-          "product_id": "f69057d9-1b35-4046-9076-d5186fe314d7",
-          "variant_name": "Size",
-          "variant_value": "2.6",
-          "size": "2.6",
-          "colour": "Pink",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-pink.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "3c7d8446-8b6e-45ff-8318-8f85756975c8",
-          "product_id": "f69057d9-1b35-4046-9076-d5186fe314d7",
-          "variant_name": "Size",
-          "variant_value": "2.8",
-          "size": "2.8",
-          "colour": "Pink",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-pink.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "15edc5a3-a9fe-4779-9672-79c3cd7212f3",
-          "product_id": "f69057d9-1b35-4046-9076-d5186fe314d7",
-          "variant_name": "Size",
-          "variant_value": "2.10",
-          "size": "2.10",
-          "colour": "Pink",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-pink.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        }
-      ]
-    },
-    {
-      "id": "c0658157-6206-43e6-b3bc-352d1471477f",
-      "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
-      "name": "Raindrop Glass bangles – Maroon",
-      "slug": "raindrop-glass-bangles-maroon",
-      "description": "Raindrop glass bangles available in eight colourways — forest green, pista, pink, maroon, red, rust orange and more — each finished with delicate raindrop detailing. Stack a few for a subtle look or wear the full set for poojas and family gatherings.",
-      "sku": "BNG-159-MR",
-      "price": 280,
-      "compare_at_price": null,
-      "stock_quantity": null,
-      "primary_image_url": "/images/products/colors/bng-159-maroon.jpg",
-      "colours": [
-        "Maroon"
-      ],
-      "colour_images": [
-        {
-          "colour": "Maroon",
-          "image_url": "/images/products/colors/bng-159-maroon.jpg"
-        }
-      ],
-      "is_active": true,
-      "is_featured": true,
-      "is_new_arrival": false,
-      "seo_title": null,
-      "seo_description": null,
-      "legacy_id": "159",
-      "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
-      "sort_index": 152,
-      "created_at": "2026-11-06T05:56:02.474Z",
-      "updated_at": "2026-11-06T05:56:02.474Z",
-      "variants": [
-        {
-          "id": "ae6dfcea-88aa-417e-a521-1eaab4f64107",
-          "product_id": "c0658157-6206-43e6-b3bc-352d1471477f",
-          "variant_name": "Size",
-          "variant_value": "2.2",
-          "size": "2.2",
-          "colour": "Maroon",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-maroon.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "5af78d00-5018-4172-a313-806cc3ed0119",
-          "product_id": "c0658157-6206-43e6-b3bc-352d1471477f",
-          "variant_name": "Size",
-          "variant_value": "2.4",
-          "size": "2.4",
-          "colour": "Maroon",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-maroon.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "6eaf02f5-ec3c-4f75-a1c5-2daa56046583",
-          "product_id": "c0658157-6206-43e6-b3bc-352d1471477f",
-          "variant_name": "Size",
-          "variant_value": "2.6",
-          "size": "2.6",
-          "colour": "Maroon",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-maroon.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "e65ed0b5-798e-487a-ba3d-2c4d2a9e5fff",
-          "product_id": "c0658157-6206-43e6-b3bc-352d1471477f",
-          "variant_name": "Size",
-          "variant_value": "2.8",
-          "size": "2.8",
-          "colour": "Maroon",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-maroon.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "9eb06794-272c-4ebe-abd5-ce66c34b1428",
-          "product_id": "c0658157-6206-43e6-b3bc-352d1471477f",
-          "variant_name": "Size",
-          "variant_value": "2.10",
-          "size": "2.10",
-          "colour": "Maroon",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-maroon.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        }
-      ]
-    },
-    {
-      "id": "26202a99-70bb-4717-82b2-c76543fd14de",
-      "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
-      "name": "Raindrop Glass bangles – Red",
-      "slug": "raindrop-glass-bangles-red",
-      "description": "Raindrop glass bangles available in eight colourways — forest green, pista, pink, maroon, red, rust orange and more — each finished with delicate raindrop detailing. Stack a few for a subtle look or wear the full set for poojas and family gatherings.",
-      "sku": "BNG-159-RD",
-      "price": 280,
-      "compare_at_price": null,
-      "stock_quantity": null,
-      "primary_image_url": "/images/products/colors/bng-159-red.jpg",
-      "colours": [
-        "Red"
-      ],
-      "colour_images": [
-        {
-          "colour": "Red",
-          "image_url": "/images/products/colors/bng-159-red.jpg"
-        }
-      ],
-      "is_active": true,
-      "is_featured": true,
-      "is_new_arrival": false,
-      "seo_title": null,
-      "seo_description": null,
-      "legacy_id": "159",
-      "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
-      "sort_index": 152,
-      "created_at": "2026-11-06T05:56:02.474Z",
-      "updated_at": "2026-11-06T05:56:02.474Z",
-      "variants": [
-        {
-          "id": "b3f737c6-2b83-4b9b-a9bf-9f66ad209b40",
-          "product_id": "26202a99-70bb-4717-82b2-c76543fd14de",
-          "variant_name": "Size",
-          "variant_value": "2.2",
-          "size": "2.2",
-          "colour": "Red",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-red.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "8265c2b3-e63c-4e98-8522-989b3c75e5e0",
-          "product_id": "26202a99-70bb-4717-82b2-c76543fd14de",
-          "variant_name": "Size",
-          "variant_value": "2.4",
-          "size": "2.4",
-          "colour": "Red",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-red.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "227968ac-93d1-4be0-9f4f-58eb636940ba",
-          "product_id": "26202a99-70bb-4717-82b2-c76543fd14de",
-          "variant_name": "Size",
-          "variant_value": "2.6",
-          "size": "2.6",
-          "colour": "Red",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-red.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "b0069ad5-7e4e-4edf-8daa-139e4371147f",
-          "product_id": "26202a99-70bb-4717-82b2-c76543fd14de",
-          "variant_name": "Size",
-          "variant_value": "2.8",
-          "size": "2.8",
-          "colour": "Red",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-red.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "99c74cdd-0a96-489e-9eba-4bfd38c4c91b",
-          "product_id": "26202a99-70bb-4717-82b2-c76543fd14de",
-          "variant_name": "Size",
-          "variant_value": "2.10",
-          "size": "2.10",
-          "colour": "Red",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-red.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        }
-      ]
-    },
-    {
-      "id": "eadff088-3cc3-4531-b5d9-9b9a2207e96b",
-      "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
-      "name": "Raindrop Glass bangles – Rust Orange",
-      "slug": "raindrop-glass-bangles-rust-orange",
-      "description": "Raindrop glass bangles available in eight colourways — forest green, pista, pink, maroon, red, rust orange and more — each finished with delicate raindrop detailing. Stack a few for a subtle look or wear the full set for poojas and family gatherings.",
-      "sku": "BNG-159-RO",
-      "price": 280,
-      "compare_at_price": null,
-      "stock_quantity": null,
-      "primary_image_url": "/images/products/colors/bng-159-rust-orange.jpg",
-      "colours": [
-        "Rust Orange"
-      ],
-      "colour_images": [
-        {
-          "colour": "Rust Orange",
-          "image_url": "/images/products/colors/bng-159-rust-orange.jpg"
-        }
-      ],
-      "is_active": true,
-      "is_featured": true,
-      "is_new_arrival": false,
-      "seo_title": null,
-      "seo_description": null,
-      "legacy_id": "159",
-      "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
-      "sort_index": 152,
-      "created_at": "2026-11-06T05:56:02.474Z",
-      "updated_at": "2026-11-06T05:56:02.474Z",
-      "variants": [
-        {
-          "id": "914b6f86-5c8d-494a-82a0-21a48214d0a0",
-          "product_id": "eadff088-3cc3-4531-b5d9-9b9a2207e96b",
-          "variant_name": "Size",
-          "variant_value": "2.2",
-          "size": "2.2",
-          "colour": "Rust Orange",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-rust-orange.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "ebfb4b9a-0343-469d-8a4c-357974e819b2",
-          "product_id": "eadff088-3cc3-4531-b5d9-9b9a2207e96b",
-          "variant_name": "Size",
-          "variant_value": "2.4",
-          "size": "2.4",
-          "colour": "Rust Orange",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-rust-orange.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "ba9ad469-5656-4230-b0e4-0fddeb62494c",
-          "product_id": "eadff088-3cc3-4531-b5d9-9b9a2207e96b",
-          "variant_name": "Size",
-          "variant_value": "2.6",
-          "size": "2.6",
-          "colour": "Rust Orange",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-rust-orange.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "5777c6de-6cc9-49c2-860b-809b2d9639a7",
-          "product_id": "eadff088-3cc3-4531-b5d9-9b9a2207e96b",
-          "variant_name": "Size",
-          "variant_value": "2.8",
-          "size": "2.8",
-          "colour": "Rust Orange",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-rust-orange.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "adacb6b6-44ea-4edc-a38f-e928c0d88880",
-          "product_id": "eadff088-3cc3-4531-b5d9-9b9a2207e96b",
-          "variant_name": "Size",
-          "variant_value": "2.10",
-          "size": "2.10",
-          "colour": "Rust Orange",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-rust-orange.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        }
-      ]
-    },
-    {
-      "id": "c059aee0-62e0-455a-9b78-4a9ac74c9888",
-      "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
-      "name": "Raindrop Glass bangles – Orange",
-      "slug": "raindrop-glass-bangles-orange",
-      "description": "Raindrop glass bangles available in eight colourways — forest green, pista, pink, maroon, red, rust orange and more — each finished with delicate raindrop detailing. Stack a few for a subtle look or wear the full set for poojas and family gatherings.",
-      "sku": "BNG-159-OR",
-      "price": 280,
-      "compare_at_price": null,
-      "stock_quantity": null,
-      "primary_image_url": "/images/products/colors/bng-159-rust-orange.jpg",
-      "colours": [
-        "Orange"
-      ],
-      "colour_images": [
-        {
-          "colour": "Orange",
-          "image_url": "/images/products/colors/bng-159-rust-orange.jpg"
-        }
-      ],
-      "is_active": true,
-      "is_featured": true,
-      "is_new_arrival": false,
-      "seo_title": null,
-      "seo_description": null,
-      "legacy_id": "159",
-      "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
-      "sort_index": 152,
-      "created_at": "2026-11-06T05:56:02.474Z",
-      "updated_at": "2026-11-06T05:56:02.474Z",
-      "variants": [
-        {
-          "id": "07dee96e-4166-496a-97ba-678c419e12e3",
-          "product_id": "c059aee0-62e0-455a-9b78-4a9ac74c9888",
-          "variant_name": "Size",
-          "variant_value": "2.2",
-          "size": "2.2",
-          "colour": "Orange",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-rust-orange.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "47b0bb53-a39b-449c-b494-a79823c15984",
-          "product_id": "c059aee0-62e0-455a-9b78-4a9ac74c9888",
-          "variant_name": "Size",
-          "variant_value": "2.4",
-          "size": "2.4",
-          "colour": "Orange",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-rust-orange.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "87defab4-20ec-4bfd-aa1a-d1cc81007b29",
-          "product_id": "c059aee0-62e0-455a-9b78-4a9ac74c9888",
-          "variant_name": "Size",
-          "variant_value": "2.6",
-          "size": "2.6",
-          "colour": "Orange",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-rust-orange.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "4b7265d6-7799-4748-8a08-c275aea00ffe",
-          "product_id": "c059aee0-62e0-455a-9b78-4a9ac74c9888",
-          "variant_name": "Size",
-          "variant_value": "2.8",
-          "size": "2.8",
-          "colour": "Orange",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-rust-orange.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "740b0997-7bc0-494b-9704-5a85637738b5",
-          "product_id": "c059aee0-62e0-455a-9b78-4a9ac74c9888",
-          "variant_name": "Size",
-          "variant_value": "2.10",
-          "size": "2.10",
-          "colour": "Orange",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-rust-orange.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        }
-      ]
-    },
-    {
-      "id": "507dfa84-6058-4953-96f5-3f49e2864365",
-      "category_id": "21c45a58-1868-5636-a6ca-f233f61f95b8",
-      "name": "Raindrop Glass bangles – Pista",
-      "slug": "raindrop-glass-bangles-pista",
-      "description": "Raindrop glass bangles available in eight colourways — forest green, pista, pink, maroon, red, rust orange and more — each finished with delicate raindrop detailing. Stack a few for a subtle look or wear the full set for poojas and family gatherings.",
-      "sku": "BNG-159-PS",
-      "price": 280,
-      "compare_at_price": null,
-      "stock_quantity": null,
-      "primary_image_url": "/images/products/colors/bng-159-pista-green.jpg",
-      "colours": [
-        "Pista"
-      ],
-      "colour_images": [
-        {
-          "colour": "Pista",
-          "image_url": "/images/products/colors/bng-159-pista-green.jpg"
-        }
-      ],
-      "is_active": true,
-      "is_featured": true,
-      "is_new_arrival": false,
-      "seo_title": null,
-      "seo_description": null,
-      "legacy_id": "159",
-      "legacy_image_source": "https://res.cloudinary.com/djgvh9eoc/image/upload/v1781003592/bangles/wffovi6drauqkbw87nq9.jpg",
-      "sort_index": 152,
-      "created_at": "2026-11-06T05:56:02.474Z",
-      "updated_at": "2026-11-06T05:56:02.474Z",
-      "variants": [
-        {
-          "id": "c40dc822-face-4807-912c-be9925537eb9",
-          "product_id": "507dfa84-6058-4953-96f5-3f49e2864365",
-          "variant_name": "Size",
-          "variant_value": "2.2",
-          "size": "2.2",
-          "colour": "Pista",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-pista-green.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "0969daac-4a2d-4cf6-8151-7a3cdd8b459a",
-          "product_id": "507dfa84-6058-4953-96f5-3f49e2864365",
-          "variant_name": "Size",
-          "variant_value": "2.4",
-          "size": "2.4",
-          "colour": "Pista",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-pista-green.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.474Z",
-          "updated_at": "2026-11-06T05:56:02.474Z"
-        },
-        {
-          "id": "a2bfbaee-6f24-4394-9590-db58f296979d",
-          "product_id": "507dfa84-6058-4953-96f5-3f49e2864365",
-          "variant_name": "Size",
-          "variant_value": "2.6",
-          "size": "2.6",
-          "colour": "Pista",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-pista-green.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.475Z",
-          "updated_at": "2026-11-06T05:56:02.475Z"
-        },
-        {
-          "id": "e6158052-094b-4693-9ae0-69ebb825b16f",
-          "product_id": "507dfa84-6058-4953-96f5-3f49e2864365",
-          "variant_name": "Size",
-          "variant_value": "2.8",
-          "size": "2.8",
-          "colour": "Pista",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-pista-green.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.475Z",
-          "updated_at": "2026-11-06T05:56:02.475Z"
-        },
-        {
-          "id": "6bcab34d-1dba-443d-a80b-d2fe52f999b4",
-          "product_id": "507dfa84-6058-4953-96f5-3f49e2864365",
-          "variant_name": "Size",
-          "variant_value": "2.10",
-          "size": "2.10",
-          "colour": "Pista",
-          "colour_hex": null,
-          "image_url": "/images/products/colors/bng-159-pista-green.jpg",
-          "sku": null,
-          "stock_quantity": null,
-          "price_override": null,
-          "is_active": true,
-          "created_at": "2026-11-06T05:56:02.475Z",
-          "updated_at": "2026-11-06T05:56:02.475Z"
+          "created_at": "2026-11-06T06:00:08.777Z",
+          "updated_at": "2026-11-06T06:00:08.777Z"
         }
       ]
     }
