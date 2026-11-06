@@ -94,7 +94,7 @@ function splitProduct(product) {
       primary_image_url: imageUrl,
       colours: [colour],
       colour_images: imageUrl ? [{ colour, image_url: imageUrl }] : [],
-      is_active: product.is_active,
+      is_active: true,
       is_featured: product.is_featured,
       is_new_arrival: product.is_new_arrival,
       seo_title: product.seo_title,
@@ -154,6 +154,11 @@ function migrateCatalog(catalog) {
       products.push(split);
     }
 
+    sql.push(`alter table public.product_variants add column if not exists colour text;`);
+    sql.push(`alter table public.product_variants add column if not exists colour_hex text;`);
+    sql.push(`alter table public.product_variants add column if not exists size text;`);
+    sql.push(`alter table public.product_variants add column if not exists image_url text;`);
+    sql.push("");
     sql.push(`-- Split "${product.name}" (${product.id}) into ${splits.length} colour products`);
     sql.push(`UPDATE public.products SET is_active = false, updated_at = now() WHERE id = ${sqlString(product.id)};`);
     for (const split of splits) {
